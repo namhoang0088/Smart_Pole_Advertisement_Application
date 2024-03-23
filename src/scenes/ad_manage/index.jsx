@@ -22,15 +22,19 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
 import { useTheme } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import Alert from "@mui/material/Alert";
+import InfoIcon from '@mui/icons-material/Info';
 import CheckIcon from "@mui/icons-material/Check";
-
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Alert from "@mui/material/Alert";
+import MyCalendar from "../../components/Calender";
 const Ad_manage = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -126,7 +130,7 @@ const Ad_manage = () => {
                 <strong>Chọn smart pole</strong>
               </Typography>
               <TextField
-                label="Chọn Smart Pole"
+                label="Smart Pole 1"
                 variant="outlined"
                 sx={{ width: "300px" }}
               />
@@ -295,19 +299,87 @@ const Ad_manage = () => {
                 </AccordionDetails>
               </Accordion>
             </Box>
+
+            {/* Nút xác nhận */}
+            <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: colors.greenAccent[600],
+                  color: "#fff",
+                  marginLeft: "20px",
+                  marginTop: "20px",
+                }}
+                endIcon={<SettingsApplicationsIcon />}
+              >
+                Xác nhận
+              </Button>
+
           </Box>
 
-          {/* Phần 2 */}
+          {/* Phần 2 -------------------------------------*/}
 
           <Box
             gridColumn="span 1"
             backgroundColor={colors.primary[400]}
             borderRadius="10px"
             padding="20px"
-            height="550px"
+            height="auto"
           >
-            {/* Các thành phần trong phần 2 */}
+            {/* Các thành phần trong phần 2 --------------------------------------------------------------*/}
+            {/*Header----------------------*/}
+            <Box marginBottom="20px" display="flex" alignItems="center" marginLeft="30%">
+              <InfoIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "36px" }}
+              />
+              <Typography variant="h4" marginRight="10px" paddingLeft="10px">
+                <strong>Thông tin Smart Pole</strong>
+              </Typography>
+
+            </Box>
+
+            {/*Tên smart pole-------------*/}
+            <Box marginBottom="20px" display="flex" alignItems="center">
+              <DriveFileRenameOutlineIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "36px" }}
+              />
+              <Typography variant="h4" marginRight="10px" paddingLeft="10px">
+                <strong>Tên Smart Pole:</strong>
+              </Typography>
+
+              <Typography variant="h4" marginRight="10px" paddingLeft="10px">
+                <strong>Smart Pole 1</strong>
+              </Typography>
+            </Box>
+
+            {/*Vị trí smart pole-------------*/}
+            <Box marginBottom="20px" display="flex" alignItems="center">
+              <LocationOnIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "36px" }}
+              />
+              <Typography variant="h4" marginRight="10px" paddingLeft="10px">
+                <strong>Tọa độ:</strong>
+              </Typography>
+
+              <Typography variant="h4" marginRight="10px" paddingLeft="10px">
+                <strong>10.876463, 106.805594</strong>
+              </Typography>
+            </Box>
+
+            {/*lịch chiếu*/}
+            <Box marginBottom="20px" display="flex" alignItems="center">
+              <CalendarMonthIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "36px" }}
+              />
+              <Typography variant="h4" marginRight="10px" paddingLeft="10px">
+                <strong>Lịch chiếu quảng cáo:</strong>
+              </Typography>
+            </Box>
+            <MyCalendar themeColor={colors.primary[400]} /> {/* Sử dụng component MyCalendar */}
+
+
           </Box>
+           {/* Hết phần 2 ----------------------------- */}
+
         </Box>
       </Box>
       {/* Hiển thị Alert nếu alertOpen là true */}
