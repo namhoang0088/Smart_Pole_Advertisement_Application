@@ -5,6 +5,7 @@ import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
 import AdManage from "./scenes/ad_manage";
 import SmartPoleManage from "./scenes/smart_pole_manage";
+import ReactDOM from "react-dom";
 // import Team from "./scenes/team";
 // import Invoices from "./scenes/invoices";
 // import Contacts from "./scenes/contacts";

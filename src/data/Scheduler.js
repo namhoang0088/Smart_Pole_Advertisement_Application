@@ -2,7 +2,7 @@
 export const SchedulerData = [
     { 
       id: 1, 
-      title: "Mì tôm Hảo Hảo", 
+      title: "Du lịch", 
       backgroundColor: "#ff0000",
       schedule: [
         { start: "2024-03-30T10:00:00", end: "2024-03-30T12:00:00" }, // Ngày 1

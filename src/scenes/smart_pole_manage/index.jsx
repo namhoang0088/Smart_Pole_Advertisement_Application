@@ -70,6 +70,18 @@ const SmartPoleManage = () => {
     console.log("Dropped event:", droppedEvent);
   };
 
+  const handleEventReceive = (info) => {
+    console.log("Received event:", info.event.title);
+    console.log("Start:", info.event.start);
+    console.log("End:", info.event.end);
+  };
+
+  const handleEventResize = (info) => {
+    console.log("Resized event:", info.event.title);
+    console.log("Start:", info.event.start);
+    console.log("End:", info.event.end);
+  };
+
   return (
     <Box m="20px">
       {/* Overlay */}
@@ -163,6 +175,8 @@ const SmartPoleManage = () => {
             editable={true}
             droppable={true}
             eventDrop={handleEventDrop}
+            eventReceive={handleEventReceive} // Xử lý khi sự kiện được thả vào lịch
+            eventResize={handleEventResize}
           />
         </Box>
       </Box>
