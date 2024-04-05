@@ -31,7 +31,7 @@ import { tokens } from "../theme";
 import SendIcon from "@mui/icons-material/Send";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-export default function CustomDialog({ open, handleClose }) {
+export default function AddEvent({ open, handleClose }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [selectedFile, setSelectedFile] = useState(null);

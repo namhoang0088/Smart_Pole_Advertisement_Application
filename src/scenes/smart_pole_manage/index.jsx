@@ -13,6 +13,8 @@ import CustomDialog from "../../components/Dialog";
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { SchedulerData } from "../../data/Scheduler"; // Import tệp dữ liệu
+import AddEvent from "../../components/AddEvent";
+
 const SmartPoleManage = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
