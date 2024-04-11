@@ -12,11 +12,21 @@ import GeographyChart from "../../components/GeographyChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const key   = 'AIzaSyCvorrtENjvCFtTTIKAAO9dLAEiS7Y3xpk';
+  const mapStyles = {
+    height: "100%",
+    width: "100%"
+  };
 
+  const defaultCenter = {
+    lat: -34.397,
+    lng: 150.644
+  };
   return (
     <Box m="20px">
       {/* HEADER */}
@@ -125,7 +135,7 @@ const Dashboard = () => {
         </Box>
 
         {/* ROW 2 */}
-        <Box
+        {/* <Box
           gridColumn="span 8"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
@@ -212,68 +222,34 @@ const Dashboard = () => {
               </Box>
             </Box>
           ))}
-        </Box>
+        </Box> */}
 
         {/* ROW 3 */}
         <Box
-          gridColumn="span 4"
+          gridColumn="span 12"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
           p="30px"
+          width = "1375px"
+          height = "600px"
         >
-          <Typography variant="h5" fontWeight="600">
-            Campaign
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            mt="25px"
-          >
-            <ProgressCircle size="125" />
-            <Typography
-              variant="h5"
-              color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
-            >
-              Doanh thu các khu vực
-            </Typography>
-            <Typography>Includes extra misc expenditures and costs</Typography>
-          </Box>
+
+    <LoadScript
+      googleMapsApiKey="AIzaSyCvorrtENjvCFtTTIKAAO9dLAEiS7Y3xpk"
+    >
+      <GoogleMap
+        mapContainerStyle={mapStyles}
+        zoom={8}
+        center={defaultCenter}
+      >
+        { /* Child components, markers, etc. */}
+      </GoogleMap>
+    </LoadScript>
+
+
         </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ padding: "30px 30px 0 30px" }}
-          >
-            Số lượng loại quảng cáo
-          </Typography>
-          <Box height="250px" mt="-20px">
-            <BarChart isDashboard={true} />
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          padding="30px"
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ marginBottom: "15px" }}
-          >
-            Bản đồ các Smart Pole
-          </Typography>
-          <Box height="200px">
-            <GeographyChart isDashboard={true} />
-          </Box>
-        </Box>
+
+
       </Box>
     </Box>
   );

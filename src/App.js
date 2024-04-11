@@ -5,6 +5,7 @@ import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
 import AdManage from "./scenes/ad_manage";
 import SmartPoleManage from "./scenes/smart_pole_manage";
+import LiveAd from "./scenes/live";
 import ReactDOM from "react-dom";
 // import Team from "./scenes/team";
 // import Invoices from "./scenes/invoices";
@@ -35,6 +36,7 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/ad_manage" element={<AdManage />} />
               <Route path="/smart_pole_manage" element={<SmartPoleManage />} />
+              <Route path="/live_ad" element={<LiveAd />} />
               {/* <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />

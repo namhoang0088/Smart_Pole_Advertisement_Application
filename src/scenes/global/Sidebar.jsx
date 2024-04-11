@@ -17,6 +17,7 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import FeaturedVideoIcon from "@mui/icons-material/FeaturedVideo";
+import SettingsInputAntennaIcon from '@mui/icons-material/SettingsInputAntenna';
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -147,9 +148,9 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Invoices Balances"
-              to="/invoices"
-              icon={<ReceiptOutlinedIcon />}
+              title="Live Stream"
+              to="/live_ad"
+              icon={<SettingsInputAntennaIcon />}
               selected={selected}
               setSelected={setSelected}
             />
