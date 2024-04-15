@@ -13,6 +13,7 @@ import CustomDialog from "../../components/Dialog";
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { SchedulerData } from "../../data/Scheduler"; // Import tệp dữ liệu
+import { colors_scheduler } from "../../data/Scheduler";
 import AddEvent from "../../components/AddEvent";
 
 const SmartPoleManage = () => {
@@ -20,46 +21,43 @@ const SmartPoleManage = () => {
   const colors = tokens(theme.palette.mode);
 
   const [openDialog, setOpenDialog] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
 
-  const handleOpenDialog = () => {
+
+  const handleOpenDialog = (namevideo) => {
     setOpenDialog(true);
+    setSelectedVideo(namevideo);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+    setSelectedVideo(null);
   };
 
-  // Xử lý dữ liệu từ SchedulerData để tạo formattedEvents
-  const formattedEvents = SchedulerData.flatMap(event => {
-    return event.schedule.map(scheduleItem => {
-      return {
-        id: `${event.id}_${scheduleItem.start}_${scheduleItem.end}`,
-        title: event.title,
-        start: scheduleItem.start,
-        end: scheduleItem.end,
-        backgroundColor: event.backgroundColor
-      };
-    });
-  });
 
-  const [events, setEvents] = useState(SchedulerData);
+  const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
 
   useEffect(() => {
-    const draggableEl = document.getElementById("external-events-list");
-    const draggable = new Draggable(draggableEl, {
-      itemSelector: '.fc-event',
-      eventData: (eventEl) => {
-        return {
-          title: eventEl.innerText,
-          duration: eventEl.dataset.duration,
-          backgroundColor: eventEl.dataset.backgroundColor,
-        };
+    const fetchData = async () => {
+      try {
+        const responseVideo = await fetch("http://localhost:5000/get/schedule");
+  
+        if (!responseVideo.ok) {
+          throw new Error("Network response video was not ok");
+        }
+  
+        const responseData = await responseVideo.json();
+        const labels = responseData.Schedule.map(item => item.lable); // Lấy giá trị của trường "lable"
+  
+        console.log("Labels:", labels); // In các giá trị lable ra console
+  
+        setDataVideo([...new Set(labels)]); // Cập nhật giá trị cho biến dataVideo
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-    });
-
-    return () => {
-      draggable.destroy();
     };
+  
+    fetchData();
   }, []);
 
   const handleEventDrop = (info) => {
@@ -84,12 +82,28 @@ const SmartPoleManage = () => {
     console.log("End:", info.event.end);
   };
 
+    // add event ------------------------begin--------------------------------
+    const [openAddEvent, setOpenAddEvent] = useState(false);
+    const handleOpenAddEvent = () => {
+      setOpenAddEvent(true);
+    };
+  
+    const handleCloseAddEvent = () => {
+      setOpenAddEvent(false);
+    };
+      // add event ------------------------end--------------------------------
+
   return (
     <Box m="20px">
       {/* Overlay */}
       {openDialog && <div className="overlay" onClick={handleCloseDialog}></div>}
       {/* Dialog */}
-      <CustomDialog open={openDialog} handleClose={handleCloseDialog} />
+      <CustomDialog open={openDialog} handleClose={handleCloseDialog} selectedVideo={selectedVideo} />
+      {/* Overlay */}
+      {openAddEvent && <div className="overlay" onClick={handleCloseAddEvent}></div>}
+      {/* Dialog */}
+      <AddEvent open={openAddEvent} handleClose={handleCloseAddEvent}  />
+
       <Header
         title="Smart Pole Advertising Management"
         subtitle="Welcome to Smart Pole Advertising Management"
@@ -108,39 +122,39 @@ const SmartPoleManage = () => {
             <h2 style={{ marginLeft: "32px", fontSize: "24px", fontWeight: "bold" }}>Danh sách quảng cáo</h2>
           </Box>
 
-          <div id="external-events-list" className="d-flex flex-wrap">
-            {events.map((event) => (
-              <div
-                key={event.id}
-                className="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event badge me-3 my-1"
-                style={{
-                  backgroundColor: event.backgroundColor,
-                  width: '380px',
-                  height: '50px',
-                  borderRadius: '1px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  color: 'white',
-                  cursor: 'pointer',
-                  marginBottom: '10px',
-                  borderRadius: '20px',
-                  padding: '10px',
-                  '&:hover': {
-                    backgroundColor: event.backgroundColorDark,
-                  },
-                }}
-                data-duration={event.duration}
-                data-background-color={event.backgroundColor}
-              >
-                
-                <div className="fc-event-main" style={{ fontWeight: 'bold', fontSize: '16px' }}>{event.title}</div>
-                <IconButton aria-label="settings" onClick={() => handleOpenDialog(event.id)}>
-                  <SettingsIcon />
-                </IconButton>
-              </div>
-            ))}
-          </div>
+          {dataVideo && dataVideo.map((label, index) => {
+  return (
+    <div
+      key={index}
+      className="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event badge me-3 my-1"
+      style={{
+        backgroundColor: colors_scheduler[index],
+        width: '380px',
+        height: '50px',
+        borderRadius: '1px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        color: 'white',
+        cursor: 'pointer',
+        marginBottom: '10px',
+        borderRadius: '20px',
+        padding: '10px',
+        '&:hover': {
+          backgroundColor: colors_scheduler[index],
+        },
+      }}
+      data-duration=""
+      data-background-color=""
+      onClick={() => handleOpenDialog(label)}
+    >
+      <div className="fc-event-main" style={{ fontWeight: 'bold', fontSize: '16px' }}>{label}</div>
+      <IconButton aria-label="settings">
+        <SettingsIcon />
+      </IconButton>
+    </div>
+  );
+})}
 
           <Box display="flex" alignItems="center">
             <Button
@@ -152,7 +166,7 @@ const SmartPoleManage = () => {
                 marginTop: "10px",
               }}
               endIcon={<AddBoxIcon />}
-              onClick={handleOpenDialog}
+              onClick={handleOpenAddEvent}
             >
               Thêm quảng cáo
             </Button>
@@ -173,7 +187,7 @@ const SmartPoleManage = () => {
               center: 'title',
               right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
             }}
-            events={formattedEvents} // Sử dụng formattedEvents
+            // events={formattedEvents} // Sử dụng formattedEvents
             editable={true}
             droppable={true}
             eventDrop={handleEventDrop}

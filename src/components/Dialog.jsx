@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -46,9 +46,12 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import dayjs from 'dayjs';
 import ToggleDays from "./ToggleDay";
 import AddIcon from '@mui/icons-material/Add';
+import Autocomplete from '@mui/material/Autocomplete';
+import FolderCopyIcon from '@mui/icons-material/FolderCopy';
+export default function CustomDialog({ open, handleClose, selectedVideo }) {
+  console.log("this is video selecttttttttttttttttttt", selectedVideo);
 
 
-export default function CustomDialog({ open, handleClose }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -86,8 +89,83 @@ export default function CustomDialog({ open, handleClose }) {
     // Thực hiện bất kỳ xử lý nào khác ở đây (nếu cần)
   };
   // chọn ngày trong tuần để lập lịch lặp lại hằng tuần --------------- end---------------
+  const [videoname, setVideoname] = useState([]); // Khai báo biến dataVideo
+  const [lable, setLable] = useState([]); // Khai báo biến dataVideo
+  const [start, setStart] = useState([]);
+  const [end, setEnd] = useState([]);
+  const [duration,setDuration] = useState([]);
+  const [begin, setBegin] = useState([]);
+  const [until,setUntil] = useState([]);
+  const [onetime, setOnetime] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [dataVideo, setDataVideo] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/get/schedule");
+        const responseVideo = await fetch("http://localhost:5000/get/video");
+        
+        if (!response.ok) {
+          throw new Error("Network response video was not ok");
+        }
+        if (!responseVideo.ok) {
+          throw new Error("Network response video was not ok");
+        }
+
+        const dataVideo = await responseVideo.json();
+        const responseData = await response.json();
+
+        const lable = responseData.Schedule.map(item => item.lable); // Lấy giá trị của trường "lable"
+        const videoname = responseData.Schedule.map(item =>item.video_name);
+        const start = responseData.Schedule.map(item =>item.start_time);
+        const end = responseData.Schedule.map(item =>item.end_time);
+        const duration = responseData.Schedule.map(item =>item.duration);
+        const begin = responseData.Schedule.map(item =>item.start_date);
+        const until = responseData.Schedule.map(item =>item.until);
+        const onetime = responseData.Schedule.map(item =>item.onetime);
 
 
+  
+        // console.log("Labelllllllllllllllllllllllllll:", lable); 
+        // console.log("Videonamemmmmmmmmmmmmmmmmmmmmmm:", videoname); 
+        // console.log("Starttttttttttttttttttttttttttt:", start); 
+        // console.log("Enddddddddddddddddddddddddddddd:", end); 
+        // console.log("durationnnnnnnnnnnnnnnnnnnnnnnn:", duration); 
+        // console.log("beginnnnnnnnnnnnnnnnnnnnnnnnnnn:", begin); 
+        // console.log("untilllllllllllllllllllllllllll:", until); 
+        // console.log("onetimeeeeeeeeeeeeeeeeeeeeeeeee:", onetime); 
+
+        setDataVideo(dataVideo);
+  
+        setLable(lable); // Cập nhật giá trị cho biến dataVideo
+        setVideoname(videoname);
+        setStart(start);
+        setEnd(end);
+        setDuration(duration);
+        setBegin(begin);
+        setUntil(until);
+        setOnetime(onetime);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  const index = lable.indexOf(selectedVideo);
+  const defaultAdvertisementName = index !== -1 ? lable[index] || '' : '';
+  const indexes = lable.reduce((acc, curr, index) => {
+    if (curr === selectedVideo) {
+      acc.push(index);
+    }
+    return acc;
+  }, []);
+  
+  // Tạo mảng defaultStart từ các chỉ mục tìm được
+  const defaultStart = indexes.map(index => start[index]);
+  const defaultvideoname = indexes.map(index => videoname[index]);
+  console.log("startttttttttttttttttt", defaultvideoname);
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
     <Dialog onClose={handleClose} open={open} PaperProps={{ sx: { width: '60%', maxWidth: '80%' } }}>
@@ -102,35 +180,51 @@ export default function CustomDialog({ open, handleClose }) {
             <Typography variant="h4" marginRight="10px" paddingLeft="10px">
               <strong>Tên quảng cáo</strong>
             </Typography>
-            <TextField label="Đổi tên quảng cáo" variant="outlined" defaultValue="Du lịch" sx={{ width: "300px" }} />
+            <TextField label="Đổi tên quảng cáo" variant="outlined" defaultValue={defaultAdvertisementName} sx={{ width: "300px" }} />
           </Box>
+          
 
           {/* Dòng thứ hai: "Chọn video" và trường nhập dữ liệu --------------------------------------*/}
-          <Box marginBottom="20px" display="flex" alignItems="center">
+          <Box marginBottom="30px" marginTop="20px" display="flex" alignItems="center">
+          <ChangeCircleIcon sx={{ color: '#4cceac', fontSize: "36px" }} />
+            <Typography variant="h4" marginRight="10px" paddingLeft="10px">
+              <strong>Thay đổi nội dung</strong>
+      </Typography>
+    <Autocomplete
+      sx={{ width: 300 }}
+      multiple
+      id="list-pole-autocomplete"
+      value={selectedOptions}
+      onChange={(event, newValue) => {
+        setSelectedOptions(newValue);
+      }}
+      options={dataVideo && dataVideo["Video name"] ? dataVideo["Video name"] : []}
+      renderInput={(params) => (
+        <TextField {...params} variant="outlined" label="Chọn nội dung" />
+      )}
+    />
+  <Box marginLeft="20px"> {/* Thêm marginLeft cho nút tải lên */}
+    <Button variant="contained" component="label" sx={{ backgroundColor: "#4cceac", color: "#fff" }} endIcon={<UploadFileIcon />}>
+      <Typography variant="body1">Tải video mới</Typography>
+      <input type="file" accept="video/*" hidden onChange={handleFileChange} />
+    </Button>
+  </Box>
+</Box>
+
+          {/* Dòng thứ ba -------------------------------------------------------------------*/}
+                    <Box marginBottom="20px" display="flex" alignItems="center">
             <OndemandVideoIcon sx={{ color: '#4cceac', fontSize: "36px" }} />
             <Typography variant="h4" marginRight="10px" paddingLeft="10px">
               <strong>Nội dung</strong>
             </Typography>
             <ReactPlayer
-              url={[{ src: '/assets/1080p.mp4', type: 'video/mp4', quality: '1080' }]}
+              url={[{ src: '', type: 'video/mp4', quality: '1080' }]}
               controls={true}
               width="640px"
               height="360px"
             />
           </Box>
 
-          {/* Dòng thứ ba -------------------------------------------------------------------*/}
-          <Box marginBottom="30px" marginTop="20px" display="flex" alignItems="center">
-            <ChangeCircleIcon sx={{ color: '#4cceac', fontSize: "36px" }} />
-            <Typography variant="h4" marginRight="10px" paddingLeft="10px">
-              <strong>Thay đổi nội dung</strong>
-            </Typography>
-            <TextField id="outlined-basic" label="Video upload" variant="outlined" value={selectedFile ? selectedFile.name : ""} />
-            <Button variant="contained" component="label" sx={{ backgroundColor: '#4cceac', color: "#fff", marginLeft: "20px" }} endIcon={<UploadFileIcon />}>
-              <Typography variant="body1">Upload here</Typography>
-              <input type="file" accept="video/*" hidden onChange={handleFileChange} />
-            </Button>
-          </Box>
 
           {/* Dòng thứ tư ----------------------------------------------------*/}
           <Box marginBottom="30px" display="flex" alignItems="center">
@@ -165,22 +259,37 @@ export default function CustomDialog({ open, handleClose }) {
                   <List component="div" disablePadding>
                   {/*nội dung trogn collapse---------------begin--------------*/}
 
-                  <Box marginBottom="20px" padding="10px" display="flex" alignItems="center" backgroundColor={colors.grey[900]} borderRadius="10px">
+
+                  <Box marginBottom="20px" padding="10px" flexDirection="column" alignItems="center" backgroundColor={colors.grey[900]} borderRadius="10px">
+                  <Box display="flex" alignItems="center">
                   <TimePicker label="Thời gian bắt đầu" defaultValue={dayjs('2022-04-17T15:30')} />
                   <span style={{ fontSize: '1.5em', margin: '0 10px' }}>-</span>
                   <TimePicker label="Thời gian kết thúc" defaultValue={dayjs('2022-04-17T16:30')} />
                   <Button variant="contained" sx={{ backgroundColor: '#757575', color: "#fff", marginLeft: "20px", display: 'flex', alignItems: 'center', padding : "5px",}}>
                   <DeleteForeverIcon />
-                  </Button>          
-                  </Box>  
+                  </Button>         
+                  </Box>
 
-                  <Box marginBottom="20px" padding="10px" display="flex" alignItems="center" backgroundColor={colors.grey[900]} borderRadius="10px">
-                  <TimePicker label="Thời gian bắt đầu" defaultValue={dayjs('2022-04-17T9:30')} />
-                  <span style={{ fontSize: '1.5em', margin: '0 10px' }}>-</span>
-                  <TimePicker label="Thời gian kết thúc" defaultValue={dayjs('2022-04-17T10:30')} />
-                  <Button variant="contained" sx={{ backgroundColor: '#757575', color: "#fff", marginLeft: "20px", display: 'flex', alignItems: 'center', padding : "5px",}}>
-                  <DeleteForeverIcon />
-                  </Button>          
+                  <Box marginBottom="30px" marginTop="20px" display="flex" alignItems="center">
+          <ChangeCircleIcon sx={{ color: '#4cceac', fontSize: "36px" }} />
+            <Typography variant="h4" marginRight="10px" paddingLeft="10px">
+              <strong>Thay đổi nội dung</strong>
+      </Typography>
+    <Autocomplete
+      sx={{ width: 300 }}
+      multiple
+      id="list-pole-autocomplete"
+      value={selectedOptions}
+      onChange={(event, newValue) => {
+        setSelectedOptions(newValue);
+      }}
+      options={dataVideo && dataVideo["Video name"] ? dataVideo["Video name"] : []}
+      renderInput={(params) => (
+        <TextField {...params} variant="outlined" label="Chọn nội dung" />
+      )}
+    />
+</Box>
+     
                   </Box>
 
                   <Button variant="outlined" sx={{marginLeft: "200px",}} startIcon={<AddIcon />}>Thêm lịch chiếu</Button>        

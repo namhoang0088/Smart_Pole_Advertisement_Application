@@ -29,3 +29,19 @@ export const SchedulerData = [
     },
   ];
   
+
+  export const colors_scheduler = [
+    "#0000FF", // Xanh Lam
+    "#00008B", // Xanh Lam Đậm
+    "#ADD8E6", // Xanh Lam Nhạt
+    "#1E90FF", // Xanh Da Trời
+    "#007FFF", // Xanh Biển
+    "#00FF00", // Xanh Lá
+    "#008000", // Xanh Lá Đậm
+    "#4682B4", // Xanh Dương
+    "#013220", // Xanh Đen
+    "#E6E6FA", // Lam
+    "#9400D3", // Tím
+    "#4B0082"  // Chàm
+  ];
+  
