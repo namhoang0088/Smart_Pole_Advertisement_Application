@@ -12,20 +12,20 @@ import GeographyChart from "../../components/GeographyChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import { GoogleMap, LoadScript } from "@react-google-maps/api";
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const key   = 'AIzaSyCvorrtENjvCFtTTIKAAO9dLAEiS7Y3xpk';
+  const key = "AIzaSyCvorrtENjvCFtTTIKAAO9dLAEiS7Y3xpk";
   const mapStyles = {
     height: "100%",
-    width: "100%"
+    width: "100%",
   };
 
   const defaultCenter = {
     lat: -34.397,
-    lng: 150.644
+    lng: 150.644,
   };
   return (
     <Box m="20px">
@@ -230,26 +230,19 @@ const Dashboard = () => {
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
           p="30px"
-          width = "1375px"
-          height = "600px"
+          width="1375px"
+          height="600px"
         >
-
-    <LoadScript
-      googleMapsApiKey="AIzaSyCvorrtENjvCFtTTIKAAO9dLAEiS7Y3xpk"
-    >
-      <GoogleMap
-        mapContainerStyle={mapStyles}
-        zoom={8}
-        center={defaultCenter}
-      >
-        { /* Child components, markers, etc. */}
-      </GoogleMap>
-    </LoadScript>
-
-
+          <LoadScript googleMapsApiKey="AIzaSyCvorrtENjvCFtTTIKAAO9dLAEiS7Y3xpk">
+            <GoogleMap
+              mapContainerStyle={mapStyles}
+              zoom={8}
+              center={defaultCenter}
+            >
+              {/* Child components, markers, etc. */}
+            </GoogleMap>
+          </LoadScript>
         </Box>
-
-
       </Box>
     </Box>
   );

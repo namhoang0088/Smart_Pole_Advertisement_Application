@@ -17,7 +17,7 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import FeaturedVideoIcon from "@mui/icons-material/FeaturedVideo";
-import SettingsInputAntennaIcon from '@mui/icons-material/SettingsInputAntenna';
+import SettingsInputAntennaIcon from "@mui/icons-material/SettingsInputAntenna";
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);

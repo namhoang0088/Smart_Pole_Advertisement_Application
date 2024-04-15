@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { ToggleButton, ToggleButtonGroup , useTheme} from "@mui/material";
+import { ToggleButton, ToggleButtonGroup, useTheme } from "@mui/material";
 import { tokens } from "../theme";
 const DAYS = [
   { key: "sunday", label: "S" },
@@ -9,24 +9,24 @@ const DAYS = [
   { key: "wednesday", label: "W" },
   { key: "thursday", label: "T" },
   { key: "friday", label: "F" },
-  { key: "saturday", label: "S" }
+  { key: "saturday", label: "S" },
 ];
 
-const StyledToggleButtonGroup = withStyles(theme => ({
+const StyledToggleButtonGroup = withStyles((theme) => ({
   grouped: {
     margin: theme.spacing(2),
     padding: theme.spacing(0, 1),
     "&:not(:first-child)": {
       border: "1px solid",
       borderColor: "#692B7C",
-      borderRadius: "50%"
+      borderRadius: "50%",
     },
     "&:first-child": {
       border: "1px solid",
       borderColor: "#692B7C",
-      borderRadius: "50%"
-    }
-  }
+      borderRadius: "50%",
+    },
+  },
 }))(ToggleButtonGroup);
 
 const StyledToggle = withStyles({
@@ -34,23 +34,23 @@ const StyledToggle = withStyles({
     color: "#4cceac",
     "&$selected": {
       color: "white",
-      background: "#4cceac"
+      background: "#4cceac",
     },
     "&:hover": {
       borderColor: "#BA9BC3",
-      background: "#BA9BC3"
+      background: "#BA9BC3",
     },
     "&:hover$selected": {
       borderColor: "#BA9BC3",
-      background: "#BA9BC3"
+      background: "#BA9BC3",
     },
     minWidth: 32,
     maxWidth: 32,
     height: 32,
     textTransform: "unset",
-    fontSize: "0.75rem"
+    fontSize: "0.75rem",
   },
-  selected: {}
+  selected: {},
 })(ToggleButton);
 
 const ToggleDays = ({ value, onChange }) => {
