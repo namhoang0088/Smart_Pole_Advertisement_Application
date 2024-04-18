@@ -35,6 +35,18 @@ const SmartPoleManage = () => {
 
   const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
 
+  //api----------------------------------begin--------------------------------
+  const [videoname, setVideoname] = useState([]); // Khai báo biến dataVideo
+  const [lable, setLable] = useState([]); // Khai báo biến dataVideo
+  const [start, setStart] = useState([]);
+  const [end, setEnd] = useState([]);
+  const [duration, setDuration] = useState([]);
+  const [begin, setBegin] = useState([]);
+  const [until, setUntil] = useState([]);
+  const [typetask, setTypeTask] = useState([]);
+  const [days, setDays] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,7 +59,23 @@ const SmartPoleManage = () => {
         const responseData = await responseVideo.json();
         const labels = responseData.Schedule.map((item) => item.lable); // Lấy giá trị của trường "lable"
 
-        // console.log("Labels:", labels); // In các giá trị lable ra console
+        const lable = responseData.Schedule.map((item) => item.lable); // Lấy giá trị của trường "lable"
+        const start = responseData.Schedule.map((item) => item.start_time);
+        const end = responseData.Schedule.map((item) => item.end_time);
+        const begin = responseData.Schedule.map((item) => item.start_date);
+        const until = responseData.Schedule.map((item) => item.until);
+        const duration = responseData.Schedule.map((item) => item.duration);
+        const typetask = responseData.Schedule.map((item) => item.typetask);
+        const days = responseData.Schedule.map((item) => item.days);
+
+        setLable(lable); // Cập nhật giá trị cho biến dataVideo
+        setStart(start);
+        setEnd(end);
+        setDuration(duration);
+        setBegin(begin);
+        setUntil(until);
+        setTypeTask(typetask);
+        setDays(days);
 
         setDataVideo([...new Set(labels)]); // Cập nhật giá trị cho biến dataVideo
       } catch (error) {
@@ -57,6 +85,178 @@ const SmartPoleManage = () => {
 
     fetchData();
   }, []);
+
+  //api-----------------------------------------------end----------------------------------------
+  const formattedEvents = [];
+
+  lable.forEach((label, index) => {
+    if (typetask[index] === "daily") {
+      const beginDate = new Date(begin[index]);
+      const untilDate = new Date(until[index]);
+
+      // Tính toán số ngày giữa begin và until
+      const dayReplay =
+        Math.floor(untilDate.getTime() - beginDate.getTime()) /
+        (1000 * 60 * 60 * 24) /
+        duration[index];
+      for (let i = 0; i <= dayReplay; i++) {
+        const BeginTime = new Date(
+          beginDate.getTime() + i * duration[index] * 24 * 60 * 60 * 1000,
+        );
+        const UntilTime = new Date(
+          beginDate.getTime() + i * duration[index] * 24 * 60 * 60 * 1000,
+        );
+
+        const [startHour, startMinute] = start[index].split(":").map(Number); // Chuyển đổi giờ và phút thành số
+        const [endHour, endMinute] = end[index].split(":").map(Number);
+
+        BeginTime.setHours(startHour);
+        BeginTime.setMinutes(startMinute);
+
+        UntilTime.setHours(endHour);
+        UntilTime.setMinutes(endMinute);
+
+        const startDateObj = new Date(BeginTime);
+        const startYear = startDateObj.getFullYear();
+        const startMonth = ("0" + (startDateObj.getMonth() + 1)).slice(-2);
+        const startDay = ("0" + startDateObj.getDate()).slice(-2);
+        const startHours = ("0" + startDateObj.getHours()).slice(-2);
+        const startMinutes = ("0" + startDateObj.getMinutes()).slice(-2);
+        const startSeconds = ("0" + startDateObj.getSeconds()).slice(-2);
+        const startEvent = `${startYear}-${startMonth}-${startDay}T${startHours}:${startMinutes}:${startSeconds}`;
+
+        // Chuyển đổi định dạng của thời gian kết thúc sự kiện
+        const endDateObj = new Date(UntilTime);
+        const endYear = endDateObj.getFullYear();
+        const endMonth = ("0" + (endDateObj.getMonth() + 1)).slice(-2);
+        const endDay = ("0" + endDateObj.getDate()).slice(-2);
+        const endHours = ("0" + endDateObj.getHours()).slice(-2);
+        const endMinutes = ("0" + endDateObj.getMinutes()).slice(-2);
+        const endSeconds = ("0" + endDateObj.getSeconds()).slice(-2);
+        const endEvent = `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}:${endSeconds}`;
+
+        const event = {
+          id: `${startEvent}_${endEvent}`,
+          title: lable[index],
+          start: startEvent,
+          end: endEvent,
+          backgroundColor: "#4cceac",
+        };
+        formattedEvents.push(event);
+        // console.log("Begin:", startEvent);
+        // console.log("Until:", endEvent);
+      }
+    }
+
+    if (typetask[index] === "weekly") {
+      const beginDate = new Date(begin[index]);
+      const untilDate = new Date(until[index]);
+
+      // Tính toán số ngày giữa begin và until
+      const dayReplay =
+        Math.floor(untilDate.getTime() - beginDate.getTime()) /
+        (1000 * 60 * 60 * 24);
+      // console.log("day replayyyyyyyyyyyyyyyyyyyyy",dayReplay);
+      for (let i = 0; i <= dayReplay; i++) {
+        const BeginTime = new Date(
+          beginDate.getTime() + i * 24 * 60 * 60 * 1000,
+        );
+        const UntilTime = new Date(
+          beginDate.getTime() + i * 24 * 60 * 60 * 1000,
+        );
+        if (
+          days[index].includes(
+            BeginTime.toLocaleString("en-US", {
+              weekday: "short",
+            }).toLowerCase(),
+          )
+        ) {
+          const [startHour, startMinute] = start[index].split(":").map(Number); // Chuyển đổi giờ và phút thành số
+          const [endHour, endMinute] = end[index].split(":").map(Number);
+          BeginTime.setHours(startHour);
+          BeginTime.setMinutes(startMinute);
+
+          UntilTime.setHours(endHour);
+          UntilTime.setMinutes(endMinute);
+
+          const startDateObj = new Date(BeginTime);
+          const startYear = startDateObj.getFullYear();
+          const startMonth = ("0" + (startDateObj.getMonth() + 1)).slice(-2);
+          const startDay = ("0" + startDateObj.getDate()).slice(-2);
+          const startHours = ("0" + startDateObj.getHours()).slice(-2);
+          const startMinutes = ("0" + startDateObj.getMinutes()).slice(-2);
+          const startSeconds = ("0" + startDateObj.getSeconds()).slice(-2);
+          const startEvent = `${startYear}-${startMonth}-${startDay}T${startHours}:${startMinutes}:${startSeconds}`;
+
+          // Chuyển đổi định dạng của thời gian kết thúc sự kiện
+          const endDateObj = new Date(UntilTime);
+          const endYear = endDateObj.getFullYear();
+          const endMonth = ("0" + (endDateObj.getMonth() + 1)).slice(-2);
+          const endDay = ("0" + endDateObj.getDate()).slice(-2);
+          const endHours = ("0" + endDateObj.getHours()).slice(-2);
+          const endMinutes = ("0" + endDateObj.getMinutes()).slice(-2);
+          const endSeconds = ("0" + endDateObj.getSeconds()).slice(-2);
+          const endEvent = `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}:${endSeconds}`;
+
+          // console.log("Begin:", startEvent);
+          // console.log("Until:", endEvent);
+          const event = {
+            id: `${startEvent}_${endEvent}`,
+            title: lable[index],
+            start: startEvent,
+            end: endEvent,
+            backgroundColor: "#FF0000",
+          };
+          formattedEvents.push(event);
+        }
+      }
+    }
+
+    if (typetask[index] === "onetime") {
+      const beginDate = new Date(begin[index]);
+      const BeginTime = new Date(beginDate.getTime());
+      const UntilTime = new Date(beginDate.getTime());
+
+      const [startHour, startMinute] = start[index].split(":").map(Number); // Chuyển đổi giờ và phút thành số
+      const [endHour, endMinute] = end[index].split(":").map(Number);
+      BeginTime.setHours(startHour);
+      BeginTime.setMinutes(startMinute);
+
+      UntilTime.setHours(endHour);
+      UntilTime.setMinutes(endMinute);
+
+      const startDateObj = new Date(BeginTime);
+      const startYear = startDateObj.getFullYear();
+      const startMonth = ("0" + (startDateObj.getMonth() + 1)).slice(-2);
+      const startDay = ("0" + startDateObj.getDate()).slice(-2);
+      const startHours = ("0" + startDateObj.getHours()).slice(-2);
+      const startMinutes = ("0" + startDateObj.getMinutes()).slice(-2);
+      const startSeconds = ("0" + startDateObj.getSeconds()).slice(-2);
+      const startEvent = `${startYear}-${startMonth}-${startDay}T${startHours}:${startMinutes}:${startSeconds}`;
+
+      // Chuyển đổi định dạng của thời gian kết thúc sự kiện
+      const endDateObj = new Date(UntilTime);
+      const endYear = endDateObj.getFullYear();
+      const endMonth = ("0" + (endDateObj.getMonth() + 1)).slice(-2);
+      const endDay = ("0" + endDateObj.getDate()).slice(-2);
+      const endHours = ("0" + endDateObj.getHours()).slice(-2);
+      const endMinutes = ("0" + endDateObj.getMinutes()).slice(-2);
+      const endSeconds = ("0" + endDateObj.getSeconds()).slice(-2);
+      const endEvent = `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}:${endSeconds}`;
+
+      // console.log("Begin:", startEvent);
+      // console.log("Until:", endEvent);
+      const event = {
+        id: `${startEvent}_${endEvent}`,
+        title: lable[index],
+        start: startEvent,
+        end: endEvent,
+        backgroundColor: "#000000",
+      };
+      formattedEvents.push(event);
+    }
+    return {};
+  });
 
   const handleEventDrop = (info) => {
     const droppedEvent = info.event;
@@ -149,7 +349,7 @@ const SmartPoleManage = () => {
                   className="fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event badge me-3 my-1"
                   style={{
                     backgroundColor: colors_scheduler[index],
-                    width: "380px",
+                    width: "100%",
                     height: "50px",
                     borderRadius: "1px",
                     display: "flex",
@@ -217,7 +417,7 @@ const SmartPoleManage = () => {
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
             }}
-            // events={formattedEvents} // Sử dụng formattedEvents
+            events={formattedEvents} // Sử dụng formattedEvents
             editable={true}
             droppable={true}
             eventDrop={handleEventDrop}

@@ -54,7 +54,9 @@ import AddIcon from "@mui/icons-material/Add";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import Checkbox from "@mui/material/Checkbox";
 import Autocomplete from "@mui/material/Autocomplete";
-
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 export default function AddEvent({ open, handleClose }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -86,13 +88,124 @@ export default function AddEvent({ open, handleClose }) {
     setOpenFlex(!openFlex);
   };
 
+  //thêm lịch chiếu---------------------begin-------------------------------
+  const [dayBoxes, setDayBoxes] = useState([]);
+
+  const handleAddDayBox = () => {
+    // Tạo một Box mới
+    const newBox = (
+      <Box
+        marginTop="10px"
+        marginBottom="20px"
+        padding="20px 10px 10px 10px"
+        flexDirection="column"
+        alignItems="center"
+        backgroundColor={colors.grey[900]}
+        borderRadius="10px"
+      >
+        <Box marginBottom="20px">
+          <Box display="flex" alignItems="center">
+            <TimePicker label="Thời gian bắt đầu" />
+            <span
+              style={{
+                fontSize: "1.5em",
+                margin: "0 10px",
+              }}
+            >
+              -
+            </span>
+            <TimePicker label="Thời gian kết thúc" />
+          </Box>
+
+          <Box
+            marginBottom="30px"
+            marginTop="20px"
+            display="flex"
+            alignItems="center"
+          >
+            <ChangeCircleIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
+            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
+              <strong>Thay đổi nội dung</strong>
+            </Typography>
+            <Autocomplete
+              sx={{ width: 300 }}
+              multiple
+              id="list-pole-autocomplete"
+              onChange={(event, newValue) => {
+                setSelectedOptions(newValue);
+              }}
+              options={
+                dataVideo && dataVideo["Video name"]
+                  ? dataVideo["Video name"]
+                  : []
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Chọn nội dung"
+                />
+              )}
+            />
+
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#757575",
+                color: "#fff",
+                marginLeft: "20px",
+                display: "flex",
+                alignItems: "center",
+                padding: "5px",
+              }}
+            >
+              <DeleteForeverIcon />
+            </Button>
+          </Box>
+
+          <Box marginBottom="20px" display="flex" alignItems="center">
+            <HourglassEmptyIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
+            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
+              <strong>Hiệu lực từ</strong>
+            </Typography>
+            <DatePicker label="Ngày bắt đầy" />
+            <span
+              style={{
+                fontSize: "1.5em",
+                margin: "0 10px",
+              }}
+            >
+              {" "}
+              -{" "}
+            </span>
+            <DatePicker label="Ngày kết thúc" />
+          </Box>
+
+          <Box marginBottom="20px" display="flex" alignItems="center">
+            <EventRepeatIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
+            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
+              <strong>Chu kỳ lặp</strong>
+            </Typography>
+            <TextField
+              label="Số ngày"
+              variant="outlined"
+              sx={{ width: "300px" }}
+            />
+          </Box>
+        </Box>
+      </Box>
+    );
+    // Thêm Box mới vào danh sách
+    setDayBoxes([...dayBoxes, newBox]);
+  };
+  //thêm lịch chiếu-----------------------end---------------------
+
   // chọn ngày trong tuần để lập lịch lặp lại hằng tuần --------------- begin------------------
 
   const handleDaysChange = (event, newDays) => {
     // Thực hiện bất kỳ xử lý nào khác ở đây (nếu cần)
   };
   // chọn ngày trong tuần để lập lịch lặp lại hằng tuần --------------- end---------------
-
   // mở danh sách video để thiết lập nội dung cho quảng cáo ---------------end--------------
   const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
   useEffect(() => {
@@ -127,7 +240,7 @@ export default function AddEvent({ open, handleClose }) {
           id="customized-dialog-title"
           sx={{ fontSize: "24px", fontWeight: "bold" }}
         >
-          Chỉnh sửa lịch phát quảng cáo
+          Thêm quảng cáo
         </DialogTitle>
         <DialogContent dividers>
           <Box
@@ -153,56 +266,6 @@ export default function AddEvent({ open, handleClose }) {
             </Box>
 
             {/* Dòng thứ hai -------------------------------------------------------------------*/}
-            <Box
-              marginBottom="30px"
-              marginTop="20px"
-              display="flex"
-              alignItems="center"
-            >
-              <FolderCopyIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-              <Typography variant="h4" marginRight="10px" paddingLeft="10px">
-                <strong>Chọn nội dung</strong>
-              </Typography>
-              <Autocomplete
-                sx={{ width: 300 }}
-                multiple
-                id="list-pole-autocomplete"
-                value={selectedOptions}
-                onChange={(event, newValue) => {
-                  setSelectedOptions(newValue);
-                }}
-                options={
-                  dataVideo && dataVideo["Video name"]
-                    ? dataVideo["Video name"]
-                    : []
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Chọn nội dung"
-                  />
-                )}
-              />
-              <Box marginLeft="20px">
-                {" "}
-                {/* Thêm marginLeft cho nút tải lên */}
-                <Button
-                  variant="contained"
-                  component="label"
-                  sx={{ backgroundColor: "#4cceac", color: "#fff" }}
-                  endIcon={<UploadFileIcon />}
-                >
-                  <Typography variant="body1">Tải video mới</Typography>
-                  <input
-                    type="file"
-                    accept="video/*"
-                    hidden
-                    onChange={handleFileChange}
-                  />
-                </Button>
-              </Box>
-            </Box>
 
             {/* Dòng thứ ba ----------------------------------------------------*/}
             <Box marginBottom="30px" display="flex" alignItems="center">
@@ -260,45 +323,149 @@ export default function AddEvent({ open, handleClose }) {
                   </ListItemButton>
                   <Collapse in={openDay} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                      {/*nội dung trogn collapse---------------begin--------------*/}
+                      {/*nội dung trong collapse của lặp lại hằng ngày---------------begin--------------*/}
 
                       <Box
+                        marginTop="10px"
                         marginBottom="20px"
-                        padding="10px"
-                        display="flex"
+                        padding="20px 10px 10px 10px"
+                        flexDirection="column"
                         alignItems="center"
                         backgroundColor={colors.grey[900]}
                         borderRadius="10px"
                       >
-                        <TimePicker label="Thời gian bắt đầu" />
-                        <span style={{ fontSize: "1.5em", margin: "0 10px" }}>
-                          -
-                        </span>
-                        <TimePicker label="Thời gian kết thúc" />
-                        <Button
-                          variant="contained"
-                          sx={{
-                            backgroundColor: "#757575",
-                            color: "#fff",
-                            marginLeft: "20px",
-                            display: "flex",
-                            alignItems: "center",
-                            padding: "5px",
-                          }}
-                        >
-                          <DeleteForeverIcon />
-                        </Button>
+                        <Box marginBottom="20px">
+                          <Box display="flex" alignItems="center">
+                            <TimePicker label="Thời gian bắt đầu" />
+                            <span
+                              style={{
+                                fontSize: "1.5em",
+                                margin: "0 10px",
+                              }}
+                            >
+                              -
+                            </span>
+                            <TimePicker label="Thời gian kết thúc" />
+                          </Box>
+
+                          <Box
+                            marginBottom="30px"
+                            marginTop="20px"
+                            display="flex"
+                            alignItems="center"
+                          >
+                            <ChangeCircleIcon
+                              sx={{ color: "#4cceac", fontSize: "36px" }}
+                            />
+                            <Typography
+                              variant="h5"
+                              marginRight="10px"
+                              paddingLeft="10px"
+                            >
+                              <strong>Thay đổi nội dung</strong>
+                            </Typography>
+                            <Autocomplete
+                              sx={{ width: 300 }}
+                              multiple
+                              id="list-pole-autocomplete"
+                              onChange={(event, newValue) => {
+                                setSelectedOptions(newValue);
+                              }}
+                              options={
+                                dataVideo && dataVideo["Video name"]
+                                  ? dataVideo["Video name"]
+                                  : []
+                              }
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  variant="outlined"
+                                  label="Chọn nội dung"
+                                />
+                              )}
+                            />
+
+                            <Button
+                              variant="contained"
+                              sx={{
+                                backgroundColor: "#757575",
+                                color: "#fff",
+                                marginLeft: "20px",
+                                display: "flex",
+                                alignItems: "center",
+                                padding: "5px",
+                              }}
+                            >
+                              <DeleteForeverIcon />
+                            </Button>
+                          </Box>
+
+                          <Box
+                            marginBottom="20px"
+                            display="flex"
+                            alignItems="center"
+                          >
+                            <HourglassEmptyIcon
+                              sx={{ color: "#4cceac", fontSize: "36px" }}
+                            />
+                            <Typography
+                              variant="h5"
+                              marginRight="10px"
+                              paddingLeft="10px"
+                            >
+                              <strong>Hiệu lực từ</strong>
+                            </Typography>
+                            <DatePicker label="Ngày bắt đầy" />
+                            <span
+                              style={{
+                                fontSize: "1.5em",
+                                margin: "0 10px",
+                              }}
+                            >
+                              {" "}
+                              -{" "}
+                            </span>
+                            <DatePicker label="Ngày kết thúc" />
+                          </Box>
+
+                          <Box
+                            marginBottom="20px"
+                            display="flex"
+                            alignItems="center"
+                          >
+                            <EventRepeatIcon
+                              sx={{ color: "#4cceac", fontSize: "36px" }}
+                            />
+                            <Typography
+                              variant="h5"
+                              marginRight="10px"
+                              paddingLeft="10px"
+                            >
+                              <strong>Chu kỳ lặp</strong>
+                            </Typography>
+                            <TextField
+                              label="Số ngày"
+                              variant="outlined"
+                              sx={{ width: "300px" }}
+                            />
+                          </Box>
+                        </Box>
                       </Box>
 
+                      {/* Thêm box để nhập khi click vào thêm lịch chiếu */}
+                      {dayBoxes.map((box, index) => (
+                        <React.Fragment key={index}>{box}</React.Fragment>
+                      ))}
+
+                      {/*nội dung trong collapse của lặp lại hằng ngày---------------end --------------*/}
                       <Button
+                        onClick={handleAddDayBox}
                         variant="outlined"
                         sx={{ marginLeft: "200px" }}
                         startIcon={<AddIcon />}
                       >
                         Thêm lịch chiếu
                       </Button>
-
-                      {/*nội dung trogn collapse---------------end --------------*/}
                     </List>
                   </Collapse>
                 </Box>
@@ -334,35 +501,132 @@ export default function AddEvent({ open, handleClose }) {
                   <Collapse in={openWeek} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <Box
+                        marginTop="10px"
                         marginBottom="20px"
-                        padding="10px"
+                        padding="20px 10px 10px 10px"
                         flexDirection="column"
                         alignItems="center"
                         backgroundColor={colors.grey[900]}
                         borderRadius="10px"
                       >
-                        <Box display="flex" alignItems="center">
-                          <TimePicker label="Thời gian bắt đầu" />
-                          <span style={{ fontSize: "1.5em", margin: "0 10px" }}>
-                            -
-                          </span>
-                          <TimePicker label="Thời gian kết thúc" />
-                          <Button
-                            variant="contained"
-                            sx={{
-                              backgroundColor: "#757575",
-                              color: "#fff",
-                              marginLeft: "20px",
-                              display: "flex",
-                              alignItems: "center",
-                              padding: "5px",
-                            }}
-                          >
-                            <DeleteForeverIcon />
-                          </Button>
-                        </Box>
+                        <Box marginBottom="20px">
+                          <Box display="flex" alignItems="center">
+                            <TimePicker label="Thời gian bắt đầu" />
+                            <span
+                              style={{
+                                fontSize: "1.5em",
+                                margin: "0 10px",
+                              }}
+                            >
+                              -
+                            </span>
+                            <TimePicker label="Thời gian kết thúc" />
+                          </Box>
 
-                        <ToggleDays onChange={handleDaysChange} />
+                          <Box
+                            marginBottom="30px"
+                            marginTop="20px"
+                            display="flex"
+                            alignItems="center"
+                          >
+                            <ChangeCircleIcon
+                              sx={{ color: "#4cceac", fontSize: "36px" }}
+                            />
+                            <Typography
+                              variant="h5"
+                              marginRight="10px"
+                              paddingLeft="10px"
+                            >
+                              <strong>Thay đổi nội dung</strong>
+                            </Typography>
+                            <Autocomplete
+                              sx={{ width: 300 }}
+                              multiple
+                              id="list-pole-autocomplete"
+                              onChange={(event, newValue) => {
+                                setSelectedOptions(newValue);
+                              }}
+                              options={
+                                dataVideo && dataVideo["Video name"]
+                                  ? dataVideo["Video name"]
+                                  : []
+                              }
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  variant="outlined"
+                                  label="Chọn nội dung"
+                                />
+                              )}
+                            />
+
+                            <Button
+                              variant="contained"
+                              sx={{
+                                backgroundColor: "#757575",
+                                color: "#fff",
+                                marginLeft: "20px",
+                                display: "flex",
+                                alignItems: "center",
+                                padding: "5px",
+                              }}
+                            >
+                              <DeleteForeverIcon />
+                            </Button>
+                          </Box>
+
+                          <Box
+                            marginBottom="20px"
+                            display="flex"
+                            alignItems="center"
+                          >
+                            <DateRangeIcon
+                              sx={{ color: "#4cceac", fontSize: "36px" }}
+                            />
+                            <Typography
+                              variant="h5"
+                              marginRight="10px"
+                              paddingLeft="10px"
+                            >
+                              <strong>Các ngày trong tuần</strong>
+                            </Typography>
+
+                            <ToggleDays
+                              onChange={(newValue) => {
+                                // Xử lý giá trị mới tại đây nếu cần
+                                console.log(newValue);
+                              }}
+                            />
+                          </Box>
+
+                          <Box
+                            marginBottom="20px"
+                            display="flex"
+                            alignItems="center"
+                          >
+                            <HourglassEmptyIcon
+                              sx={{ color: "#4cceac", fontSize: "36px" }}
+                            />
+                            <Typography
+                              variant="h5"
+                              marginRight="10px"
+                              paddingLeft="10px"
+                            >
+                              <strong>Hiệu lực từ</strong>
+                            </Typography>
+                            <DatePicker label="Ngày bắt đầy" />
+                            <span
+                              style={{
+                                fontSize: "1.5em",
+                                margin: "0 10px",
+                              }}
+                            >
+                              {" "}
+                              -{" "}
+                            </span>
+                            <DatePicker label="Ngày kết thúc" />
+                          </Box>
+                        </Box>
                       </Box>
                       <Button
                         variant="outlined"
@@ -406,33 +670,99 @@ export default function AddEvent({ open, handleClose }) {
                   <Collapse in={openFlex} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <Box
+                        marginTop="10px"
                         marginBottom="20px"
-                        padding="10px"
-                        display="flex"
+                        padding="20px 10px 10px 10px"
+                        flexDirection="column"
                         alignItems="center"
                         backgroundColor={colors.grey[900]}
                         borderRadius="10px"
                       >
-                        <DateTimePicker label="Thời gian bắt đầu" />
-                        <span style={{ fontSize: "1.5em", margin: "0 10px" }}>
-                          -
-                        </span>
-                        <DateTimePicker label="Thời gian kết thúc" />
-                        <Button
-                          variant="contained"
-                          sx={{
-                            backgroundColor: "#757575",
-                            color: "#fff",
-                            marginLeft: "20px",
-                            display: "flex",
-                            alignItems: "center",
-                            padding: "5px",
-                          }}
-                        >
-                          <DeleteForeverIcon />
-                        </Button>
-                      </Box>
+                        <Box marginBottom="20px">
+                          <Box display="flex" alignItems="center">
+                            <TimePicker label="Thời gian bắt đầu" />
+                            <span
+                              style={{
+                                fontSize: "1.5em",
+                                margin: "0 10px",
+                              }}
+                            >
+                              -
+                            </span>
+                            <TimePicker label="Thời gian kết thúc" />
+                          </Box>
 
+                          <Box
+                            marginBottom="30px"
+                            marginTop="20px"
+                            display="flex"
+                            alignItems="center"
+                          >
+                            <ChangeCircleIcon
+                              sx={{ color: "#4cceac", fontSize: "36px" }}
+                            />
+                            <Typography
+                              variant="h5"
+                              marginRight="10px"
+                              paddingLeft="10px"
+                            >
+                              <strong>Thay đổi nội dung</strong>
+                            </Typography>
+                            <Autocomplete
+                              sx={{ width: 300 }}
+                              multiple
+                              id="list-pole-autocomplete"
+                              onChange={(event, newValue) => {
+                                setSelectedOptions(newValue);
+                              }}
+                              options={
+                                dataVideo && dataVideo["Video name"]
+                                  ? dataVideo["Video name"]
+                                  : []
+                              }
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  variant="outlined"
+                                  label="Chọn nội dung"
+                                />
+                              )}
+                            />
+
+                            <Button
+                              variant="contained"
+                              sx={{
+                                backgroundColor: "#757575",
+                                color: "#fff",
+                                marginLeft: "20px",
+                                display: "flex",
+                                alignItems: "center",
+                                padding: "5px",
+                              }}
+                            >
+                              <DeleteForeverIcon />
+                            </Button>
+                          </Box>
+
+                          <Box
+                            marginBottom="20px"
+                            display="flex"
+                            alignItems="center"
+                          >
+                            <HourglassEmptyIcon
+                              sx={{ color: "#4cceac", fontSize: "36px" }}
+                            />
+                            <Typography
+                              variant="h5"
+                              marginRight="10px"
+                              paddingLeft="10px"
+                            >
+                              <strong>Hiệu lực từ</strong>
+                            </Typography>
+                            <DatePicker label="Ngày bắt đầy" />
+                          </Box>
+                        </Box>
+                      </Box>
                       <Button
                         variant="outlined"
                         sx={{ marginLeft: "200px" }}

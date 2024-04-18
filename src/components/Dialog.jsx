@@ -55,7 +55,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
-import DateRangeIcon from '@mui/icons-material/DateRange';
+import DateRangeIcon from "@mui/icons-material/DateRange";
 export default function CustomDialog({ open, handleClose, selectedVideo }) {
   // console.log("this is video selecttttttttttttttttttt", selectedVideo);
 
@@ -88,14 +88,6 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
     setOpenFlex(!openFlex);
   };
 
-  // chọn ngày trong tuần để lập lịch lặp lại hằng tuần --------------- begin------------------
-  const [selectedDays, setSelectedDays] = useState([0, 2, 3]);
-
-  const handleDaysChange = (event, newDays) => {
-    setSelectedDays(newDays);
-    // Thực hiện bất kỳ xử lý nào khác ở đây (nếu cần)
-  };
-  // chọn ngày trong tuần để lập lịch lặp lại hằng tuần --------------- end---------------
   const [videoname, setVideoname] = useState([]); // Khai báo biến dataVideo
   const [lable, setLable] = useState([]); // Khai báo biến dataVideo
   const [start, setStart] = useState([]);
@@ -180,19 +172,21 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
   const defaultType = indexes.map((index) => typetask[index]);
   const defaultDays = indexes.map((index) => days[index]);
   const daysToIndex = {
-    "mon": 0,
-    "tue": 1,
-    "wed": 2,
-    "thu": 3,
-    "fri": 4,
-    "sat": 5,
-    "sun": 6
+    mon: 0,
+    tue: 1,
+    wed: 2,
+    thu: 3,
+    fri: 4,
+    sat: 5,
+    sun: 6,
   };
-  const defaultDaysIndices = defaultDays.map(days => {
-    return days.map(day => daysToIndex[day] !== undefined ? daysToIndex[day] : -1);
+  const defaultDaysIndices = defaultDays.map((days) => {
+    return days.map((day) =>
+      daysToIndex[day] !== undefined ? daysToIndex[day] : -1,
+    );
   });
-  
-    console.log("dayssssssssssssssssssssssssssss", defaultDaysIndices);
+
+  // console.log("dayssssssssssssssssssssssssssss", defaultDaysIndices);
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Dialog
@@ -359,19 +353,15 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
                                     sx={{ width: 300 }}
                                     multiple
                                     id="list-pole-autocomplete"
-
                                     defaultValue={defaultvideoname[index]}
-
                                     onChange={(event, newValue) => {
                                       setSelectedOptions(newValue);
                                     }}
-
                                     options={
                                       dataVideo && dataVideo["Video name"]
                                         ? dataVideo["Video name"]
                                         : []
                                     }
-
                                     renderInput={(params) => (
                                       <TextField
                                         {...params}
@@ -394,29 +384,6 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
                                   >
                                     <DeleteForeverIcon />
                                   </Button>
-                                </Box>
-
-                                <Box
-                                  marginBottom="20px"
-                                  display="flex"
-                                  alignItems="center"
-                                >
-                                  <EventRepeatIcon
-                                    sx={{ color: "#4cceac", fontSize: "36px" }}
-                                  />
-                                  <Typography
-                                    variant="h5"
-                                    marginRight="10px"
-                                    paddingLeft="10px"
-                                  >
-                                    <strong>Lặp lại sau</strong>
-                                  </Typography>
-                                  <TextField
-                                    label="Số ngày"
-                                    variant="outlined"
-                                    defaultValue={defaultDuration[index]}
-                                    sx={{ width: "300px" }}
-                                  />
                                 </Box>
 
                                 <Box
@@ -450,6 +417,29 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
                                   <DatePicker
                                     label="Ngày kết thúc"
                                     defaultValue={dayjs(defaultUntil[index])}
+                                  />
+                                </Box>
+
+                                <Box
+                                  marginBottom="20px"
+                                  display="flex"
+                                  alignItems="center"
+                                >
+                                  <EventRepeatIcon
+                                    sx={{ color: "#4cceac", fontSize: "36px" }}
+                                  />
+                                  <Typography
+                                    variant="h5"
+                                    marginRight="10px"
+                                    paddingLeft="10px"
+                                  >
+                                    <strong>Chu kỳ lặp</strong>
+                                  </Typography>
+                                  <TextField
+                                    label="Số ngày"
+                                    variant="outlined"
+                                    defaultValue={defaultDuration[index]}
+                                    sx={{ width: "300px" }}
                                   />
                                 </Box>
                               </Box>
@@ -499,7 +489,7 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
                   </ListItemButton>
                   <Collapse in={openWeek} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                    {defaultType.map((type, index) => {
+                      {defaultType.map((type, index) => {
                         if (type === "weekly") {
                           return (
                             <Box
@@ -605,12 +595,12 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
                                   </Typography>
 
                                   <ToggleDays
-  value={defaultDaysIndices[index]}
-  onChange={(newValue) => {
-    // Xử lý giá trị mới tại đây nếu cần
-    console.log(newValue);
-  }}
-/>
+                                    value={defaultDaysIndices[index]}
+                                    onChange={(newValue) => {
+                                      // Xử lý giá trị mới tại đây nếu cần
+                                      console.log(newValue);
+                                    }}
+                                  />
                                 </Box>
 
                                 <Box
@@ -800,19 +790,6 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
                                   <DatePicker
                                     label="Ngày bắt đầy"
                                     defaultValue={dayjs(defaultBegin[index])}
-                                  />
-                                  <span
-                                    style={{
-                                      fontSize: "1.5em",
-                                      margin: "0 10px",
-                                    }}
-                                  >
-                                    {" "}
-                                    -{" "}
-                                  </span>
-                                  <DatePicker
-                                    label="Ngày kết thúc"
-                                    defaultValue={dayjs(defaultUntil[index])}
                                   />
                                 </Box>
                               </Box>
