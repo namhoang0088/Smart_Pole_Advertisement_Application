@@ -31,7 +31,7 @@ const AdManage = () => {
     },
     {
       field: "companyName",
-      headerName: "Tên công ty",
+      headerName: "Tên Smart Pole",
       flex: 1,
       cellClassName: "company-column--cell",
       renderCell: ({ row }) => (
@@ -43,12 +43,12 @@ const AdManage = () => {
     },
     {
       field: "adType",
-      headerName: "Loại quảng cáo",
+      headerName: "Tọa độ",
       flex: 1,
     },
     {
       field: "phone",
-      headerName: "Số điện thoại",
+      headerName: "Khu vực",
       flex: 1,
       renderCell: ({ value }) => (
         <Box display="flex" alignItems="center">
@@ -59,7 +59,7 @@ const AdManage = () => {
     },
     {
       field: "email",
-      headerName: "Email",
+      headerName: "Kênh chiếu",
       flex: 1,
       renderCell: ({ value }) => (
         <Box display="flex" alignItems="center">
@@ -93,8 +93,8 @@ const AdManage = () => {
   return (
     <Box m="20px">
       <Header
-        title="Quản lý quảng cáo"
-        subtitle="Quản lý danh sách quảng cáo được trả tiền"
+        title="Smart pole content management"
+        subtitle="Welcome to Smart pole content management"
       />
       {/* Overlay */}
       {openDialog && (

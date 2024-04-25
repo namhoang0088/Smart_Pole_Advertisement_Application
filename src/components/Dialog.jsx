@@ -56,7 +56,7 @@ import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-export default function CustomDialog({ open, handleClose, selectedVideo }) {
+export default function CustomDialog({ open, handleClose, selectedVideo, channelStream }) {
   // console.log("this is video selecttttttttttttttttttt", selectedVideo);
 
   const theme = useTheme();
@@ -104,7 +104,7 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/get/schedule");
+        const response = await fetch(`http://localhost:5000/get/schedule?stream=${channelStream}`);
         const responseVideo = await fetch("http://localhost:5000/get/video");
 
         if (!response.ok) {
@@ -154,7 +154,7 @@ export default function CustomDialog({ open, handleClose, selectedVideo }) {
     };
 
     fetchData();
-  }, []);
+  }, [channelStream]);
 
 
   const index = label.indexOf(selectedVideo);
@@ -953,7 +953,7 @@ const handleSubmit = async () => {
     const label = defaultAdvertisementName; // Nhãn
 
     // Tạo đường dẫn API
-    const url = `http://localhost:5000//schedule/addTask/daily?list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
+    const url = `http://localhost:5000//schedule/addTask/daily?stream=${channelStream}&list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
     console.log(url)
     // Gửi yêu cầu API
     try {
@@ -995,7 +995,7 @@ const handleSubmit = async () => {
 
 
     // Tạo đường dẫn API
-    const url = `http://localhost:5000//schedule/addTask/weekly?list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}&days=${daypick}`;
+    const url = `http://localhost:5000//schedule/addTask/weekly?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}&days=${daypick}`;
     console.log(url)
     //Gửi yêu cầu API
     try {
@@ -1031,7 +1031,7 @@ const handleSubmit = async () => {
 
 
     // Tạo đường dẫn API
-    const url = `http://localhost:5000//schedule/addTask/onetime?list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&label=${label}`;
+    const url = `http://localhost:5000//schedule/addTask/onetime?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&label=${label}`;
     console.log(url)
     //Gửi yêu cầu API
     try {
@@ -1072,7 +1072,7 @@ const handleSave = async () => {
 //xóa quảng cáo-----------------------------------begin--------------------------------------
 const handleDeleteAdvertisement = () => {
   // Gửi yêu cầu API đến localhost:5000//schedule/deleteTask
-  fetch(`http://localhost:5000/schedule/deleteTask?label=${defaultAdvertisementName}`, {
+  fetch(`http://localhost:5000/schedule/deleteTask?stream=${channelStream}&label=${defaultAdvertisementName}`, {
     method: 'GET',
   })
     .then(response => {
@@ -1093,7 +1093,7 @@ const handleDeleteAdvertisement = () => {
 
 const handleDeleteId = (id) => {
   // Gửi yêu cầu API
-  fetch(`http://localhost:5000/schedule/deleteTask?id=${id}`, {
+  fetch(`http://localhost:5000/schedule/deleteTask?stream=${channelStream}&id=${id}`, {
     method: 'GET' // Sử dụng phương thức DELETE để xóa
   })
   .then(response => {

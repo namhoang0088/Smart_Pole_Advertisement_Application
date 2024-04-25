@@ -15,6 +15,9 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { SchedulerData } from "../../data/Scheduler"; // Import tệp dữ liệu
 import { colors_scheduler } from "../../data/Scheduler";
 import AddEvent from "../../components/AddEvent";
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 
 const SmartPoleManage = () => {
   const theme = useTheme();
@@ -22,10 +25,11 @@ const SmartPoleManage = () => {
 
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
-
-  const handleOpenDialog = (namevideo) => {
+  const [channelStream,setChannelStream] = useState(null);
+  const handleOpenDialog = (namevideo,channelstream) => {
     setOpenDialog(true);
     setSelectedVideo(namevideo);
+    setChannelStream(channelstream)
   };
 
   const handleCloseDialog = () => {
@@ -33,9 +37,20 @@ const SmartPoleManage = () => {
     setSelectedVideo(null);
   };
 
-  const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
+    //lựa chọn kênh live------------------------begin-----------------------------
+    const channelOptions = [
+      { value: 1, label: 'Kênh 1' },
+      { value: 2, label: 'Kênh 2' }
+    ];
+    const [channel, setChannel] = React.useState(1);
+    const handleChannelChange = (event) => {
+      const newChannel = event.target.value;
+      setChannel(newChannel);
+    };  
+    //lựa chọn kênh live-------------------end-----------------------------------
 
   //api----------------------------------begin--------------------------------
+  const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
   const [videoname, setVideoname] = useState([]); // Khai báo biến dataVideo
   const [label, setlabel] = useState([]); // Khai báo biến dataVideo
   const [start, setStart] = useState([]);
@@ -50,16 +65,16 @@ const SmartPoleManage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseVideo = await fetch("http://localhost:5000/get/schedule");
-
+        const responseVideo = await fetch(`http://localhost:5000/get/schedule?stream=${channel}`);
         if (!responseVideo.ok) {
           throw new Error("Network response video was not ok");
         }
-
+  
         const responseData = await responseVideo.json();
-        const labels = responseData.Schedule.map((item) => item.label); // Lấy giá trị của trường "label"
-
-        const label = responseData.Schedule.map((item) => item.label); // Lấy giá trị của trường "label"
+        console.log("responeeeeeeeeeeeee", responseData)
+        // Cập nhật giá trị của các state khi fetch thành công
+        const labels = responseData.Schedule.map((item) => item.label); 
+        const label = responseData.Schedule.map((item) => item.label);
         const start = responseData.Schedule.map((item) => item.start_time);
         const end = responseData.Schedule.map((item) => item.end_time);
         const begin = responseData.Schedule.map((item) => item.start_date);
@@ -67,8 +82,9 @@ const SmartPoleManage = () => {
         const duration = responseData.Schedule.map((item) => item.duration);
         const typetask = responseData.Schedule.map((item) => item.typetask);
         const days = responseData.Schedule.map((item) => item.days);
-
-        setlabel(label); // Cập nhật giá trị cho biến dataVideo
+  
+        // Cập nhật state mới
+        setlabel(label);
         setStart(start);
         setEnd(end);
         setDuration(duration);
@@ -76,15 +92,14 @@ const SmartPoleManage = () => {
         setUntil(until);
         setTypeTask(typetask);
         setDays(days);
-        setDataVideo([...new Set(labels)]); // Cập nhật giá trị cho biến dataVideo
+        setDataVideo([...new Set(labels)]);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
-    fetchData();
-  }, []);
-
+  
+    fetchData(); // Gọi hàm fetchData khi giá trị của channel thay đổi
+  }, [channel]); 
   //api-----------------------------------------------end----------------------------------------
   const formattedEvents = [];
 
@@ -300,18 +315,40 @@ const SmartPoleManage = () => {
         open={openDialog}
         handleClose={handleCloseDialog}
         selectedVideo={selectedVideo}
+        channelStream={channelStream}
       />
       {/* Overlay */}
       {openAddEvent && (
         <div className="overlay" onClick={handleCloseAddEvent}></div>
       )}
       {/* Dialog */}
-      <AddEvent open={openAddEvent} handleClose={handleCloseAddEvent} />
-
+      <AddEvent open={openAddEvent} handleClose={handleCloseAddEvent} channelStream={channel} />
+      <Box display="flex">
       <Header
-        title="Smart Pole Advertising Management"
-        subtitle="Welcome to Smart Pole Advertising Management"
+        title="Multi-channel Advertising Management"
+        subtitle="Welcome to Multi-channel Advertising Management"
       />
+      <Box marginLeft="auto" width="300px">
+        <TextField
+          select
+          label="Kênh"
+          value={channel}
+          onChange={handleChannelChange}
+          variant="outlined"
+          fullWidth
+        >
+          {channelOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              <Box display="flex" alignItems="center"> {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
+                <SubscriptionsIcon sx={{ marginRight: 1 }} /> {/* Icon Subscriptions */}
+                {option.label}
+              </Box>
+            </MenuItem>
+          ))}
+        </TextField>
+      </Box>
+    </Box>
+
       <Box
         display="grid"
         gridTemplateColumns="30% 70%"
@@ -364,7 +401,7 @@ const SmartPoleManage = () => {
                   }}
                   data-duration=""
                   data-background-color=""
-                  onClick={() => handleOpenDialog(label)}
+                  onClick={() => handleOpenDialog(label,channel)}
                 >
                   <div
                     className="fc-event-main"

@@ -58,7 +58,8 @@ import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 
-export default function AddEvent({ open, handleClose }) {
+export default function AddEvent({ open, handleClose , channelStream}) {
+  console.log("adđ event channel stream", channelStream)
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -868,7 +869,7 @@ const onChangeTimeBeginOneTime = (newTime, boxOneTimeIdCounter) => {
       const label = labelOfScheduler; // Nhãn
   
       // Tạo đường dẫn API
-      const url = `http://localhost:5000//schedule/addTask/daily?list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
+      const url = `http://localhost:5000//schedule/addTask/daily?stream=${channelStream}&list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
       console.log(url)
       // Gửi yêu cầu API
       try {
@@ -910,7 +911,7 @@ const onChangeTimeBeginOneTime = (newTime, boxOneTimeIdCounter) => {
 
   
       // Tạo đường dẫn API
-      const url = `http://localhost:5000//schedule/addTask/weekly?list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}&days=${daypick}`;
+      const url = `http://localhost:5000//schedule/addTask/weekly?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}&days=${daypick}`;
       console.log(url)
       //Gửi yêu cầu API
       try {
@@ -947,7 +948,7 @@ const onChangeTimeBeginOneTime = (newTime, boxOneTimeIdCounter) => {
 
   
       // Tạo đường dẫn API
-      const url = `http://localhost:5000//schedule/addTask/onetime?list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&label=${label}`;
+      const url = `http://localhost:5000//schedule/addTask/onetime?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&label=${label}`;
       console.log(url)
       //Gửi yêu cầu API
       try {
@@ -991,7 +992,7 @@ const onChangeTimeBeginOneTime = (newTime, boxOneTimeIdCounter) => {
       <Dialog
         onClose={handleClose}
         open={open}
-        PaperProps={{ sx: { width: "60%", maxWidth: "80%" } }}
+        PaperProps={{ sx: { width: "60%", maxWidth: "100%" } }}
       >
         <DialogTitle
           id="customized-dialog-title"
