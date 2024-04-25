@@ -37,7 +37,7 @@ const SmartPoleManage = () => {
 
   //api----------------------------------begin--------------------------------
   const [videoname, setVideoname] = useState([]); // Khai báo biến dataVideo
-  const [lable, setLable] = useState([]); // Khai báo biến dataVideo
+  const [label, setlabel] = useState([]); // Khai báo biến dataVideo
   const [start, setStart] = useState([]);
   const [end, setEnd] = useState([]);
   const [duration, setDuration] = useState([]);
@@ -57,9 +57,9 @@ const SmartPoleManage = () => {
         }
 
         const responseData = await responseVideo.json();
-        const labels = responseData.Schedule.map((item) => item.lable); // Lấy giá trị của trường "lable"
+        const labels = responseData.Schedule.map((item) => item.label); // Lấy giá trị của trường "label"
 
-        const lable = responseData.Schedule.map((item) => item.lable); // Lấy giá trị của trường "lable"
+        const label = responseData.Schedule.map((item) => item.label); // Lấy giá trị của trường "label"
         const start = responseData.Schedule.map((item) => item.start_time);
         const end = responseData.Schedule.map((item) => item.end_time);
         const begin = responseData.Schedule.map((item) => item.start_date);
@@ -68,7 +68,7 @@ const SmartPoleManage = () => {
         const typetask = responseData.Schedule.map((item) => item.typetask);
         const days = responseData.Schedule.map((item) => item.days);
 
-        setLable(lable); // Cập nhật giá trị cho biến dataVideo
+        setlabel(label); // Cập nhật giá trị cho biến dataVideo
         setStart(start);
         setEnd(end);
         setDuration(duration);
@@ -76,7 +76,6 @@ const SmartPoleManage = () => {
         setUntil(until);
         setTypeTask(typetask);
         setDays(days);
-
         setDataVideo([...new Set(labels)]); // Cập nhật giá trị cho biến dataVideo
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -89,7 +88,7 @@ const SmartPoleManage = () => {
   //api-----------------------------------------------end----------------------------------------
   const formattedEvents = [];
 
-  lable.forEach((label, index) => {
+  label.forEach((labelItem, index) => {
     if (typetask[index] === "daily") {
       const beginDate = new Date(begin[index]);
       const untilDate = new Date(until[index]);
@@ -134,10 +133,9 @@ const SmartPoleManage = () => {
         const endMinutes = ("0" + endDateObj.getMinutes()).slice(-2);
         const endSeconds = ("0" + endDateObj.getSeconds()).slice(-2);
         const endEvent = `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}:${endSeconds}`;
-
         const event = {
           id: `${startEvent}_${endEvent}`,
-          title: lable[index],
+          title: labelItem,
           start: startEvent,
           end: endEvent,
           backgroundColor: "#4cceac",
@@ -202,7 +200,7 @@ const SmartPoleManage = () => {
           // console.log("Until:", endEvent);
           const event = {
             id: `${startEvent}_${endEvent}`,
-            title: lable[index],
+            title: labelItem,
             start: startEvent,
             end: endEvent,
             backgroundColor: "#FF0000",
@@ -248,7 +246,7 @@ const SmartPoleManage = () => {
       // console.log("Until:", endEvent);
       const event = {
         id: `${startEvent}_${endEvent}`,
-        title: lable[index],
+        title: labelItem,
         start: startEvent,
         end: endEvent,
         backgroundColor: "#000000",
