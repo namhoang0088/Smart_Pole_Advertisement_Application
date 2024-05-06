@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Box,
   ListItemButton,
@@ -23,6 +23,13 @@ import MicOffIcon from "@mui/icons-material/MicOff";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import PhoneDisabledIcon from "@mui/icons-material/PhoneDisabled";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
+import SettingsInputAntennaIcon from "@mui/icons-material/SettingsInputAntenna";
+import AddLinkIcon from '@mui/icons-material/AddLink';
+import { API_BASE_URL } from "../../data/link_api";
+import DvrIcon from '@mui/icons-material/Dvr';
 
 const LiveAd = () => {
   const theme = useTheme();
@@ -83,6 +90,151 @@ const LiveAd = () => {
     }
   };
 
+  //lựa chọn kênh live------------------------begin-----------------------------
+  const channelOptions = [
+    { value: 1, label: "Kênh 1" },
+    { value: 2, label: "Kênh 2" },
+  ];
+  
+  const [channel, setChannel] = React.useState(1);
+  const [tvChannel,setTvChannel] = useState("");
+  const [tvChannelOption, setTvChannelOption] = useState([]);
+  const [nameTwitch, setNameTwitch] = useState('');
+
+
+  const handleChannelChange = (event) => {
+    const newChannel = event.target.value;
+    setChannel(newChannel);
+  };
+
+  const handleTvChannelChange = (event) => {
+    const newChannel = event.target.value;
+    console.log("tv channel", newChannel)
+  };
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const responseData = await fetch(
+          `${API_BASE_URL}/get/namestream?stream=${channel}`,
+          {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
+        );
+        if (!responseData.ok) {
+          throw new Error("Network response video was not ok");
+        }
+
+        const responseTVChanel = await fetch(
+          `${API_BASE_URL}/get/TVchannel`,
+          {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
+        );
+        if (!responseTVChanel.ok) {
+          throw new Error("Network response video was not ok");
+        }
+        const responseDataTVChanel = await responseTVChanel.json();
+        const response = await responseData.json();
+        setNameTwitch(response["name twitch"])
+        setTvChannel(responseDataTVChanel["TV channel"])
+        // Xử lý dữ liệu responseVideo ở đây
+      } catch (error) {
+        console.error("Error fetching video schedule:", error);
+      }
+    };
+  
+    fetchData(); // Gọi hàm fetchData khi giá trị của channel thay đổi
+  }, [channel]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const responseTVChanel = await fetch(
+          `${API_BASE_URL}/get/TVchannel`,
+          {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
+        );
+        if (!responseTVChanel.ok) {
+          throw new Error("Network response video was not ok");
+        }
+        const formattedChannels = tvChannel.replace(/[\[\]']+/g, '').split(', ');
+        const options = formattedChannels.map((channel, index) => ({
+          value: index + 1,
+          label: `${channel}`
+        }));
+        setTvChannelOption(options);
+
+        // Xử lý dữ liệu responseVideo ở đây
+      } catch (error) {
+        console.error("Error fetching video schedule:", error);
+      }
+    };
+  
+    fetchData(); // Gọi hàm fetchData khi giá trị của channel thay đổi
+  }, []);
+  
+
+
+  //lựa chọn kênh live-------------------end-----------------------------------
+  const [liveLink, setLiveLink] = useState(null);
+  const onChangeLink = (newValue) => {
+    setLiveLink(newValue);
+}
+const handleClickLive= async () => {
+  const url = `${API_BASE_URL}//live?stream=${channel}&link=${liveLink}`;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    console.log("Response data:", data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+const handleClickStop= async () => {
+  const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
+  console.log(url)
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    console.log("Response data:", data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
   return (
     <Box m="20px">
       <Header title="Live Stream" subtitle="Welcome to Live Stream" />
@@ -103,7 +255,7 @@ const LiveAd = () => {
           alignItems="center" // căn video theo chiều ngang
           style={{ overflow: "hidden", position: "relative" }}
         >
-          <video
+          {/* <video
             id="liveVideo"
             autoPlay
             style={{
@@ -113,7 +265,14 @@ const LiveAd = () => {
               height: "auto",
               objectFit: "contain",
             }}
-          ></video>
+          ></video> */}
+
+          <iframe
+    src={`https://player.twitch.tv/?channel=${nameTwitch}&parent=localhost`}
+    height="100%"
+    width="100%"
+    allowfullscreen>
+</iframe>
         </Box>
 
         <Box // phần chọn smart pole
@@ -122,78 +281,216 @@ const LiveAd = () => {
           padding="20px"
           height="auto"
         >
-          <Box marginBottom="20px" flexDirection="column" alignItems="center">
-            <ListItemButton onClick={handleClickListPole}>
-              <ListItemIcon>
-                <img
-                  src="/assets/smart_pole.webp"
-                  alt="Day Icon"
-                  style={{ width: "36px", height: "36px", marginRight: "10px" }}
-                />
-                <Typography variant="h4" marginRight="10px" paddingLeft="10px">
-                  <strong>Danh sách khu vực Smart Pole</strong>
-                </Typography>
-              </ListItemIcon>
-              {openListPole ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={openListPole} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <Box
-                  marginBottom="10px"
-                  padding="5px"
-                  display="flex"
-                  alignItems="center"
-                  backgroundColor="#ffffff"
-                  borderRadius="10px"
-                >
-                  <Typography
-                    variant="h6"
-                    marginRight="10px"
-                    paddingLeft="10px"
-                  >
-                    <strong>Hồ Chí Minh</strong>
-                  </Typography>
-                  <Checkbox color="primary" style={{ marginLeft: "auto" }} />
-                </Box>
-
-                <Box
-                  marginBottom="10px"
-                  padding="5px"
-                  display="flex"
-                  alignItems="center"
-                  backgroundColor="#ffffff"
-                  borderRadius="10px"
-                >
-                  <Typography
-                    variant="h6"
-                    marginRight="10px"
-                    paddingLeft="10px"
-                  >
-                    <strong>Hà Nội</strong>
-                  </Typography>
-                  <Checkbox color="primary" style={{ marginLeft: "auto" }} />
-                </Box>
-
-                <Box
-                  marginBottom="10px"
-                  padding="5px"
-                  display="flex"
-                  alignItems="center"
-                  backgroundColor="#ffffff"
-                  borderRadius="10px"
-                >
-                  <Typography
-                    variant="h6"
-                    marginRight="10px"
-                    paddingLeft="10px"
-                  >
-                    <strong>Đà Nẵng</strong>
-                  </Typography>
-                  <Checkbox color="primary" style={{ marginLeft: "auto" }} />
-                </Box>
-              </List>
-            </Collapse>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+          <SubscriptionsIcon/>
+            <Typography
+              variant="h4"
+              style={{ marginRight: "10px", paddingLeft: "10px" }}
+            >
+              <strong>Danh sách các kênh chiếu</strong>
+            </Typography>
           </Box>
+
+          <Box width="300px" marginBottom="20px">
+            <TextField
+              select
+              label="Kênh"
+              value={channel}
+              onChange={handleChannelChange}
+              variant="outlined"
+              fullWidth
+            >
+              {channelOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  <Box display="flex" alignItems="center">
+                    {" "}
+                    {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
+                    <SubscriptionsIcon sx={{ marginRight: 1 }} />{" "}
+                    {/* Icon Subscriptions */}
+                    {option.label}
+                  </Box>
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        {/* phần live stream bằng link------------begin--------------------------------------- */}
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+          <AddLinkIcon />
+            <Typography
+              variant="h4"
+              style={{ marginRight: "10px", paddingLeft: "10px" }}
+            >
+              <strong>LiveStream bằng link</strong>
+            </Typography>
+          </Box>
+          <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
+  <TextField
+    label="Đường link"
+    variant="outlined"
+    sx={{ flex: 1 }}
+    onChange={(event) => {
+      const newValue = event.target.value;
+      onChangeLink(newValue);
+    }}
+  />
+  <Button
+    variant="outlined"
+    onClick={handleClickLive}
+    sx={{
+      color: "#007FFF",
+      borderColor: "#007FFF",
+      backgroundColor: "#FFFFFF",
+      fontSize: "1.2rem",
+      fontWeight: "bold",
+      padding: "15px 20px",
+      borderRadius: "10px",
+      "&:hover": {
+        backgroundColor: "#007FFF",
+        color: "#FFFFFF",
+      },
+    }}
+  >
+    Live
+  </Button>
+
+  <Button
+  variant="outlined"
+  onClick={handleClickStop}
+  sx={{
+    color: "#FF0000", // Đổi màu chữ thành đỏ
+    borderColor: "#FF0000", // Đổi màu viền thành đỏ
+    backgroundColor: "#FFFFFF",
+    fontSize: "1.2rem",
+    fontWeight: "bold",
+    padding: "15px 20px",
+    borderRadius: "10px",
+    "&:hover": {
+      backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+    },
+  }}
+>
+  Stop
+</Button>
+
+</Box>
+
+      {/* phần live stream bằng link------------end--------------------------------------- */}
+      
+
+      {/* phần live stream bằng kênh có sẵn------------begin--------------------------------------- */}
+      <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+          <DvrIcon />
+            <Typography
+              variant="h4"
+              style={{ marginRight: "10px", paddingLeft: "10px" }}
+            >
+              <strong>LiveStream từ Đài truyền hình có sẵn</strong>
+            </Typography>
+          </Box>
+          <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
+          <Box variant="outlined"
+    sx={{ flex: 1 }}>
+            <TextField
+              select
+              label="Đài truyền hình"
+              value={channel}
+              onChange={handleTvChannelChange}
+              variant="outlined"
+              fullWidth
+            >
+              {tvChannelOption.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  <Box display="flex" alignItems="center">
+                    {" "}
+                    {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
+                    <DvrIcon sx={{ marginRight: 1 }} />{" "}
+                    {/* Icon Subscriptions */}
+                    {option.label}
+                  </Box>
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+  <Button
+    variant="outlined"
+    onClick={handleClickLive}
+    sx={{
+      color: "#007FFF",
+      borderColor: "#007FFF",
+      backgroundColor: "#FFFFFF",
+      fontSize: "1.2rem",
+      fontWeight: "bold",
+      padding: "15px 20px",
+      borderRadius: "10px",
+      "&:hover": {
+        backgroundColor: "#007FFF",
+        color: "#FFFFFF",
+      },
+    }}
+  >
+    Live
+  </Button>
+
+  <Button
+  variant="outlined"
+  onClick={handleClickStop}
+  sx={{
+    color: "#FF0000", // Đổi màu chữ thành đỏ
+    borderColor: "#FF0000", // Đổi màu viền thành đỏ
+    backgroundColor: "#FFFFFF",
+    fontSize: "1.2rem",
+    fontWeight: "bold",
+    padding: "15px 20px",
+    borderRadius: "10px",
+    "&:hover": {
+      backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+    },
+  }}
+>
+  Stop
+</Button>
+
+</Box>
+
+      {/* phần live stream bằng kênh có sẵn------------end--------------------------------------- */}
+
+      {/* phần live stream bằng camera------------begin--------------------------------------- */}
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+          <SettingsInputAntennaIcon />
+            <Typography
+              variant="h4"
+              style={{ marginRight: "10px", paddingLeft: "10px" }}
+            >
+              <strong>LiveStream trực tiếp</strong>
+            </Typography>
+          </Box>
+
 
           <Box display="flex" alignItems="center" marginLeft="50px">
             <Button
@@ -272,6 +569,8 @@ const LiveAd = () => {
               Go Live Here!
             </Button>
           </Box>
+           {/* phần live stream bằng camera------------begin--------------------------------------- */}
+
         </Box>
       </Box>
     </Box>

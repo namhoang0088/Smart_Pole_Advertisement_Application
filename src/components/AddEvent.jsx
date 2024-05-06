@@ -57,9 +57,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
-
-export default function AddEvent({ open, handleClose , channelStream}) {
-  console.log("adđ event channel stream", channelStream)
+import { API_BASE_URL } from "../data/link_api";
+export default function AddEvent({ open, handleClose, channelStream }) {
+  // console.log("adđ event channel stream", channelStream)
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -89,8 +89,8 @@ export default function AddEvent({ open, handleClose , channelStream}) {
   const handleClickFlex = () => {
     setOpenFlex(!openFlex);
   };
-//-----------------------------------------------------------------------------------------------------------------------------------------
-  const [labelOfScheduler,setLabelOfScheduler] =  useState(null); 
+  //-----------------------------------------------------------------------------------------------------------------------------------------
+  const [labelOfScheduler, setLabelOfScheduler] = useState(null);
 
   const [timeStartDailyArray, setTimeStartDailyArray] = useState([]);
   const [timeEndDailyArray, setTimeEndDailyArray] = useState([]);
@@ -98,7 +98,7 @@ export default function AddEvent({ open, handleClose , channelStream}) {
   const [timeBeginDailyArray, setTimeBeginDailyArray] = useState([]);
   const [timeUntilDailyArray, setTimeUntilDailyArray] = useState([]);
   const [durationDailyArray, setDurationDailyArray] = useState([]);
-  
+
   const [timeStartWeeklyArray, setTimeStartWeeklyArray] = useState([]);
   const [timeEndWeeklyArray, setTimeEndWeeklyArray] = useState([]);
   const [contentWeeklyArray, setContentWeeklyArray] = useState([]);
@@ -110,7 +110,6 @@ export default function AddEvent({ open, handleClose , channelStream}) {
   const [timeEndOneTimeArray, setTimeEndOneTimeArray] = useState([]);
   const [contentOneTimeArray, setContentOneTimeArray] = useState([]);
   const [timeBeginOneTimeArray, setTimeBeginOneTimeArray] = useState([]);
-
 
   //thêm lịch chiếu-----Daily----------------begin-------------------------------
   const [dayBoxes, setDayBoxes] = useState([]);
@@ -225,15 +224,18 @@ export default function AddEvent({ open, handleClose , channelStream}) {
             <Typography variant="h5" marginRight="10px" paddingLeft="10px">
               <strong>Hiệu lực từ</strong>
             </Typography>
-            <DatePicker label="Ngày bắt đầy"
-  onChange={(newDate) => {
-    const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-    const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-    const year = newDate.$y; // Lấy năm
-    const formattedDate = `${month}/${day}/${year}`;
-    onChangeTimeBeginDaily(formattedDate,boxDailyIdCounter.toString(),);
-  }}
-      
+            <DatePicker
+              label="Ngày bắt đầy"
+              onChange={(newDate) => {
+                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
+                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
+                const year = newDate.$y; // Lấy năm
+                const formattedDate = `${month}/${day}/${year}`;
+                onChangeTimeBeginDaily(
+                  formattedDate,
+                  boxDailyIdCounter.toString(),
+                );
+              }}
             />
             <span
               style={{
@@ -244,14 +246,18 @@ export default function AddEvent({ open, handleClose , channelStream}) {
               {" "}
               -{" "}
             </span>
-            <DatePicker label="Ngày kết thúc" 
-                onChange={(newDate) => {
-    const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-    const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-    const year = newDate.$y; // Lấy năm
-    const formattedDate = `${month}/${day}/${year}`;
-    onChangeTimeUntilDaily(formattedDate,boxDailyIdCounter.toString(),);
-  }}
+            <DatePicker
+              label="Ngày kết thúc"
+              onChange={(newDate) => {
+                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
+                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
+                const year = newDate.$y; // Lấy năm
+                const formattedDate = `${month}/${day}/${year}`;
+                onChangeTimeUntilDaily(
+                  formattedDate,
+                  boxDailyIdCounter.toString(),
+                );
+              }}
             />
           </Box>
 
@@ -264,11 +270,10 @@ export default function AddEvent({ open, handleClose , channelStream}) {
               label="Số ngày"
               variant="outlined"
               sx={{ width: "300px" }}
-
               onChange={(event) => {
-    const newValue = event.target.value;
-    onChangeDurationDaily(newValue, boxDailyIdCounter) ;
-  }}
+                const newValue = event.target.value;
+                onChangeDurationDaily(newValue, boxDailyIdCounter);
+              }}
             />
           </Box>
         </Box>
@@ -296,8 +301,9 @@ export default function AddEvent({ open, handleClose , channelStream}) {
       >
         <Box marginBottom="20px">
           <Box display="flex" alignItems="center">
-            <TimePicker label="Thời gian bắt đầu" 
-                            onChange={(newTime) => {
+            <TimePicker
+              label="Thời gian bắt đầu"
+              onChange={(newTime) => {
                 const hours = newTime.$d.getHours().toString().padStart(2, "0");
                 const minutes = newTime.$d
                   .getMinutes()
@@ -319,8 +325,9 @@ export default function AddEvent({ open, handleClose , channelStream}) {
             >
               -
             </span>
-            <TimePicker label="Thời gian kết thúc" 
-                            onChange={(newTime) => {
+            <TimePicker
+              label="Thời gian kết thúc"
+              onChange={(newTime) => {
                 const hours = newTime.$d.getHours().toString().padStart(2, "0");
                 const minutes = newTime.$d
                   .getMinutes()
@@ -390,7 +397,9 @@ export default function AddEvent({ open, handleClose , channelStream}) {
             </Typography>
 
             <ToggleDays
-             onChange={(event, newValue) => onChangePickDayOfWeek(event, newValue, boxWeeklyIdCounter)}
+              onChange={(event, newValue) =>
+                onChangePickDayOfWeek(event, newValue, boxWeeklyIdCounter)
+              }
             />
           </Box>
 
@@ -399,14 +408,18 @@ export default function AddEvent({ open, handleClose , channelStream}) {
             <Typography variant="h5" marginRight="10px" paddingLeft="10px">
               <strong>Hiệu lực từ</strong>
             </Typography>
-            <DatePicker label="Ngày bắt đầy" 
-                onChange={(newDate) => {
-    const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-    const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-    const year = newDate.$y; // Lấy năm
-    const formattedDate = `${month}/${day}/${year}`;
-    onChangeTimeBeginWeekly(formattedDate,boxWeeklyIdCounter.toString(),);
-  }}
+            <DatePicker
+              label="Ngày bắt đầy"
+              onChange={(newDate) => {
+                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
+                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
+                const year = newDate.$y; // Lấy năm
+                const formattedDate = `${month}/${day}/${year}`;
+                onChangeTimeBeginWeekly(
+                  formattedDate,
+                  boxWeeklyIdCounter.toString(),
+                );
+              }}
             />
             <span
               style={{
@@ -417,14 +430,18 @@ export default function AddEvent({ open, handleClose , channelStream}) {
               {" "}
               -{" "}
             </span>
-            <DatePicker label="Ngày kết thúc" 
-                              onChange={(newDate) => {
-    const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-    const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-    const year = newDate.$y; // Lấy năm
-    const formattedDate = `${month}/${day}/${year}`;
-    onChangeTimeUntilWeekly(formattedDate,boxWeeklyIdCounter.toString(),);
-  }}
+            <DatePicker
+              label="Ngày kết thúc"
+              onChange={(newDate) => {
+                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
+                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
+                const year = newDate.$y; // Lấy năm
+                const formattedDate = `${month}/${day}/${year}`;
+                onChangeTimeUntilWeekly(
+                  formattedDate,
+                  boxWeeklyIdCounter.toString(),
+                );
+              }}
             />
           </Box>
         </Box>
@@ -452,8 +469,9 @@ export default function AddEvent({ open, handleClose , channelStream}) {
       >
         <Box marginBottom="20px">
           <Box display="flex" alignItems="center">
-            <TimePicker label="Thời gian bắt đầu" 
-                            onChange={(newTime) => {
+            <TimePicker
+              label="Thời gian bắt đầu"
+              onChange={(newTime) => {
                 const hours = newTime.$d.getHours().toString().padStart(2, "0");
                 const minutes = newTime.$d
                   .getMinutes()
@@ -475,8 +493,9 @@ export default function AddEvent({ open, handleClose , channelStream}) {
             >
               -
             </span>
-            <TimePicker label="Thời gian kết thúc" 
-                          onChange={(newTime) => {
+            <TimePicker
+              label="Thời gian kết thúc"
+              onChange={(newTime) => {
                 const hours = newTime.$d.getHours().toString().padStart(2, "0");
                 const minutes = newTime.$d
                   .getMinutes()
@@ -508,7 +527,10 @@ export default function AddEvent({ open, handleClose , channelStream}) {
               id="list-pole-autocomplete"
               onChange={(event, newValue) => {
                 setSelectedOptions(newValue);
-                onChangeContentOneTime(newValue, boxOneTimeIdCounter.toString());
+                onChangeContentOneTime(
+                  newValue,
+                  boxOneTimeIdCounter.toString(),
+                );
               }}
               options={
                 dataVideo && dataVideo["Video name"]
@@ -544,14 +566,18 @@ export default function AddEvent({ open, handleClose , channelStream}) {
             <Typography variant="h5" marginRight="10px" paddingLeft="10px">
               <strong>Hiệu lực từ</strong>
             </Typography>
-            <DatePicker label="Ngày bắt đầy" 
-                onChange={(newDate) => {
-    const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-    const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-    const year = newDate.$y; // Lấy năm
-    const formattedDate = `${month}/${day}/${year}`;
-    onChangeTimeBeginOneTime(formattedDate,boxOneTimeIdCounter.toString(),);
-  }}
+            <DatePicker
+              label="Ngày bắt đầy"
+              onChange={(newDate) => {
+                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
+                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
+                const year = newDate.$y; // Lấy năm
+                const formattedDate = `${month}/${day}/${year}`;
+                onChangeTimeBeginOneTime(
+                  formattedDate,
+                  boxOneTimeIdCounter.toString(),
+                );
+              }}
             />
           </Box>
         </Box>
@@ -567,7 +593,11 @@ export default function AddEvent({ open, handleClose , channelStream}) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseVideo = await fetch("http://localhost:5000/get/video");
+        const responseVideo = await fetch(`${API_BASE_URL}/get/video`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
 
         if (!responseVideo.ok) {
           throw new Error("Network response video was not ok");
@@ -643,7 +673,7 @@ export default function AddEvent({ open, handleClose , channelStream}) {
       if (index !== -1) {
         // Nếu nhãn đã tồn tại, cập nhật giá trị
         return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newTime } : item
+          idx === index ? { ...item, value: newTime } : item,
         );
       } else {
         // Nếu nhãn không tồn tại, thêm một mục mới
@@ -659,7 +689,7 @@ export default function AddEvent({ open, handleClose , channelStream}) {
       if (index !== -1) {
         // Nếu nhãn đã tồn tại, cập nhật giá trị
         return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newTime } : item
+          idx === index ? { ...item, value: newTime } : item,
         );
       } else {
         // Nếu nhãn không tồn tại, thêm một mục mới
@@ -675,7 +705,7 @@ export default function AddEvent({ open, handleClose , channelStream}) {
       if (index !== -1) {
         // Nếu nhãn đã tồn tại, cập nhật giá trị
         return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newValue } : item
+          idx === index ? { ...item, value: newValue } : item,
         );
       } else {
         // Nếu nhãn không tồn tại, thêm một mục mới
@@ -683,304 +713,303 @@ export default function AddEvent({ open, handleClose , channelStream}) {
       }
     });
   };
-//daily-----------------------------------------end-------------------------------------------
-//weekly-----------------------------------------begin-------------------------------------------
+  //daily-----------------------------------------end-------------------------------------------
+  //weekly-----------------------------------------begin-------------------------------------------
 
-const onChangeTimeStartWeekly = (formattedTime, boxWeeklyIdCounter) => {
-  const label = "weeklyTimeStart" + boxWeeklyIdCounter;
-  setTimeStartWeeklyArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: formattedTime } : item,
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: formattedTime }];
-    }
-  });
-};
+  const onChangeTimeStartWeekly = (formattedTime, boxWeeklyIdCounter) => {
+    const label = "weeklyTimeStart" + boxWeeklyIdCounter;
+    setTimeStartWeeklyArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: formattedTime } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: formattedTime }];
+      }
+    });
+  };
 
-const onChangeTimeEndWeekly = (formattedTime, boxWeeklyIdCounter) => {
-  const label = "weeklyTimeEnd" + boxWeeklyIdCounter;
-  setTimeEndWeeklyArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: formattedTime } : item,
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: formattedTime }];
-    }
-  });
-};
+  const onChangeTimeEndWeekly = (formattedTime, boxWeeklyIdCounter) => {
+    const label = "weeklyTimeEnd" + boxWeeklyIdCounter;
+    setTimeEndWeeklyArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: formattedTime } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: formattedTime }];
+      }
+    });
+  };
 
-const onChangeContentWeekly = (newValue, boxWeeklyIdCounter) => {
-  const label = "weeklyContent" + boxWeeklyIdCounter;
-  setContentWeeklyArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: newValue } : item,
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: newValue }];
-    }
-  });
-};
+  const onChangeContentWeekly = (newValue, boxWeeklyIdCounter) => {
+    const label = "weeklyContent" + boxWeeklyIdCounter;
+    setContentWeeklyArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: newValue } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: newValue }];
+      }
+    });
+  };
 
-const onChangeTimeBeginWeekly = (newTime, boxWeeklyIdCounter) => {
-  const label = "weeklyTimeBegin" + boxWeeklyIdCounter;
-  setTimeBeginWeeklyArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: newTime } : item
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: newTime }];
-    }
-  });
-};
+  const onChangeTimeBeginWeekly = (newTime, boxWeeklyIdCounter) => {
+    const label = "weeklyTimeBegin" + boxWeeklyIdCounter;
+    setTimeBeginWeeklyArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: newTime } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: newTime }];
+      }
+    });
+  };
 
-const onChangeTimeUntilWeekly = (newTime, boxWeeklyIdCounter) => {
-  const label = "weeklyTimeUntil" + boxWeeklyIdCounter;
-  setTimeUntilWeeklyArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: newTime } : item
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: newTime }];
-    }
-  });
-};
+  const onChangeTimeUntilWeekly = (newTime, boxWeeklyIdCounter) => {
+    const label = "weeklyTimeUntil" + boxWeeklyIdCounter;
+    setTimeUntilWeeklyArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: newTime } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: newTime }];
+      }
+    });
+  };
 
+  // Hàm xử lý khi có sự thay đổi trong các ngày được chọn
+  const onChangePickDayOfWeek = (event, newValue, boxWeeklyIdCounter) => {
+    const daysOfWeek = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+    const selectedDays = newValue.map((index) => daysOfWeek[index]);
 
-// Hàm xử lý khi có sự thay đổi trong các ngày được chọn
-const onChangePickDayOfWeek = (event, newValue, boxWeeklyIdCounter) => {
-  const daysOfWeek = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
-  const selectedDays = newValue.map(index => daysOfWeek[index]);
+    const label = "weeklyDayOfWeek" + boxWeeklyIdCounter;
+    setListDayWeeklyArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: selectedDays } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: selectedDays }];
+      }
+    });
+  };
+  //weekly-----------------------------------------end-------------------------------------------
 
-  const label = "weeklyDayOfWeek" + boxWeeklyIdCounter;
-  setListDayWeeklyArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: selectedDays } : item
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: selectedDays }];
-    }
-  });
-};
-//weekly-----------------------------------------end-------------------------------------------
+  //onetime------------------------------------------begin---------------------------------------
+  const onChangeTimeStartOneTime = (formattedTime, boxOneTimeIdCounter) => {
+    const label = "onetimeTimeStart" + boxOneTimeIdCounter;
+    setTimeStartOneTimeArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: formattedTime } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: formattedTime }];
+      }
+    });
+  };
 
-//onetime------------------------------------------begin---------------------------------------
-const onChangeTimeStartOneTime = (formattedTime, boxOneTimeIdCounter) => {
-  const label = "onetimeTimeStart" + boxOneTimeIdCounter;
-  setTimeStartOneTimeArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: formattedTime } : item,
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: formattedTime }];
-    }
-  });
-};
+  const onChangeTimeEndOneTime = (formattedTime, boxOneTimeIdCounter) => {
+    const label = "onetimeTimeEnd" + boxOneTimeIdCounter;
+    setTimeEndOneTimeArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: formattedTime } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: formattedTime }];
+      }
+    });
+  };
 
-const onChangeTimeEndOneTime = (formattedTime, boxOneTimeIdCounter) => {
-  const label = "onetimeTimeEnd" + boxOneTimeIdCounter;
-  setTimeEndOneTimeArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: formattedTime } : item,
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: formattedTime }];
-    }
-  });
-};
+  const onChangeContentOneTime = (newValue, boxOneTimeIdCounter) => {
+    const label = "onetimeContent" + boxOneTimeIdCounter;
+    setContentOneTimeArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: newValue } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: newValue }];
+      }
+    });
+  };
 
-const onChangeContentOneTime = (newValue, boxOneTimeIdCounter) => {
-  const label = "onetimeContent" + boxOneTimeIdCounter;
-  setContentOneTimeArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: newValue } : item,
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: newValue }];
-    }
-  });
-};
-
-const onChangeTimeBeginOneTime = (newTime, boxOneTimeIdCounter) => {
-  const label = "onetimeTimeBegin" + boxOneTimeIdCounter;
-  setTimeBeginOneTimeArray((prevArray) => {
-    const index = prevArray.findIndex((item) => item.label === label);
-    if (index !== -1) {
-      // Nếu nhãn đã tồn tại, cập nhật giá trị
-      return prevArray.map((item, idx) =>
-        idx === index ? { ...item, value: newTime } : item
-      );
-    } else {
-      // Nếu nhãn không tồn tại, thêm một mục mới
-      return [...prevArray, { label: label, value: newTime }];
-    }
-  });
-};
-//onetime----------------------------------------------end-----------------------------------
+  const onChangeTimeBeginOneTime = (newTime, boxOneTimeIdCounter) => {
+    const label = "onetimeTimeBegin" + boxOneTimeIdCounter;
+    setTimeBeginOneTimeArray((prevArray) => {
+      const index = prevArray.findIndex((item) => item.label === label);
+      if (index !== -1) {
+        // Nếu nhãn đã tồn tại, cập nhật giá trị
+        return prevArray.map((item, idx) =>
+          idx === index ? { ...item, value: newTime } : item,
+        );
+      } else {
+        // Nếu nhãn không tồn tại, thêm một mục mới
+        return [...prevArray, { label: label, value: newTime }];
+      }
+    });
+  };
+  //onetime----------------------------------------------end-----------------------------------
 
   const handleSubmit = async () => {
-  //api------daily---------------------begin-------------------------------------------
+    //api------daily---------------------begin-------------------------------------------
     for (let i = 0; i < timeStartDailyArray.length; i++) {
       const startTime = timeStartDailyArray[i].value; // Thời gian bắt đầu
       const endTime = timeEndDailyArray[i].value; // Thời gian kết thúc
-      const list = contentDailyArray[i].value.join(','); // Danh sách nội dung
+      const list = contentDailyArray[i].value.join(","); // Danh sách nội dung
       const duration = durationDailyArray[i].value; // Độ dài
-      const startDateParts = timeBeginDailyArray[i].value.split('/'); // Tách ngày, tháng và năm
+      const startDateParts = timeBeginDailyArray[i].value.split("/"); // Tách ngày, tháng và năm
       const startDate = `${startDateParts[2]}-${startDateParts[0]}-${startDateParts[1]}`; // Định dạng lại theo yyyy-mm-dd
 
-      const untilParts = timeUntilDailyArray[i].value.split('/'); // Tách ngày, tháng và năm
+      const untilParts = timeUntilDailyArray[i].value.split("/"); // Tách ngày, tháng và năm
       const until = `${untilParts[2]}-${untilParts[0]}-${untilParts[1]}`; // Định dạng lại theo yyyy-mm-dd
       const label = labelOfScheduler; // Nhãn
-  
+
       // Tạo đường dẫn API
-      const url = `http://localhost:5000//schedule/addTask/daily?stream=${channelStream}&list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
-      console.log(url)
+      const url = `${API_BASE_URL}//schedule/addTask/daily?stream=${channelStream}&list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
+      console.log(url);
       // Gửi yêu cầu API
       try {
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
           },
           // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
         });
-  
+
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
-  
+
         const data = await response.json();
-        console.log('Response data:', data);
+        console.log("Response data:", data);
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
-//api------daily---------------------end-------------------------------------------
+    //api------daily---------------------end-------------------------------------------
 
-//api------weekly---------------------begin-------------------------------------------
+    //api------weekly---------------------begin-------------------------------------------
     for (let i = 0; i < timeStartWeeklyArray.length; i++) {
       const startTime = timeStartWeeklyArray[i].value; // Thời gian bắt đầu
       const endTime = timeEndWeeklyArray[i].value; // Thời gian kết thúc
-      const list = contentWeeklyArray[i].value.join(','); // Danh sách nội dung
+      const list = contentWeeklyArray[i].value.join(","); // Danh sách nội dung
 
-      const startDateParts = timeBeginWeeklyArray[i].value.split('/'); // Tách ngày, tháng và năm
+      const startDateParts = timeBeginWeeklyArray[i].value.split("/"); // Tách ngày, tháng và năm
       const startDate = `${startDateParts[2]}-${startDateParts[0]}-${startDateParts[1]}`; // Định dạng lại theo yyyy-mm-dd
 
-      const untilParts = timeUntilWeeklyArray[i].value.split('/'); // Tách ngày, tháng và năm
+      const untilParts = timeUntilWeeklyArray[i].value.split("/"); // Tách ngày, tháng và năm
       const until = `${untilParts[2]}-${untilParts[0]}-${untilParts[1]}`; // Định dạng lại theo yyyy-mm-dd
       const label = labelOfScheduler; // Nhãn
 
-      const daypick = listDayWeeklyArray[i].value.join(',');
+      const daypick = listDayWeeklyArray[i].value.join(",");
 
-
-  
       // Tạo đường dẫn API
-      const url = `http://localhost:5000//schedule/addTask/weekly?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}&days=${daypick}`;
-      console.log(url)
+      const url = `${API_BASE_URL}//schedule/addTask/weekly?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}&days=${daypick}`;
+      console.log(url);
       //Gửi yêu cầu API
       try {
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
           },
           // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
         });
-  
+
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
-        
+
         const data = await response.json();
-        console.log('Response data:', data);
+        console.log("Response data:", data);
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
-//api------weekly---------------------end-------------------------------------------
+    //api------weekly---------------------end-------------------------------------------
 
-//api------onetime---------------------begin-------------------------------------------
+    //api------onetime---------------------begin-------------------------------------------
     for (let i = 0; i < timeStartOneTimeArray.length; i++) {
       const startTime = timeStartOneTimeArray[i].value; // Thời gian bắt đầu
       const endTime = timeEndOneTimeArray[i].value; // Thời gian kết thúc
-      const list = contentOneTimeArray[i].value.join(','); // Danh sách nội dung
+      const list = contentOneTimeArray[i].value.join(","); // Danh sách nội dung
 
-      const startDateParts = timeBeginOneTimeArray[i].value.split('/'); // Tách ngày, tháng và năm
+      const startDateParts = timeBeginOneTimeArray[i].value.split("/"); // Tách ngày, tháng và năm
       const startDate = `${startDateParts[2]}-${startDateParts[0]}-${startDateParts[1]}`; // Định dạng lại theo yyyy-mm-dd
 
       const label = labelOfScheduler; // Nhãn
 
-  
       // Tạo đường dẫn API
-      const url = `http://localhost:5000//schedule/addTask/onetime?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&label=${label}`;
-      console.log(url)
+      const url = `${API_BASE_URL}//schedule/addTask/onetime?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&label=${label}`;
+      console.log(url);
       //Gửi yêu cầu API
       try {
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
           },
           // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
         });
-  
+
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
-       
+
         const data = await response.json();
-        console.log('Response data:', data);
+        console.log("Response data:", data);
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
-//api------onetime---------------------end-------------------------------------------
-  window.location.reload();
+    //api------onetime---------------------end-------------------------------------------
+    window.location.reload();
   };
 
   const handleSave = async () => {
     try {
       await handleSubmit(); // Gọi hàm để xử lý việc gửi API
-      console.log('API requests sent successfully');
+      console.log("API requests sent successfully");
       // Thêm logic xử lý sau khi gửi API thành công nếu cần
     } catch (error) {
-      console.error('Error while sending API requests:', error);
+      console.error("Error while sending API requests:", error);
       // Thêm logic xử lý khi gặp lỗi khi gửi API nếu cần
     }
     handleClose();
@@ -1020,10 +1049,10 @@ const onChangeTimeBeginOneTime = (newTime, boxOneTimeIdCounter) => {
                 label="Đổi tên quảng cáo"
                 variant="outlined"
                 onChange={(event) => {
-        const newValue = event.target.value;
-        setLabelOfScheduler(newValue); // Cập nhật giá trị của labelOfScheduler
-      }}
-                sx={{ width: "300px" }} 
+                  const newValue = event.target.value;
+                  setLabelOfScheduler(newValue); // Cập nhật giá trị của labelOfScheduler
+                }}
+                sx={{ width: "300px" }}
               />
             </Box>
 

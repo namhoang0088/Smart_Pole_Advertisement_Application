@@ -15,21 +15,20 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { SchedulerData } from "../../data/Scheduler"; // Import tệp dữ liệu
 import { colors_scheduler } from "../../data/Scheduler";
 import AddEvent from "../../components/AddEvent";
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
-
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
+import { API_BASE_URL } from "../../data/link_api";
 const SmartPoleManage = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [channelStream,setChannelStream] = useState(null);
-  const handleOpenDialog = (namevideo,channelstream) => {
+  const [channelStream, setChannelStream] = useState(null);
+  const handleOpenDialog = (namevideo, channelstream) => {
     setOpenDialog(true);
     setSelectedVideo(namevideo);
-    setChannelStream(channelstream)
+    setChannelStream(channelstream);
   };
 
   const handleCloseDialog = () => {
@@ -37,17 +36,17 @@ const SmartPoleManage = () => {
     setSelectedVideo(null);
   };
 
-    //lựa chọn kênh live------------------------begin-----------------------------
-    const channelOptions = [
-      { value: 1, label: 'Kênh 1' },
-      { value: 2, label: 'Kênh 2' }
-    ];
-    const [channel, setChannel] = React.useState(1);
-    const handleChannelChange = (event) => {
-      const newChannel = event.target.value;
-      setChannel(newChannel);
-    };  
-    //lựa chọn kênh live-------------------end-----------------------------------
+  //lựa chọn kênh live------------------------begin-----------------------------
+  const channelOptions = [
+    { value: 1, label: "Kênh 1" },
+    { value: 2, label: "Kênh 2" },
+  ];
+  const [channel, setChannel] = React.useState(1);
+  const handleChannelChange = (event) => {
+    const newChannel = event.target.value;
+    setChannel(newChannel);
+  };
+  //lựa chọn kênh live-------------------end-----------------------------------
 
   //api----------------------------------begin--------------------------------
   const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
@@ -65,15 +64,22 @@ const SmartPoleManage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseVideo = await fetch(`http://localhost:5000/get/schedule?stream=${channel}`);
+        const responseVideo = await fetch(
+          `${API_BASE_URL}/get/schedule?stream=${channel}`,
+          {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          },
+        );
         if (!responseVideo.ok) {
           throw new Error("Network response video was not ok");
         }
-  
+        // console.log(`${API_BASE_URL}/get/schedule?stream=${channel}`)
         const responseData = await responseVideo.json();
-        console.log("responeeeeeeeeeeeee", responseData)
+        // console.log("responeeeeeeeeeeeee", responseVideo)
         // Cập nhật giá trị của các state khi fetch thành công
-        const labels = responseData.Schedule.map((item) => item.label); 
+        const labels = responseData.Schedule.map((item) => item.label);
         const label = responseData.Schedule.map((item) => item.label);
         const start = responseData.Schedule.map((item) => item.start_time);
         const end = responseData.Schedule.map((item) => item.end_time);
@@ -82,7 +88,7 @@ const SmartPoleManage = () => {
         const duration = responseData.Schedule.map((item) => item.duration);
         const typetask = responseData.Schedule.map((item) => item.typetask);
         const days = responseData.Schedule.map((item) => item.days);
-  
+
         // Cập nhật state mới
         setlabel(label);
         setStart(start);
@@ -97,9 +103,9 @@ const SmartPoleManage = () => {
         console.error("Error fetching data:", error);
       }
     };
-  
+
     fetchData(); // Gọi hàm fetchData khi giá trị của channel thay đổi
-  }, [channel]); 
+  }, [channel]);
   //api-----------------------------------------------end----------------------------------------
   const formattedEvents = [];
 
@@ -322,32 +328,39 @@ const SmartPoleManage = () => {
         <div className="overlay" onClick={handleCloseAddEvent}></div>
       )}
       {/* Dialog */}
-      <AddEvent open={openAddEvent} handleClose={handleCloseAddEvent} channelStream={channel} />
-      <Box display="flex">
-      <Header
-        title="Multi-channel Advertising Management"
-        subtitle="Welcome to Multi-channel Advertising Management"
+      <AddEvent
+        open={openAddEvent}
+        handleClose={handleCloseAddEvent}
+        channelStream={channel}
       />
-      <Box marginLeft="auto" width="300px">
-        <TextField
-          select
-          label="Kênh"
-          value={channel}
-          onChange={handleChannelChange}
-          variant="outlined"
-          fullWidth
-        >
-          {channelOptions.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              <Box display="flex" alignItems="center"> {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
-                <SubscriptionsIcon sx={{ marginRight: 1 }} /> {/* Icon Subscriptions */}
-                {option.label}
-              </Box>
-            </MenuItem>
-          ))}
-        </TextField>
+      <Box display="flex">
+        <Header
+          title="Multi-channel Advertising Management"
+          subtitle="Welcome to Multi-channel Advertising Management"
+        />
+        <Box marginLeft="auto" width="300px">
+          <TextField
+            select
+            label="Kênh"
+            value={channel}
+            onChange={handleChannelChange}
+            variant="outlined"
+            fullWidth
+          >
+            {channelOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                <Box display="flex" alignItems="center">
+                  {" "}
+                  {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
+                  <SubscriptionsIcon sx={{ marginRight: 1 }} />{" "}
+                  {/* Icon Subscriptions */}
+                  {option.label}
+                </Box>
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
       </Box>
-    </Box>
 
       <Box
         display="grid"
@@ -401,7 +414,7 @@ const SmartPoleManage = () => {
                   }}
                   data-duration=""
                   data-background-color=""
-                  onClick={() => handleOpenDialog(label,channel)}
+                  onClick={() => handleOpenDialog(label, channel)}
                 >
                   <div
                     className="fc-event-main"
