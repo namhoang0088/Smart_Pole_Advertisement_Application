@@ -100,6 +100,7 @@ const LiveAd = () => {
   const [tvChannel,setTvChannel] = useState("");
   const [tvChannelOption, setTvChannelOption] = useState([]);
   const [nameTwitch, setNameTwitch] = useState('');
+  const [selectTvChannel, setSelectTvChannel] =  React.useState(1);
 
 
   const handleChannelChange = (event) => {
@@ -107,11 +108,13 @@ const LiveAd = () => {
     setChannel(newChannel);
   };
 
-  const handleTvChannelChange = (event) => {
-    const newChannel = event.target.value;
-    console.log("tv channel", newChannel)
-  };
-  
+  // xử lý đổi tvchannel
+const handleTvChannelChange = (event) => {
+  const newIndex = event.target.value; // Lấy index mới được chọn từ dropdown menu
+  setSelectTvChannel(newIndex); // Cập nhật giá trị mới dựa trên index
+  console.log("tvchannel ",  tvChannelOption[selectTvChannel -1].label)
+};
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,7 +130,7 @@ const LiveAd = () => {
         if (!responseData.ok) {
           throw new Error("Network response video was not ok");
         }
-
+  
         const responseTVChanel = await fetch(
           `${API_BASE_URL}/get/TVchannel`,
           {
@@ -143,6 +146,14 @@ const LiveAd = () => {
         const response = await responseData.json();
         setNameTwitch(response["name twitch"])
         setTvChannel(responseDataTVChanel["TV channel"])
+  
+        const formattedChannels = responseDataTVChanel["TV channel"].replace(/[\[\]']+/g, '').split(', ');
+        const options = formattedChannels.map((channel, index) => ({
+          value: index + 1,
+          label: `${channel}`
+        }));
+        setTvChannelOption(options);
+  
         // Xử lý dữ liệu responseVideo ở đây
       } catch (error) {
         console.error("Error fetching video schedule:", error);
@@ -151,36 +162,7 @@ const LiveAd = () => {
   
     fetchData(); // Gọi hàm fetchData khi giá trị của channel thay đổi
   }, [channel]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const responseTVChanel = await fetch(
-          `${API_BASE_URL}/get/TVchannel`,
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-            },
-          }
-        );
-        if (!responseTVChanel.ok) {
-          throw new Error("Network response video was not ok");
-        }
-        const formattedChannels = tvChannel.replace(/[\[\]']+/g, '').split(', ');
-        const options = formattedChannels.map((channel, index) => ({
-          value: index + 1,
-          label: `${channel}`
-        }));
-        setTvChannelOption(options);
-
-        // Xử lý dữ liệu responseVideo ở đây
-      } catch (error) {
-        console.error("Error fetching video schedule:", error);
-      }
-    };
   
-    fetchData(); // Gọi hàm fetchData khi giá trị của channel thay đổi
-  }, []);
   
 
 
@@ -234,7 +216,52 @@ const handleClickStop= async () => {
     console.error("Error:", error);
   }
 }
+// live bằng kênh truyền hình có sẵn-----------------------------begin----------------------------------------
+const handleClickLiveTvChannel= async () => {
+  const url = `${API_BASE_URL}//live/TVchannel?stream=${channel}&tvchannel=${tvChannelOption[selectTvChannel -1].label}`;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+    });
 
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    console.log("Response data:", data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+const handleClickStopTvChannel= async () => {
+  const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
+  console.log(url)
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    console.log("Response data:", data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
   return (
     <Box m="20px">
       <Header title="Live Stream" subtitle="Welcome to Live Stream" />
@@ -412,7 +439,7 @@ const handleClickStop= async () => {
             <TextField
               select
               label="Đài truyền hình"
-              value={channel}
+              value={selectTvChannel}
               onChange={handleTvChannelChange}
               variant="outlined"
               fullWidth
@@ -432,7 +459,7 @@ const handleClickStop= async () => {
           </Box>
   <Button
     variant="outlined"
-    onClick={handleClickLive}
+    onClick={handleClickLiveTvChannel}
     sx={{
       color: "#007FFF",
       borderColor: "#007FFF",
@@ -452,7 +479,7 @@ const handleClickStop= async () => {
 
   <Button
   variant="outlined"
-  onClick={handleClickStop}
+  onClick={handleClickStopTvChannel}
   sx={{
     color: "#FF0000", // Đổi màu chữ thành đỏ
     borderColor: "#FF0000", // Đổi màu viền thành đỏ
