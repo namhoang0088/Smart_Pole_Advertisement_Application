@@ -24,7 +24,6 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckIcon from "@mui/icons-material/Check";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
-
 import CancelIcon from "@mui/icons-material/Cancel";
 import {
   DatePicker,
@@ -58,6 +57,8 @@ import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import { API_BASE_URL } from "../data/link_api";
+import ErrorPopup from "./ErrorPopup";
+import SuccessPopup from "./SuccessPopup";
 export default function AddEvent({ open, handleClose, channelStream }) {
   // console.log("adđ event channel stream", channelStream)
   const theme = useTheme();
@@ -882,7 +883,8 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     });
   };
   //onetime----------------------------------------------end-----------------------------------
-
+  // biến để check có error nào hay không
+  const [successsubmit, setSuccesssubmit] = useState(true);
   const handleSubmit = async () => {
     //api------daily---------------------begin-------------------------------------------
     for (let i = 0; i < timeStartDailyArray.length; i++) {
@@ -899,7 +901,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
       // Tạo đường dẫn API
       const url = `${API_BASE_URL}//schedule/addTask/daily?stream=${channelStream}&list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
-      console.log(url);
+      //console.log(url);
       // Gửi yêu cầu API
       try {
         const response = await fetch(url, {
@@ -910,11 +912,14 @@ export default function AddEvent({ open, handleClose, channelStream }) {
           },
           // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
         });
-
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          const errorData = await response.json(); // Nhận dữ liệu lỗi dưới dạng JSON
+          setErrorMessage(errorData.error);
+          setSuccesssubmit(false);
+          setOpenpopup(true);
+          console.error("Errorrrrrrrrrrrrrrrrrrrrrr:", errorData.error); // Log dữ liệu lỗi
+          // Xử lý lỗi ở đây (nếu cần)
         }
-
         const data = await response.json();
         console.log("Response data:", data);
       } catch (error) {
@@ -940,7 +945,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
       // Tạo đường dẫn API
       const url = `${API_BASE_URL}//schedule/addTask/weekly?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}&days=${daypick}`;
-      console.log(url);
+      //console.log(url);
       //Gửi yêu cầu API
       try {
         const response = await fetch(url, {
@@ -953,7 +958,10 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         });
 
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          const errorData = await response.json(); // Nhận dữ liệu lỗi dưới dạng JSON
+          setErrorMessage(errorData.error);
+          setSuccesssubmit(false);
+          setOpenpopup(true);
         }
 
         const data = await response.json();
@@ -977,7 +985,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
       // Tạo đường dẫn API
       const url = `${API_BASE_URL}//schedule/addTask/onetime?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&label=${label}`;
-      console.log(url);
+      //console.log(url);
       //Gửi yêu cầu API
       try {
         const response = await fetch(url, {
@@ -990,7 +998,10 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         });
 
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          const errorData = await response.json(); // Nhận dữ liệu lỗi dưới dạng JSON
+          setErrorMessage(errorData.error);
+          setSuccesssubmit(false);
+          setOpenpopup(true);
         }
 
         const data = await response.json();
@@ -1000,22 +1011,55 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       }
     }
     //api------onetime---------------------end-------------------------------------------
-    window.location.reload();
+    //window.location.reload();
   };
 
   const handleSave = async () => {
     try {
       await handleSubmit(); // Gọi hàm để xử lý việc gửi API
-      console.log("API requests sent successfully");
-      // Thêm logic xử lý sau khi gửi API thành công nếu cần
+  
+      // Chờ cho tất cả các yêu cầu API hoàn thành
+      await Promise.all([
+        // Các tác vụ asynchronous khác nếu cần
+      ]);
+      // Thêm logic xử lý sau khi tất cả các yêu cầu API hoàn thành
+      
+      if (successsubmit) {
+        setOpenpopupsuccess(1);
+        // setTimeout(() => {
+        //  // window.location.reload();
+        // }, 2000);
+      }
     } catch (error) {
       console.error("Error while sending API requests:", error);
       // Thêm logic xử lý khi gặp lỗi khi gửi API nếu cần
     }
-    handleClose();
   };
   //gửi dữ liệu lập lịch------------------------------------end--------------------------
 
+  //hiện popup lỗi-----------------------------------begin---------------------------------
+  const [openpopup, setOpenpopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleClickOpenpopup = () => {
+    setOpenpopup(true);
+  };
+
+  const handleClosepopup = () => {
+    setOpenpopup(false);
+  };
+  //hiện popup lỗi -----------------------------------------end------------------------------
+  //hiện popup thành công---------------------------------begin------------------------------
+  const [openpopupsuccess, setOpenpopupsuccess] = useState(false);
+
+  const handleClickOpenpopupsuccess = () => {
+    setOpenpopupsuccess(true);
+  };
+
+  const handleClosepopupsuccess = () => {
+    setOpenpopupsuccess(false);
+  };
+  //hiện popup thành công---------------------------------end--------------------------------
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Dialog
@@ -1023,6 +1067,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         open={open}
         PaperProps={{ sx: { width: "60%", maxWidth: "100%" } }}
       >
+    
         <DialogTitle
           id="customized-dialog-title"
           sx={{ fontSize: "24px", fontWeight: "bold" }}
@@ -1278,6 +1323,8 @@ export default function AddEvent({ open, handleClose, channelStream }) {
           </Button>
         </DialogActions>
       </Dialog>
+      <ErrorPopup open={openpopup} handleClose={handleClosepopup} errorMessage={errorMessage} />
+      <SuccessPopup open={openpopupsuccess} handleClose={handleClosepopupsuccess}/>
     </LocalizationProvider>
   );
 }

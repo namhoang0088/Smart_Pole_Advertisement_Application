@@ -1097,7 +1097,7 @@ export default function CustomDialog({
         console.error("Error:", error);
       }
     }
-    window.location.reload();
+    //window.location.reload();
     //api------onetime---------------------end-------------------------------------------
   };
 
