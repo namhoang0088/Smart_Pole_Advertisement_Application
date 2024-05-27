@@ -713,6 +713,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         return [...prevArray, { label: label, value: newValue }];
       }
     });
+    console.log("success popup", successsubmit)
   };
   //daily-----------------------------------------end-------------------------------------------
   //weekly-----------------------------------------begin-------------------------------------------
@@ -1008,6 +1009,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         console.log("Response data:", data);
       } catch (error) {
         console.error("Error:", error);
+        setSuccesssubmit(false);
       }
     }
     //api------onetime---------------------end-------------------------------------------
@@ -1016,20 +1018,19 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
   const handleSave = async () => {
     try {
+      setSuccesssubmit(true);
       await handleSubmit(); // Gọi hàm để xử lý việc gửi API
-  
-      // Chờ cho tất cả các yêu cầu API hoàn thành
-      await Promise.all([
-        // Các tác vụ asynchronous khác nếu cần
-      ]);
-      // Thêm logic xử lý sau khi tất cả các yêu cầu API hoàn thành
+      setSuccesssubmit((prevSuccess) => {
+        if (prevSuccess) {
+          setOpenpopupsuccess(1);
+          // Thực hiện các hành động khác sau khi tất cả các yêu cầu API hoàn thành
+                  setTimeout(() => {
+         window.location.reload();
+        }, 2000);
+        }
+        return prevSuccess;
+      });
       
-      if (successsubmit) {
-        setOpenpopupsuccess(1);
-        // setTimeout(() => {
-        //  // window.location.reload();
-        // }, 2000);
-      }
     } catch (error) {
       console.error("Error while sending API requests:", error);
       // Thêm logic xử lý khi gặp lỗi khi gửi API nếu cần

@@ -6,7 +6,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-export default function SuccessPopup({ open, handleClose}) {
+import CircularProgress from '@mui/material/CircularProgress';
+import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+export default function  WaitingLivePopup({ open, handleClose}) {
   return (
     <Dialog
       open={open}
@@ -15,12 +17,12 @@ export default function SuccessPopup({ open, handleClose}) {
       aria-describedby="alert-dialog-description"
       PaperProps={{ sx: { width: "30%", maxWidth: "100%" } }}
     >
-        <DialogTitle sx={{ fontSize: "24px", fontWeight: "bold",color: "green", display: 'flex', alignItems: 'center'  }}>
-          <CheckCircleIcon from sx={{ marginRight: '8px' ,fontSize: '32px' }} /> Success
+        <DialogTitle sx={{ fontSize: "24px", fontWeight: "bold",color: "rgb(100, 190, 241)", display: 'flex', alignItems: 'center'  }}>
+          <RotateLeftIcon from sx={{ marginRight: '8px' ,fontSize: '32px' }} /> Waiting...
         </DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description" sx={{ fontSize: '20px' }}>
-          Success
+        <DialogContentText id="alert-dialog-description" sx={{ fontSize: '20px', textAlign: 'center'  }}>
+        <CircularProgress />
         </DialogContentText>
       </DialogContent>
       <DialogActions>

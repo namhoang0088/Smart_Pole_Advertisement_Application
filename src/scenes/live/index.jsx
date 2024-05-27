@@ -30,6 +30,10 @@ import SettingsInputAntennaIcon from "@mui/icons-material/SettingsInputAntenna";
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { API_BASE_URL } from "../../data/link_api";
 import DvrIcon from '@mui/icons-material/Dvr';
+import SuccessPopup from "../../components/SuccessPopup";
+import ErrorPopup from "../../components/ErrorPopup";
+import WaitingLivePopup from "../../components/WaitingLivePopup";
+import WaitingStopPopup from "../../components/WaitingStopPopup";
 
 const LiveAd = () => {
   const theme = useTheme();
@@ -172,6 +176,7 @@ const handleTvChannelChange = (event) => {
     setLiveLink(newValue);
 }
 const handleClickLive= async () => {
+  setLoading(true);
   const url = `${API_BASE_URL}//live?stream=${channel}&link=${liveLink}`;
   try {
     const response = await fetch(url, {
@@ -184,7 +189,17 @@ const handleClickLive= async () => {
     });
 
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      setLoading(false); 
+      const errorData = await response.json(); // Nhận dữ liệu lỗi dưới dạng JSON
+      setErrorMessage(errorData.error);
+      setOpenpopup(true);
+    }
+    else{
+      setLoading(false); 
+      setOpenpopupsuccess(1);
+      setTimeout(() => {
+        setOpenpopupsuccess(0);
+      }, 1000);
     }
 
     const data = await response.json();
@@ -193,7 +208,11 @@ const handleClickLive= async () => {
     console.error("Error:", error);
   }
 }
+
+
 const handleClickStop= async () => {
+  setLoadingStop(true)
+
   const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
   console.log(url)
   try {
@@ -207,7 +226,14 @@ const handleClickStop= async () => {
     });
 
     if (!response.ok) {
+      setTimeout(() => {
+        setLoadingStop(false);
+      }, 1000);
       throw new Error("Network response was not ok");
+    } else{
+      setTimeout(() => {
+        setLoadingStop(false);
+      }, 1000);
     }
 
     const data = await response.json();
@@ -218,6 +244,7 @@ const handleClickStop= async () => {
 }
 // live bằng kênh truyền hình có sẵn-----------------------------begin----------------------------------------
 const handleClickLiveTvChannel= async () => {
+  setLoading(true);
   const url = `${API_BASE_URL}//live/TVchannel?stream=${channel}&tvchannel=${tvChannelOption[selectTvChannel -1].label}`;
   try {
     const response = await fetch(url, {
@@ -230,7 +257,14 @@ const handleClickLiveTvChannel= async () => {
     });
 
     if (!response.ok) {
+      setLoading(false);
       throw new Error("Network response was not ok");
+    } else{
+      setLoading(false);
+      setOpenpopupsuccess(1);
+      setTimeout(() => {
+        setOpenpopupsuccess(0);
+      }, 1000);
     }
 
     const data = await response.json();
@@ -240,6 +274,7 @@ const handleClickLiveTvChannel= async () => {
   }
 }
 const handleClickStopTvChannel= async () => {
+  setLoadingStop(true);
   const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
   console.log(url)
   try {
@@ -253,7 +288,14 @@ const handleClickStopTvChannel= async () => {
     });
 
     if (!response.ok) {
+      setTimeout(() => {
+        setLoadingStop(false);
+      }, 1000);
       throw new Error("Network response was not ok");
+    } else{
+      setTimeout(() => {
+        setLoadingStop(false);
+      }, 1000);
     }
 
     const data = await response.json();
@@ -262,6 +304,41 @@ const handleClickStopTvChannel= async () => {
     console.error("Error:", error);
   }
 }
+  //hiện popup lỗi-----------------------------------begin---------------------------------
+  const [loading, setLoading] = useState(false);
+  const [loadingStop, setLoadingStop] = useState(false);
+
+  const [openpopup, setOpenpopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleClickOpenpopup = () => {
+    setOpenpopup(true);
+  };
+
+  const handleClosepopup = () => {
+    setOpenpopup(false);
+  };
+  //hiện popup lỗi -----------------------------------------end------------------------------
+  //hiện popup thành công---------------------------------begin------------------------------
+  const [openpopupsuccess, setOpenpopupsuccess] = useState(false);
+
+  const handleClickOpenpopupsuccess = () => {
+    setOpenpopupsuccess(true);
+  };
+
+  const handleClosepopupsuccess = () => {
+    setOpenpopupsuccess(false);
+  };
+
+  const handleClosepopupLoadingLive = () => {
+    setLoading(false);
+  }
+
+  const handleClosepopupLoadingStop = () => {
+    setLoadingStop(false);
+  }
+
+  //hiện popup thành công---------------------------------end--------------------------------
   return (
     <Box m="20px">
       <Header title="Live Stream" subtitle="Welcome to Live Stream" />
@@ -600,8 +677,14 @@ const handleClickStopTvChannel= async () => {
 
         </Box>
       </Box>
+      <ErrorPopup open={openpopup} handleClose={handleClosepopup} errorMessage={errorMessage} />
+      <SuccessPopup open={openpopupsuccess} handleClose={handleClosepopupsuccess}/>
+      <WaitingLivePopup open={loading} handleClose={handleClosepopupLoadingLive}/>
+      <WaitingStopPopup open={loadingStop} handleClose = {handleClosepopupLoadingStop}/>
     </Box>
+    
   );
 };
 
 export default LiveAd;
+
