@@ -21,6 +21,7 @@ import SettingsInputAntennaIcon from "@mui/icons-material/SettingsInputAntenna";
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -154,6 +155,14 @@ const Sidebar = () => {
               title="Video manage"
               to="/video"
               icon={<SlideshowIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+<Item
+              title="Log manage"
+              to="/log"
+              icon={<EditNoteIcon />}
               selected={selected}
               setSelected={setSelected}
             />

@@ -7,9 +7,9 @@ import AdManage from "./scenes/ad_manage";
 import SmartPoleManage from "./scenes/smart_pole_manage";
 import LiveAd from "./scenes/live";
 import VideoManage from "./scenes/video_manage";
+import LogManage from "./scenes/log";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
-
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -28,6 +28,7 @@ function App() {
               <Route path="/smart_pole_manage" element={<SmartPoleManage />} />
               <Route path="/live_ad" element={<LiveAd />} />
               <Route path="/video" element={<VideoManage />} />
+              <Route path="/log" element={<LogManage/>}/>
             </Routes>
           </main>
         </div>
