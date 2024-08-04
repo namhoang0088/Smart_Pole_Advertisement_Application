@@ -19,21 +19,31 @@ import { tokens } from "../../theme";
 import TrafficIcon from '@mui/icons-material/Traffic';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import LogChannel from "../../components/log/LogChannel";
+import GridViewIcon from '@mui/icons-material/GridView';
+import LogScreen from "../../components/log/LogScreen";
 const LogManage = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
     const [logchannel,setLogchannel] = useState(false);
     const [logsmartpole,setLogsmartpole] = useState(false); 
+    const [logscreen,setLogscreen] = useState(false);
 
     const handleClickChannel = () =>{
       setLogchannel(true);
-      console.log("Box clicked!"); 
     }
-    
     const handleCloseChannel = () =>{
       setLogchannel(false);
     }
+
+
+    const handleClickScreen = () =>{
+      setLogscreen(true);
+    }
+    const handleCloseScreen = () =>{
+      setLogscreen(false);
+    }
+
 
     return(    
     <Box m="20px">
@@ -112,16 +122,18 @@ const LogManage = () => {
         backgroundColor: colors.blueAccent[600],
       }
     }}
+    onClick = {handleClickScreen}
   >
               <Typography variant="h2" style={{ color: 'white',  fontWeight: 'bold'}}>
-                    ?
+                    Screen
               </Typography>
-              <TrafficIcon style={{ fontSize: '100px', color: 'white' }} />
+              <GridViewIcon style={{ fontSize: '100px', color: 'white' }} />
         </Box>
 
 
       </Box>
 
       <LogChannel open = {logchannel} handleClose = {handleCloseChannel}/>
+      <LogScreen open = {logscreen} handleClose={handleCloseScreen}/>
       </Box>)
 }; export default LogManage;

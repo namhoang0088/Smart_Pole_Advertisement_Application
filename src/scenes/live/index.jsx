@@ -34,7 +34,8 @@ import SuccessPopup from "../../components/SuccessPopup";
 import ErrorPopup from "../../components/ErrorPopup";
 import WaitingLivePopup from "../../components/WaitingLivePopup";
 import WaitingStopPopup from "../../components/WaitingStopPopup";
-
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import Autocomplete from "@mui/material/Autocomplete";
 const LiveAd = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -273,6 +274,7 @@ const handleClickLiveTvChannel= async () => {
     console.error("Error:", error);
   }
 }
+
 const handleClickStopTvChannel= async () => {
   setLoadingStop(true);
   const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
@@ -304,6 +306,95 @@ const handleClickStopTvChannel= async () => {
     console.error("Error:", error);
   }
 }
+// live bằng video có sẵn-----------------------------begin----------------------------------------
+const handleClickLiveVideo= async () => {
+  setLoading(true); 
+  const list = selectedOptions.join(",");
+  const url = `${API_BASE_URL}//live/video?stream=${channel}&list=${list}`;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+    });
+
+    if (!response.ok) {
+      setLoading(false);
+      throw new Error("Network response was not ok");
+    } else{
+      setLoading(false);
+      setOpenpopupsuccess(1);
+      setTimeout(() => {
+        setOpenpopupsuccess(0);
+      }, 1000);
+    }
+
+    const data = await response.json();
+    console.log("Response data:", data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+const handleClickStopVideo= async () => {
+  setLoadingStop(true);
+  const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
+  console.log(url)
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+    });
+
+    if (!response.ok) {
+      setTimeout(() => {
+        setLoadingStop(false);
+      }, 1000);
+      throw new Error("Network response was not ok");
+    } else{
+      setTimeout(() => {
+        setLoadingStop(false);
+      }, 1000);
+    }
+
+    const data = await response.json();
+    console.log("Response data:", data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   //hiện popup lỗi-----------------------------------begin---------------------------------
   const [loading, setLoading] = useState(false);
   const [loadingStop, setLoadingStop] = useState(false);
@@ -337,7 +428,34 @@ const handleClickStopTvChannel= async () => {
   const handleClosepopupLoadingStop = () => {
     setLoadingStop(false);
   }
-
+  
+    // mở danh sách video để thiết lập nội dung cho quảng cáo ---------------end--------------
+    const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const responseVideo = await fetch(`${API_BASE_URL}/get/video`, {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          });
+  
+          if (!responseVideo.ok) {
+            throw new Error("Network response video was not ok");
+          }
+  
+          const dataVideo = await responseVideo.json();
+          // console.log("nammmmmmmmmmmmmmmmmmmmmmmmmmm", dataVideo); // In dữ liệu nhận được ra console
+  
+          setDataVideo(dataVideo); // Cập nhật giá trị cho biến dataVideo
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+  
+      fetchData();
+    }, []);
+    const [selectedOptions, setSelectedOptions] = useState([]);
   //hiện popup thành công---------------------------------end--------------------------------
   return (
     <Box m="20px">
@@ -596,8 +714,8 @@ const handleClickStopTvChannel= async () => {
           </Box>
 
 
-          <Box display="flex" alignItems="center" marginLeft="50px">
-            <Button
+          {/* <Box display="flex" alignItems="center" marginLeft="50px"> */}
+            {/* <Button
               variant="contained"
               sx={{
                 backgroundColor: isMicOn ? "#007FFF" : "#757575",
@@ -647,8 +765,74 @@ const handleClickStopTvChannel= async () => {
               }}
             >
               <PhoneDisabledIcon fontSize="large" />
-            </Button>
+            </Button> */}
+            <Box display="flex" alignItems="center" gap={2} marginBottom="20px"
+          >
+            <Autocomplete
+              sx={{ width: 300 }}
+              multiple
+              id="list-pole-autocomplete"
+              onChange={(event, newValue) => {
+                setSelectedOptions(newValue);
+                // onChangeContentDaily(newValue, boxDailyIdCounter.toString());
+              }}
+              options={
+                dataVideo && dataVideo["Video name"]
+                  ? dataVideo["Video name"]
+                  : []
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Chọn nội dung"
+                />
+              )}
+            />
+              <Button
+    variant="outlined"
+    onClick={handleClickLiveVideo}
+    sx={{
+      color: "#007FFF",
+      borderColor: "#007FFF",
+      backgroundColor: "#FFFFFF",
+      fontSize: "1.2rem",
+      fontWeight: "bold",
+      padding: "15px 20px",
+      borderRadius: "10px",
+      "&:hover": {
+        backgroundColor: "#007FFF",
+        color: "#FFFFFF",
+      },
+    }}
+  >
+    Live
+  </Button>
+
+  <Button
+  variant="outlined"
+  onClick={handleClickStopVideo}
+  sx={{
+    color: "#FF0000", // Đổi màu chữ thành đỏ
+    borderColor: "#FF0000", // Đổi màu viền thành đỏ
+    backgroundColor: "#FFFFFF",
+    fontSize: "1.2rem",
+    fontWeight: "bold",
+    padding: "15px 20px",
+    borderRadius: "10px",
+    "&:hover": {
+      backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+    },
+  }}
+>
+  Stop
+</Button>
+
+
           </Box>
+{/* 
+          </Box> */}
 
           <Box display="flex" alignItems="center" marginLeft="50px">
             <Button
