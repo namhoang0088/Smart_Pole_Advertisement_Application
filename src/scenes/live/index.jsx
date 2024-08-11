@@ -44,6 +44,7 @@ const LiveAd = () => {
   const [isCameraOn, setIsCameraOn] = useState(false); // Trạng thái của camera, mặc định là tắt
   const [micStream, setMicStream] = useState(null); // Lưu trữ stream từ microphone
   const [cameraStream, setCameraStream] = useState(null); // Lưu trữ stream từ camera
+  const currentHost = window.location.hostname;
 
   const handleClickListPole = () => {
     setOpenListPole(!openListPole);
@@ -99,6 +100,7 @@ const LiveAd = () => {
   const channelOptions = [
     { value: 1, label: "Kênh 1" },
     { value: 2, label: "Kênh 2" },
+    { value: 3, label: "Kênh 3" },
   ];
   
   const [channel, setChannel] = React.useState(1);
@@ -311,6 +313,7 @@ const handleClickLiveVideo= async () => {
   setLoading(true); 
   const list = selectedOptions.join(",");
   const url = `${API_BASE_URL}//live/video?stream=${channel}&list=${list}`;
+  console.log("urllllllllll",url)
   try {
     const response = await fetch(url, {
       method: "GET",
@@ -490,7 +493,7 @@ const handleClickStopVideo= async () => {
           ></video> */}
 
           <iframe
-    src={`https://player.twitch.tv/?channel=${nameTwitch}&parent=localhost`}
+    src={`https://player.twitch.tv/?channel=${nameTwitch}&parent=${currentHost}`}
     height="100%"
     width="100%"
     allowfullscreen>
@@ -625,7 +628,7 @@ const handleClickStopVideo= async () => {
               variant="h4"
               style={{ marginRight: "10px", paddingLeft: "10px" }}
             >
-              <strong>LiveStream từ Đài truyền hình có sẵn</strong>
+              <strong>LiveStream Đài truyền hình</strong>
             </Typography>
           </Box>
           <Box display="flex" alignItems="center" gap={2} marginBottom="20px">

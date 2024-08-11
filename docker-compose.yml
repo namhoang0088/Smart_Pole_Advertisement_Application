@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  app:
+    image: smart-pole-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./D:/Smart_Pole_Application/smart_pole_application:/app
+    command: npm start

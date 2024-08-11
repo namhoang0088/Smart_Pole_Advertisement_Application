@@ -31,7 +31,7 @@ import Filter6Icon from '@mui/icons-material/Filter6';
 export default function LogScreen({ open, handleClose }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  
+  const currentHost = window.location.hostname;
   return (
     <Dialog
       open={open}
@@ -68,7 +68,7 @@ export default function LogScreen({ open, handleClose }) {
     }}
   >
           <iframe
-    src={`https://player.twitch.tv/?channel=kaicenat&parent=localhost`}
+    src={`https://player.twitch.tv/?channel=kaicenat&parent=${currentHost}`}
     height="70%"
     width="100%"
     allowfullscreen>
@@ -106,7 +106,7 @@ export default function LogScreen({ open, handleClose }) {
     }}
   >
           <iframe
-    src={`https://player.twitch.tv/?channel=dat_live2&parent=localhost`}
+    src={`https://player.twitch.tv/?channel=dat_live2&parent=${currentHost}`}
     height="70%"
     width="100%"
     allowfullscreen>
@@ -145,7 +145,7 @@ export default function LogScreen({ open, handleClose }) {
     }}
   >
           <iframe
-    src={`https://player.twitch.tv/?channel=fanum&parent=localhost`}
+    src={`https://player.twitch.tv/?channel=fanum&parent=${currentHost}`}
     height="70%"
     width="100%"
     allowfullscreen>
@@ -191,7 +191,7 @@ export default function LogScreen({ open, handleClose }) {
     }}
   >
           <iframe
-    src={`https://player.twitch.tv/?channel=kaicenat&parent=localhost`}
+    src={`https://player.twitch.tv/?channel=kaicenat&parent=${currentHost}`}
     height="70%"
     width="100%"
     allowfullscreen>
@@ -229,7 +229,7 @@ export default function LogScreen({ open, handleClose }) {
     }}
   >
           <iframe
-    src={`https://player.twitch.tv/?channel=dat_live2&parent=localhost`}
+    src={`https://player.twitch.tv/?channel=dat_live2&parent=${currentHost}`}
     height="70%"
     width="100%"
     allowfullscreen>
@@ -268,7 +268,7 @@ export default function LogScreen({ open, handleClose }) {
     }}
   >
           <iframe
-    src={`https://player.twitch.tv/?channel=fanum&parent=localhost`}
+    src={`https://player.twitch.tv/?channel=fanum&parent=${currentHost}`}
     height="70%"
     width="100%"
     allowfullscreen>
