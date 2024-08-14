@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Smart_Pole_Advertisement_Application/static/css/main.2f414e0d.css",
-    "main.js": "/Smart_Pole_Advertisement_Application/static/js/main.db8bc9c7.js",
+    "main.js": "/Smart_Pole_Advertisement_Application/static/js/main.23bc8be8.js",
     "reactPlayerYouTube.js": "/Smart_Pole_Advertisement_Application/static/js/reactPlayerYouTube.70167920.chunk.js",
     "reactPlayerSoundCloud.js": "/Smart_Pole_Advertisement_Application/static/js/reactPlayerSoundCloud.1fbceaa3.chunk.js",
     "reactPlayerVimeo.js": "/Smart_Pole_Advertisement_Application/static/js/reactPlayerVimeo.6501f2da.chunk.js",
@@ -18,7 +18,7 @@
     "reactPlayerPreview.js": "/Smart_Pole_Advertisement_Application/static/js/reactPlayerPreview.fc26af01.chunk.js",
     "index.html": "/Smart_Pole_Advertisement_Application/index.html",
     "main.2f414e0d.css.map": "/Smart_Pole_Advertisement_Application/static/css/main.2f414e0d.css.map",
-    "main.db8bc9c7.js.map": "/Smart_Pole_Advertisement_Application/static/js/main.db8bc9c7.js.map",
+    "main.23bc8be8.js.map": "/Smart_Pole_Advertisement_Application/static/js/main.23bc8be8.js.map",
     "reactPlayerYouTube.70167920.chunk.js.map": "/Smart_Pole_Advertisement_Application/static/js/reactPlayerYouTube.70167920.chunk.js.map",
     "reactPlayerSoundCloud.1fbceaa3.chunk.js.map": "/Smart_Pole_Advertisement_Application/static/js/reactPlayerSoundCloud.1fbceaa3.chunk.js.map",
     "reactPlayerVimeo.6501f2da.chunk.js.map": "/Smart_Pole_Advertisement_Application/static/js/reactPlayerVimeo.6501f2da.chunk.js.map",
@@ -36,6 +36,6 @@
   },
   "entrypoints": [
     "static/css/main.2f414e0d.css",
-    "static/js/main.db8bc9c7.js"
+    "static/js/main.23bc8be8.js"
   ]
 }
