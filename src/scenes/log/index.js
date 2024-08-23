@@ -21,6 +21,7 @@ import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import LogChannel from "../../components/log/LogChannel";
 import GridViewIcon from '@mui/icons-material/GridView';
 import LogScreen from "../../components/log/LogScreen";
+import CellWifiIcon from '@mui/icons-material/CellWifi';
 const LogManage = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -77,9 +78,9 @@ const LogManage = () => {
     }}
   >
               <Typography variant="h2" style={{ color: 'white',  fontWeight: 'bold'}}>
-                    Smart Pole
+              BandWidth
               </Typography>
-              <TrafficIcon style={{ fontSize: '100px', color: 'white' }} />
+              <CellWifiIcon style={{ fontSize: '100px', color: 'white' }} />
         </Box>
 
 {/*2------------begin----------------------------------------------------------------- */}

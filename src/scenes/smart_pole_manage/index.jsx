@@ -40,6 +40,9 @@ const SmartPoleManage = () => {
   const channelOptions = [
     { value: 1, label: "Kênh 1" },
     { value: 2, label: "Kênh 2" },
+    { value: 3, label: "Kênh 3" },
+    { value: 4, label: "Kênh 4" },
+    { value: 5, label: "Kênh 5" },
   ];
   const [channel, setChannel] = React.useState(1);
   const handleChannelChange = (event) => {

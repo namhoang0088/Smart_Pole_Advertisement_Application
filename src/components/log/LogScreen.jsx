@@ -68,7 +68,7 @@ export default function LogScreen({ open, handleClose }) {
     }}
   >
           <iframe
-    src={`https://player.twitch.tv/?channel=kaicenat&parent=${currentHost}`}
+    src={`https://player.twitch.tv/?channel=gutsssssssss9&parent=${currentHost}`}
     height="70%"
     width="100%"
     allowfullscreen>
@@ -145,7 +145,7 @@ export default function LogScreen({ open, handleClose }) {
     }}
   >
           <iframe
-    src={`https://player.twitch.tv/?channel=fanum&parent=${currentHost}`}
+    src={`https://player.twitch.tv/?channel=dat_live1&parent=${currentHost}`}
     height="70%"
     width="100%"
     allowfullscreen>
@@ -167,7 +167,7 @@ export default function LogScreen({ open, handleClose }) {
 
   </Box>
       </Box>
-{/*hàng 1------------end------------------------------------------------------------- */}
+{/*hàng 2------------end------------------------------------------------------------- */}
 <Box
         display="grid"
         gridTemplateColumns="32% 32% 32%"
