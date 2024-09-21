@@ -21,13 +21,14 @@ import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import LogChannel from "../../components/log/LogChannel";
 import GridViewIcon from '@mui/icons-material/GridView';
 import LogScreen from "../../components/log/LogScreen";
+import LogBandWidth from "../../components/log/LogBandWidth";
 import CellWifiIcon from '@mui/icons-material/CellWifi';
 const LogManage = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
     const [logchannel,setLogchannel] = useState(false);
-    const [logsmartpole,setLogsmartpole] = useState(false); 
+    const [logbandwidth,setLogbandwidth] = useState(false); 
     const [logscreen,setLogscreen] = useState(false);
 
     const handleClickChannel = () =>{
@@ -43,6 +44,14 @@ const LogManage = () => {
     }
     const handleCloseScreen = () =>{
       setLogscreen(false);
+    }
+
+    const handleClickBandWidth = () =>{
+      setLogbandwidth(true);
+    }
+
+    const handleCloseBandWidth = () =>{
+      setLogbandwidth(false);
     }
 
 
@@ -76,6 +85,7 @@ const LogManage = () => {
         backgroundColor: colors.blueAccent[600],
       }
     }}
+    onClick = {handleClickBandWidth}
   >
               <Typography variant="h2" style={{ color: 'white',  fontWeight: 'bold'}}>
               BandWidth
@@ -136,5 +146,6 @@ const LogManage = () => {
 
       <LogChannel open = {logchannel} handleClose = {handleCloseChannel}/>
       <LogScreen open = {logscreen} handleClose={handleCloseScreen}/>
+      <LogBandWidth open = {logbandwidth} handleClose={handleCloseBandWidth}/>
       </Box>)
 }; export default LogManage;
