@@ -16,7 +16,7 @@ import Header from "../../components/Header";
 import { API_BASE_URL } from "../../data/link_api";
 import { useTheme } from "@mui/material/styles";
 import { tokens } from "../../theme";
-
+import ReactDOM from "react-dom";
 const LogManageee = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);

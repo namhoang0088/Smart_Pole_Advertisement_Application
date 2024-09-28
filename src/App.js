@@ -10,6 +10,8 @@ import VideoManage from "./scenes/video_manage";
 import LogManage from "./scenes/log";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
+import AirQuality from "./scenes/air_quality";
+import ReactDOM from "react-dom";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -29,6 +31,7 @@ function App() {
               <Route path="/live_ad" element={<LiveAd />} />
               <Route path="/video" element={<VideoManage />} />
               <Route path="/log" element={<LogManage/>}/>
+              <Route path="/air" element={<AirQuality/>}/>
             </Routes>
           </main>
         </div>

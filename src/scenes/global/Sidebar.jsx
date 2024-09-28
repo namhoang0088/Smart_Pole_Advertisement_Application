@@ -22,6 +22,7 @@ import SlideshowIcon from '@mui/icons-material/Slideshow';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import AirIcon from '@mui/icons-material/Air';
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -166,13 +167,13 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            {/* <Item
-              title="Calendar"
-              to="/calendar"
-              icon={<CalendarTodayOutlinedIcon />}
+            <Item
+              title="Air quality"
+              to="/air"
+              icon={<AirIcon />}
               selected={selected}
               setSelected={setSelected}
-            /> */}
+            />
             <Item
               title="FAQ Page"
               to="/faq"

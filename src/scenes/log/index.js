@@ -88,7 +88,7 @@ const LogManage = () => {
     onClick = {handleClickBandWidth}
   >
               <Typography variant="h2" style={{ color: 'white',  fontWeight: 'bold'}}>
-              BandWidth
+              Performance
               </Typography>
               <CellWifiIcon style={{ fontSize: '100px', color: 'white' }} />
         </Box>
