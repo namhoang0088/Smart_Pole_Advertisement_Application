@@ -26,13 +26,13 @@ const Map2 = ({ children }) => {
     { lat: -42.734358, lng: 147.439506 },
     { lat: -42.734358, lng: 147.501315 },
     { lat: -42.735258, lng: 147.438 },
-    { lat: -43.999792, lng: 170.463352 }
+    { lat: -43.999792, lng: 170.463352 },
   ];
   let testArray = [];
   for (let i = 0; i < listings.length; i++) {
     let location = listings[i];
     testArray.push(
-      <Pin position={location} id={i} key={i} clusterer={listings} />
+      <Pin position={location} id={i} key={i} clusterer={listings} />,
     );
   }
 
@@ -42,175 +42,175 @@ const Map2 = ({ children }) => {
       elementType: "geometry",
       stylers: [
         {
-          color: "#e9e9e9"
+          color: "#e9e9e9",
         },
         {
-          lightness: 17
-        }
-      ]
+          lightness: 17,
+        },
+      ],
     },
     {
       featureType: "landscape",
       elementType: "geometry",
       stylers: [
         {
-          color: "#f5f5f5"
+          color: "#f5f5f5",
         },
         {
-          lightness: 20
-        }
-      ]
+          lightness: 20,
+        },
+      ],
     },
     {
       featureType: "road.highway",
       elementType: "geometry.fill",
       stylers: [
         {
-          color: "#ffffff"
+          color: "#ffffff",
         },
         {
-          lightness: 17
-        }
-      ]
+          lightness: 17,
+        },
+      ],
     },
     {
       featureType: "road.highway",
       elementType: "geometry.stroke",
       stylers: [
         {
-          color: "#ffffff"
+          color: "#ffffff",
         },
         {
-          lightness: 29
+          lightness: 29,
         },
         {
-          weight: 0.2
-        }
-      ]
+          weight: 0.2,
+        },
+      ],
     },
     {
       featureType: "road.arterial",
       elementType: "geometry",
       stylers: [
         {
-          color: "#ffffff"
+          color: "#ffffff",
         },
         {
-          lightness: 18
-        }
-      ]
+          lightness: 18,
+        },
+      ],
     },
     {
       featureType: "road.local",
       elementType: "geometry",
       stylers: [
         {
-          color: "#ffffff"
+          color: "#ffffff",
         },
         {
-          lightness: 16
-        }
-      ]
+          lightness: 16,
+        },
+      ],
     },
     {
       featureType: "poi",
       elementType: "geometry",
       stylers: [
         {
-          color: "#f5f5f5"
+          color: "#f5f5f5",
         },
         {
-          lightness: 21
-        }
-      ]
+          lightness: 21,
+        },
+      ],
     },
     {
       featureType: "poi.park",
       elementType: "geometry",
       stylers: [
         {
-          color: "#dedede"
+          color: "#dedede",
         },
         {
-          lightness: 21
-        }
-      ]
+          lightness: 21,
+        },
+      ],
     },
     {
       elementType: "labels.text.stroke",
       stylers: [
         {
-          visibility: "on"
+          visibility: "on",
         },
         {
-          color: "#ffffff"
+          color: "#ffffff",
         },
         {
-          lightness: 16
-        }
-      ]
+          lightness: 16,
+        },
+      ],
     },
     {
       elementType: "labels.text.fill",
       stylers: [
         {
-          saturation: 36
+          saturation: 36,
         },
         {
-          color: "#333333"
+          color: "#333333",
         },
         {
-          lightness: 40
-        }
-      ]
+          lightness: 40,
+        },
+      ],
     },
     {
       elementType: "labels.icon",
       stylers: [
         {
-          visibility: "off"
-        }
-      ]
+          visibility: "off",
+        },
+      ],
     },
     {
       featureType: "transit",
       elementType: "geometry",
       stylers: [
         {
-          color: "#f2f2f2"
+          color: "#f2f2f2",
         },
         {
-          lightness: 19
-        }
-      ]
+          lightness: 19,
+        },
+      ],
     },
     {
       featureType: "administrative",
       elementType: "geometry.fill",
       stylers: [
         {
-          color: "#fefefe"
+          color: "#fefefe",
         },
         {
-          lightness: 20
-        }
-      ]
+          lightness: 20,
+        },
+      ],
     },
     {
       featureType: "administrative",
       elementType: "geometry.stroke",
       stylers: [
         {
-          color: "#fefefe"
+          color: "#fefefe",
         },
         {
-          lightness: 17
+          lightness: 17,
         },
         {
-          weight: 1.2
-        }
-      ]
-    }
+          weight: 1.2,
+        },
+      ],
+    },
   ];
 
   return (
@@ -218,7 +218,7 @@ const Map2 = ({ children }) => {
       id="marker-example"
       mapContainerStyle={{
         height: "400px",
-        width: "800px"
+        width: "800px",
       }}
       zoom={15}
       center={{ lat: -42.735258, lng: 147.438 }}
@@ -228,11 +228,11 @@ const Map2 = ({ children }) => {
         options={{
           imagePath:
             "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
-          styles: []
+          styles: [],
         }}
       >
         {/* {listings} */}
-        {clusterer =>
+        {(clusterer) =>
           [
             { lat: -31.56391, lng: 147.154312 },
             { lat: -33.718234, lng: 150.363181 },
@@ -256,7 +256,7 @@ const Map2 = ({ children }) => {
             { lat: -42.734358, lng: 147.439506 },
             { lat: -42.734358, lng: 147.501315 },
             { lat: -42.735258, lng: 147.438 },
-            { lat: -43.999792, lng: 170.463352 }
+            { lat: -43.999792, lng: 170.463352 },
           ].map((location, i) => (
             <Pin key={i} position={location} clusterer={clusterer} />
           ))
@@ -269,13 +269,13 @@ const Map2 = ({ children }) => {
 Map.defaultProps = {
   mapContainerStyle: {
     height: "400px",
-    width: "800px"
+    width: "800px",
   },
   children: null,
   onLoad: () => {},
   onDragEndFunc: () => {},
   onDragStartFunc: () => {},
-  onZoomChangeFunc: () => {}
+  onZoomChangeFunc: () => {},
 };
 
 export default Map2;

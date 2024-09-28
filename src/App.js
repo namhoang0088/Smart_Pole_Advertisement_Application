@@ -30,8 +30,8 @@ function App() {
               <Route path="/smart_pole_manage" element={<SmartPoleManage />} />
               <Route path="/live_ad" element={<LiveAd />} />
               <Route path="/video" element={<VideoManage />} />
-              <Route path="/log" element={<LogManage/>}/>
-              <Route path="/air" element={<AirQuality/>}/>
+              <Route path="/log" element={<LogManage />} />
+              <Route path="/air" element={<AirQuality />} />
             </Routes>
           </main>
         </div>

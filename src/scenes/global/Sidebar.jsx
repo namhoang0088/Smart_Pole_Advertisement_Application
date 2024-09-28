@@ -18,11 +18,11 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import FeaturedVideoIcon from "@mui/icons-material/FeaturedVideo";
 import SettingsInputAntennaIcon from "@mui/icons-material/SettingsInputAntenna";
-import SlideshowIcon from '@mui/icons-material/Slideshow';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import AirIcon from '@mui/icons-material/Air';
+import SlideshowIcon from "@mui/icons-material/Slideshow";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import AirIcon from "@mui/icons-material/Air";
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -160,7 +160,7 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
 
-<Item
+            <Item
               title="Log manage"
               to="/log"
               icon={<EditNoteIcon />}

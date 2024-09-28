@@ -81,7 +81,7 @@ const AdManage = () => {
     setChannel(event.target.value); // Cập nhật giá trị channel khi người dùng thay đổi
     setChannels(newChannels);
     const url = `${API_BASE_URL}/set/poleStream/ID?ID=${id}&stream=${event.target.value}`;
-    console.log("url name smart pole", url)
+    console.log("url name smart pole", url);
     try {
       const response = await fetch(url, {
         method: "GET",

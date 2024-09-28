@@ -12,7 +12,7 @@ import GeographyChart from "../../components/GeographyChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
-import { GoogleMap, LoadScript , Marker} from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -22,7 +22,7 @@ const Dashboard = () => {
     height: "100%",
     width: "100%",
   };
-  
+
   const defaultCenter = {
     lat: 10.880415,
     lng: 106.805633,
@@ -30,39 +30,39 @@ const Dashboard = () => {
   const locations = [
     {
       name: "Pole 1",
-      location: { 
-        lat: 10.880210, 
-        lng: 106.805461 
+      location: {
+        lat: 10.88021,
+        lng: 106.805461,
       },
     },
     {
       name: "Pole 2",
-      location: { 
-        lat: 10.880274, 
-        lng: 106.805502
+      location: {
+        lat: 10.880274,
+        lng: 106.805502,
       },
     },
     {
       name: "Pole 3",
-      location: { 
-        lat: 10.880331, 
-        lng: 106.805541
+      location: {
+        lat: 10.880331,
+        lng: 106.805541,
       },
     },
     {
       name: "Pole 4",
-      location: { 
-        lat: 10.880417, 
-        lng: 106.805596
+      location: {
+        lat: 10.880417,
+        lng: 106.805596,
       },
     },
     {
       name: "Pole 5",
-      location: { 
+      location: {
         lat: 10.880514,
-        lng: 106.805658
+        lng: 106.805658,
       },
-    }
+    },
   ];
 
   return (
@@ -278,13 +278,9 @@ const Dashboard = () => {
               center={defaultCenter}
             >
               {/* Child components, markers, etc. */}
-              {
-            locations.map(item => {
-              return (
-              <Marker key={item.name} position={item.location}/>
-              )
-            })
-         }
+              {locations.map((item) => {
+                return <Marker key={item.name} position={item.location} />;
+              })}
             </GoogleMap>
           </LoadScript>
         </Box>

@@ -18,32 +18,33 @@ import { useTheme } from "@mui/material/styles";
 import { tokens } from "../../theme";
 import ReactDOM from "react-dom";
 const LogManageee = () => {
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
-    return(    
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  return (
     <Box m="20px">
-        <Box display="flex">
-          <Header title="Video Management" subtitle="Welcome to Video Management" />
-          <Box marginLeft="auto" >
+      <Box display="flex">
+        <Header
+          title="Video Management"
+          subtitle="Welcome to Video Management"
+        />
+        <Box marginLeft="auto">
           <Button
-                variant="contained"
-                onClick={handleClickAddVideo}
-                sx={{
-                  backgroundColor: colors.greenAccent[600],
-                  color: "#fff",
-                  marginLeft: "100px",
-                  marginTop: "10px",
-                }}
-                endIcon={<AddBoxIcon />}
-                
-              >
-                Thêm Video
-              </Button>
-          </Box>
+            variant="contained"
+            onClick={handleClickAddVideo}
+            sx={{
+              backgroundColor: colors.greenAccent[600],
+              color: "#fff",
+              marginLeft: "100px",
+              marginTop: "10px",
+            }}
+            endIcon={<AddBoxIcon />}
+          >
+            Thêm Video
+          </Button>
         </Box>
-        <Box
-        >
-
-        </Box>
-      </Box>)
-}; export default LogManageee()
+      </Box>
+      <Box></Box>
+    </Box>
+  );
+};
+export default LogManageee();

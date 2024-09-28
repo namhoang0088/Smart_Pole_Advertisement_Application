@@ -57,7 +57,7 @@ const VideoManage = () => {
   const mockData = dataVideo.map((videoName, index) => ({
     id: index + 1,
     videoName,
-    date: `2024-01-${String(index + 1).padStart(2, '0')}`,
+    date: `2024-01-${String(index + 1).padStart(2, "0")}`,
     uploadBy: `User ${String.fromCharCode(65 + index)}`,
   }));
 
@@ -83,7 +83,7 @@ const VideoManage = () => {
     setOpenpopup(false);
   };
 
-  //popup add video 
+  //popup add video
   const [openpopupaddvideo, setOpenpopupaddvideo] = useState(false);
 
   const handleClosepopupaddvideo = () => {
@@ -91,26 +91,28 @@ const VideoManage = () => {
   };
   const handleClickAddVideo = () => {
     setOpenpopupaddvideo(true);
-  }
+  };
   return (
     <Box m="20px">
       <Box display="flex">
-        <Header title="Video Management" subtitle="Welcome to Video Management" />
-        <Box marginLeft="auto" >
-        <Button
-              variant="contained"
-              onClick={handleClickAddVideo}
-              sx={{
-                backgroundColor: colors.greenAccent[600],
-                color: "#fff",
-                marginLeft: "100px",
-                marginTop: "10px",
-              }}
-              endIcon={<AddBoxIcon />}
-              
-            >
-              Thêm Video
-            </Button>
+        <Header
+          title="Video Management"
+          subtitle="Welcome to Video Management"
+        />
+        <Box marginLeft="auto">
+          <Button
+            variant="contained"
+            onClick={handleClickAddVideo}
+            sx={{
+              backgroundColor: colors.greenAccent[600],
+              color: "#fff",
+              marginLeft: "100px",
+              marginTop: "10px",
+            }}
+            endIcon={<AddBoxIcon />}
+          >
+            Thêm Video
+          </Button>
         </Box>
       </Box>
       <Box
@@ -163,7 +165,10 @@ const VideoManage = () => {
               {mockData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
-                  <TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                  <TableRow
+                    key={row.id}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
                     <TableCell align="center">{row.id}</TableCell>
                     <TableCell align="center">{row.videoName}</TableCell>
                     <TableCell align="center">{row.date}</TableCell>
@@ -201,8 +206,15 @@ const VideoManage = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Box>
-      <VideoDetailDialog open={openpopup} handleClose={handleClosepopup} videoname={videoNameDetail} />
-      <AddvideoDialog open={openpopupaddvideo} handleClose={handleClosepopupaddvideo}/>
+      <VideoDetailDialog
+        open={openpopup}
+        handleClose={handleClosepopup}
+        videoname={videoNameDetail}
+      />
+      <AddvideoDialog
+        open={openpopupaddvideo}
+        handleClose={handleClosepopupaddvideo}
+      />
     </Box>
   );
 };

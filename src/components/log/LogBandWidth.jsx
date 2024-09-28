@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { styled } from '@mui/material/styles';
+import React, { useEffect, useState } from "react";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import { styled } from "@mui/material/styles";
 import {
   Box,
   Typography,
@@ -14,11 +14,11 @@ import {
   TableBody,
   TableContainer,
   TableHead,
-} from '@mui/material';
-import GridViewIcon from '@mui/icons-material/GridView';
-import { GaugeComponent } from 'react-gauge-component';
-import { useTheme } from '@mui/material/styles';
-import { tokens } from '../../theme';
+} from "@mui/material";
+import GridViewIcon from "@mui/icons-material/GridView";
+import { GaugeComponent } from "react-gauge-component";
+import { useTheme } from "@mui/material/styles";
+import { tokens } from "../../theme";
 
 export default function LogBandWidth({ open, handleClose }) {
   const theme = useTheme();
@@ -33,7 +33,9 @@ export default function LogBandWidth({ open, handleClose }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://${window.location.hostname}:5000/get/performance`);
+        const response = await fetch(
+          `http://${window.location.hostname}:5000/get/performance`,
+        );
         const data = await response.json();
         setPerformanceData(data);
       } catch (error) {
@@ -54,8 +56,17 @@ export default function LogBandWidth({ open, handleClose }) {
       aria-describedby="alert-dialog-description"
       PaperProps={{ sx: { width: "90%", maxWidth: "100%", height: "60%" } }}
     >
-      <DialogTitle sx={{ fontSize: "24px", fontWeight: "bold", color: "rgb(116, 165, 138)", display: 'flex', alignItems: 'center' }}>
-        <GridViewIcon sx={{ marginRight: '8px', fontSize: '32px' }} /> Performance
+      <DialogTitle
+        sx={{
+          fontSize: "24px",
+          fontWeight: "bold",
+          color: "rgb(116, 165, 138)",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <GridViewIcon sx={{ marginRight: "8px", fontSize: "32px" }} />{" "}
+        Performance
       </DialogTitle>
 
       <DialogContent dividers>
@@ -69,28 +80,31 @@ export default function LogBandWidth({ open, handleClose }) {
           <Box
             sx={{
               backgroundColor: "white",
-              borderRadius: '100px',
-              padding: '10px',
-              height: '200px',
-              display: 'flex',
-              flexDirection: 'column',
-              marginLeft: '20px',
-              justifyContent: 'center',
-              alignItems: 'center',
-              boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.2)',
-              '&:hover': {
+              borderRadius: "100px",
+              padding: "10px",
+              height: "200px",
+              display: "flex",
+              flexDirection: "column",
+              marginLeft: "20px",
+              justifyContent: "center",
+              alignItems: "center",
+              boxShadow: "4px 4px 4px 4px rgba(0, 0, 0, 0.2)",
+              "&:hover": {
                 backgroundColor: colors.blueAccent[600],
-              }
+              },
             }}
           >
-            <Typography variant="h2" style={{ color: 'black', fontWeight: 'bold' }}>
+            <Typography
+              variant="h2"
+              style={{ color: "black", fontWeight: "bold" }}
+            >
               CPU
             </Typography>
 
             <GaugeComponent
               type="semicircle"
               arc={{
-                colorArray: ['#00FF15', '#FF2121'],
+                colorArray: ["#00FF15", "#FF2121"],
                 padding: 0.02,
                 subArcs: [
                   { limit: 10 },
@@ -99,7 +113,7 @@ export default function LogBandWidth({ open, handleClose }) {
                   {},
                   {},
                   {},
-                  {}
+                  {},
                 ],
               }}
               pointer={{ type: "blob", animationDelay: 0 }}
@@ -113,8 +127,8 @@ export default function LogBandWidth({ open, handleClose }) {
                   type: "outer",
                   valueConfig: {
                     formatTextValue: (value) => `${value} %`,
-                  }
-                }
+                  },
+                },
               }}
               maxValue={100}
             />
@@ -123,29 +137,32 @@ export default function LogBandWidth({ open, handleClose }) {
           {/* Bandwidth Box */}
           <Box
             sx={{
-              backgroundColor: 'white',
-              borderRadius: '100px',
-              padding: '10px',
-              height: '200px',
-              display: 'flex',
-              flexDirection: 'column',
-              marginLeft: '20px',
-              justifyContent: 'center',
-              alignItems: 'center',
-              boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.2)',
-              '&:hover': {
+              backgroundColor: "white",
+              borderRadius: "100px",
+              padding: "10px",
+              height: "200px",
+              display: "flex",
+              flexDirection: "column",
+              marginLeft: "20px",
+              justifyContent: "center",
+              alignItems: "center",
+              boxShadow: "4px 4px 4px 4px rgba(0, 0, 0, 0.2)",
+              "&:hover": {
                 backgroundColor: colors.blueAccent[600],
-              }
+              },
             }}
           >
-            <Typography variant="h2" style={{ color: 'black', fontWeight: 'bold' }}>
+            <Typography
+              variant="h2"
+              style={{ color: "black", fontWeight: "bold" }}
+            >
               BandWidth
             </Typography>
 
             <GaugeComponent
               type="semicircle"
               arc={{
-                colorArray: ['#0abcfd', '#77ff8a'],
+                colorArray: ["#0abcfd", "#77ff8a"],
                 padding: 0.02,
                 subArcs: [
                   { limit: 10 },
@@ -154,7 +171,7 @@ export default function LogBandWidth({ open, handleClose }) {
                   {},
                   {},
                   {},
-                  {}
+                  {},
                 ],
               }}
               pointer={{ type: "blob", animationDelay: 0 }}
@@ -168,8 +185,8 @@ export default function LogBandWidth({ open, handleClose }) {
                   type: "outer",
                   valueConfig: {
                     formatTextValue: (value) => `${value} Mbps`,
-                  }
-                }
+                  },
+                },
               }}
               maxValue={100}
             />
@@ -178,29 +195,32 @@ export default function LogBandWidth({ open, handleClose }) {
           {/* FPS Box */}
           <Box
             sx={{
-              backgroundColor: 'white',
-              borderRadius: '100px',
-              padding: '10px',
-              height: '200px',
-              display: 'flex',
-              flexDirection: 'column',
-              marginLeft: '20px',
-              justifyContent: 'center',
-              alignItems: 'center',
-              boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.2)',
-              '&:hover': {
+              backgroundColor: "white",
+              borderRadius: "100px",
+              padding: "10px",
+              height: "200px",
+              display: "flex",
+              flexDirection: "column",
+              marginLeft: "20px",
+              justifyContent: "center",
+              alignItems: "center",
+              boxShadow: "4px 4px 4px 4px rgba(0, 0, 0, 0.2)",
+              "&:hover": {
                 backgroundColor: colors.blueAccent[600],
-              }
+              },
             }}
           >
-            <Typography variant="h2" style={{ color: 'black', fontWeight: 'bold' }}>
+            <Typography
+              variant="h2"
+              style={{ color: "black", fontWeight: "bold" }}
+            >
               FPS
             </Typography>
 
             <GaugeComponent
               type="semicircle"
               arc={{
-                colorArray: ['#8158d8', '#ff71c6'],
+                colorArray: ["#8158d8", "#ff71c6"],
                 padding: 0.02,
                 subArcs: [
                   { limit: 10 },
@@ -209,7 +229,7 @@ export default function LogBandWidth({ open, handleClose }) {
                   {},
                   {},
                   {},
-                  {}
+                  {},
                 ],
               }}
               pointer={{ type: "blob", animationDelay: 0 }}
@@ -223,13 +243,12 @@ export default function LogBandWidth({ open, handleClose }) {
                   type: "outer",
                   valueConfig: {
                     formatTextValue: (value) => `${value} FPS`,
-                  }
-                }
+                  },
+                },
               }}
               maxValue={100}
             />
           </Box>
-
         </Box>
       </DialogContent>
 

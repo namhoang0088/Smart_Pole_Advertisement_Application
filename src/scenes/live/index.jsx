@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   ListItemButton,
@@ -27,9 +27,9 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import SettingsInputAntennaIcon from "@mui/icons-material/SettingsInputAntenna";
-import AddLinkIcon from '@mui/icons-material/AddLink';
+import AddLinkIcon from "@mui/icons-material/AddLink";
 import { API_BASE_URL } from "../../data/link_api";
-import DvrIcon from '@mui/icons-material/Dvr';
+import DvrIcon from "@mui/icons-material/Dvr";
 import SuccessPopup from "../../components/SuccessPopup";
 import ErrorPopup from "../../components/ErrorPopup";
 import WaitingLivePopup from "../../components/WaitingLivePopup";
@@ -104,13 +104,12 @@ const LiveAd = () => {
     { value: 4, label: "Kênh 4" },
     { value: 5, label: "Kênh 5" },
   ];
-  
-  const [channel, setChannel] = React.useState(1);
-  const [tvChannel,setTvChannel] = useState("");
-  const [tvChannelOption, setTvChannelOption] = useState([]);
-  const [nameTwitch, setNameTwitch] = useState('');
-  const [selectTvChannel, setSelectTvChannel] =  React.useState(1);
 
+  const [channel, setChannel] = React.useState(1);
+  const [tvChannel, setTvChannel] = useState("");
+  const [tvChannelOption, setTvChannelOption] = useState([]);
+  const [nameTwitch, setNameTwitch] = useState("");
+  const [selectTvChannel, setSelectTvChannel] = React.useState(1);
 
   const handleChannelChange = (event) => {
     const newChannel = event.target.value;
@@ -118,12 +117,11 @@ const LiveAd = () => {
   };
 
   // xử lý đổi tvchannel
-const handleTvChannelChange = (event) => {
-  const newIndex = event.target.value; // Lấy index mới được chọn từ dropdown menu
-  setSelectTvChannel(newIndex); // Cập nhật giá trị mới dựa trên index
-  console.log("tvchannel ",  tvChannelOption[selectTvChannel -1].label)
-};
-
+  const handleTvChannelChange = (event) => {
+    const newIndex = event.target.value; // Lấy index mới được chọn từ dropdown menu
+    setSelectTvChannel(newIndex); // Cập nhật giá trị mới dựa trên index
+    console.log("tvchannel ", tvChannelOption[selectTvChannel - 1].label);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -134,278 +132,248 @@ const handleTvChannelChange = (event) => {
             headers: {
               "ngrok-skip-browser-warning": "true",
             },
-          }
+          },
         );
         if (!responseData.ok) {
           throw new Error("Network response video was not ok");
         }
-  
-        const responseTVChanel = await fetch(
-          `${API_BASE_URL}/get/TVchannel`,
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-            },
-          }
-        );
+
+        const responseTVChanel = await fetch(`${API_BASE_URL}/get/TVchannel`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
         if (!responseTVChanel.ok) {
           throw new Error("Network response video was not ok");
         }
         const responseDataTVChanel = await responseTVChanel.json();
         const response = await responseData.json();
-        setNameTwitch(response["name twitch"])
-        setTvChannel(responseDataTVChanel["TV channel"])
-  
-        const formattedChannels = responseDataTVChanel["TV channel"].replace(/[\[\]']+/g, '').split(', ');
+        setNameTwitch(response["name twitch"]);
+        setTvChannel(responseDataTVChanel["TV channel"]);
+
+        const formattedChannels = responseDataTVChanel["TV channel"]
+          .replace(/[\[\]']+/g, "")
+          .split(", ");
         const options = formattedChannels.map((channel, index) => ({
           value: index + 1,
-          label: `${channel}`
+          label: `${channel}`,
         }));
         setTvChannelOption(options);
-  
+
         // Xử lý dữ liệu responseVideo ở đây
       } catch (error) {
         console.error("Error fetching video schedule:", error);
       }
     };
-  
+
     fetchData(); // Gọi hàm fetchData khi giá trị của channel thay đổi
   }, [channel]);
-  
-  
-
 
   //lựa chọn kênh live-------------------end-----------------------------------
   const [liveLink, setLiveLink] = useState(null);
   const onChangeLink = (newValue) => {
     setLiveLink(newValue);
-}
-const handleClickLive= async () => {
-  setLoading(true);
-  const url = `${API_BASE_URL}//live?stream=${channel}&link=${liveLink}`;
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-      },
-      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
-    });
+  };
+  const handleClickLive = async () => {
+    setLoading(true);
+    const url = `${API_BASE_URL}//live?stream=${channel}&link=${liveLink}`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+        // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+      });
 
-    if (!response.ok) {
-      setLoading(false); 
-      const errorData = await response.json(); // Nhận dữ liệu lỗi dưới dạng JSON
-      setErrorMessage(errorData.error);
-      setOpenpopup(true);
+      if (!response.ok) {
+        setLoading(false);
+        const errorData = await response.json(); // Nhận dữ liệu lỗi dưới dạng JSON
+        setErrorMessage(errorData.error);
+        setOpenpopup(true);
+      } else {
+        setLoading(false);
+        setOpenpopupsuccess(1);
+        setTimeout(() => {
+          setOpenpopupsuccess(0);
+        }, 1000);
+      }
+
+      const data = await response.json();
+      console.log("Response data:", data);
+    } catch (error) {
+      console.error("Error:", error);
     }
-    else{
-      setLoading(false); 
-      setOpenpopupsuccess(1);
-      setTimeout(() => {
-        setOpenpopupsuccess(0);
-      }, 1000);
+  };
+
+  const handleClickStop = async () => {
+    setLoadingStop(true);
+
+    const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
+    console.log(url);
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+        // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+      });
+
+      if (!response.ok) {
+        setTimeout(() => {
+          setLoadingStop(false);
+        }, 1000);
+        throw new Error("Network response was not ok");
+      } else {
+        setTimeout(() => {
+          setLoadingStop(false);
+        }, 1000);
+      }
+
+      const data = await response.json();
+      console.log("Response data:", data);
+    } catch (error) {
+      console.error("Error:", error);
     }
+  };
+  // live bằng kênh truyền hình có sẵn-----------------------------begin----------------------------------------
+  const handleClickLiveTvChannel = async () => {
+    setLoading(true);
+    const url = `${API_BASE_URL}//live/TVchannel?stream=${channel}&tvchannel=${tvChannelOption[selectTvChannel - 1].label}`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+        // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+      });
 
-    const data = await response.json();
-    console.log("Response data:", data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
+      if (!response.ok) {
+        setLoading(false);
+        throw new Error("Network response was not ok");
+      } else {
+        setLoading(false);
+        setOpenpopupsuccess(1);
+        setTimeout(() => {
+          setOpenpopupsuccess(0);
+        }, 1000);
+      }
 
-
-const handleClickStop= async () => {
-  setLoadingStop(true)
-
-  const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
-  console.log(url)
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-      },
-      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
-    });
-
-    if (!response.ok) {
-      setTimeout(() => {
-        setLoadingStop(false);
-      }, 1000);
-      throw new Error("Network response was not ok");
-    } else{
-      setTimeout(() => {
-        setLoadingStop(false);
-      }, 1000);
+      const data = await response.json();
+      console.log("Response data:", data);
+    } catch (error) {
+      console.error("Error:", error);
     }
+  };
 
-    const data = await response.json();
-    console.log("Response data:", data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-// live bằng kênh truyền hình có sẵn-----------------------------begin----------------------------------------
-const handleClickLiveTvChannel= async () => {
-  setLoading(true);
-  const url = `${API_BASE_URL}//live/TVchannel?stream=${channel}&tvchannel=${tvChannelOption[selectTvChannel -1].label}`;
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-      },
-      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
-    });
+  const handleClickStopTvChannel = async () => {
+    setLoadingStop(true);
+    const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
+    console.log(url);
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+        // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+      });
 
-    if (!response.ok) {
-      setLoading(false);
-      throw new Error("Network response was not ok");
-    } else{
-      setLoading(false);
-      setOpenpopupsuccess(1);
-      setTimeout(() => {
-        setOpenpopupsuccess(0);
-      }, 1000);
+      if (!response.ok) {
+        setTimeout(() => {
+          setLoadingStop(false);
+        }, 1000);
+        throw new Error("Network response was not ok");
+      } else {
+        setTimeout(() => {
+          setLoadingStop(false);
+        }, 1000);
+      }
+
+      const data = await response.json();
+      console.log("Response data:", data);
+    } catch (error) {
+      console.error("Error:", error);
     }
+  };
+  // live bằng video có sẵn-----------------------------begin----------------------------------------
+  const handleClickLiveVideo = async () => {
+    setLoading(true);
+    const list = selectedOptions.join(",");
+    const url = `${API_BASE_URL}//live/video?stream=${channel}&list=${list}`;
+    console.log("urllllllllll", url);
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+        // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+      });
 
-    const data = await response.json();
-    console.log("Response data:", data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
+      if (!response.ok) {
+        setLoading(false);
+        throw new Error("Network response was not ok");
+      } else {
+        setLoading(false);
+        setOpenpopupsuccess(1);
+        setTimeout(() => {
+          setOpenpopupsuccess(0);
+        }, 1000);
+      }
 
-const handleClickStopTvChannel= async () => {
-  setLoadingStop(true);
-  const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
-  console.log(url)
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-      },
-      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
-    });
-
-    if (!response.ok) {
-      setTimeout(() => {
-        setLoadingStop(false);
-      }, 1000);
-      throw new Error("Network response was not ok");
-    } else{
-      setTimeout(() => {
-        setLoadingStop(false);
-      }, 1000);
+      const data = await response.json();
+      console.log("Response data:", data);
+    } catch (error) {
+      console.error("Error:", error);
     }
+  };
 
-    const data = await response.json();
-    console.log("Response data:", data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-// live bằng video có sẵn-----------------------------begin----------------------------------------
-const handleClickLiveVideo= async () => {
-  setLoading(true); 
-  const list = selectedOptions.join(",");
-  const url = `${API_BASE_URL}//live/video?stream=${channel}&list=${list}`;
-  console.log("urllllllllll",url)
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-      },
-      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
-    });
+  const handleClickStopVideo = async () => {
+    setLoadingStop(true);
+    const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
+    console.log(url);
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+        // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
+      });
 
-    if (!response.ok) {
-      setLoading(false);
-      throw new Error("Network response was not ok");
-    } else{
-      setLoading(false);
-      setOpenpopupsuccess(1);
-      setTimeout(() => {
-        setOpenpopupsuccess(0);
-      }, 1000);
+      if (!response.ok) {
+        setTimeout(() => {
+          setLoadingStop(false);
+        }, 1000);
+        throw new Error("Network response was not ok");
+      } else {
+        setTimeout(() => {
+          setLoadingStop(false);
+        }, 1000);
+      }
+
+      const data = await response.json();
+      console.log("Response data:", data);
+    } catch (error) {
+      console.error("Error:", error);
     }
-
-    const data = await response.json();
-    console.log("Response data:", data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
-const handleClickStopVideo= async () => {
-  setLoadingStop(true);
-  const url = `${API_BASE_URL}//stoplive?stream=${channel}`;
-  console.log(url)
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-      },
-      // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
-    });
-
-    if (!response.ok) {
-      setTimeout(() => {
-        setLoadingStop(false);
-      }, 1000);
-      throw new Error("Network response was not ok");
-    } else{
-      setTimeout(() => {
-        setLoadingStop(false);
-      }, 1000);
-    }
-
-    const data = await response.json();
-    console.log("Response data:", data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  };
 
   //hiện popup lỗi-----------------------------------begin---------------------------------
   const [loading, setLoading] = useState(false);
   const [loadingStop, setLoadingStop] = useState(false);
 
   const [openpopup, setOpenpopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleClickOpenpopup = () => {
     setOpenpopup(true);
@@ -428,39 +396,39 @@ const handleClickStopVideo= async () => {
 
   const handleClosepopupLoadingLive = () => {
     setLoading(false);
-  }
+  };
 
   const handleClosepopupLoadingStop = () => {
     setLoadingStop(false);
-  }
-  
-    // mở danh sách video để thiết lập nội dung cho quảng cáo ---------------end--------------
-    const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const responseVideo = await fetch(`${API_BASE_URL}/get/video`, {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-            },
-          });
-  
-          if (!responseVideo.ok) {
-            throw new Error("Network response video was not ok");
-          }
-  
-          const dataVideo = await responseVideo.json();
-          // console.log("nammmmmmmmmmmmmmmmmmmmmmmmmmm", dataVideo); // In dữ liệu nhận được ra console
-  
-          setDataVideo(dataVideo); // Cập nhật giá trị cho biến dataVideo
-        } catch (error) {
-          console.error("Error fetching data:", error);
+  };
+
+  // mở danh sách video để thiết lập nội dung cho quảng cáo ---------------end--------------
+  const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const responseVideo = await fetch(`${API_BASE_URL}/get/video`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
+
+        if (!responseVideo.ok) {
+          throw new Error("Network response video was not ok");
         }
-      };
-  
-      fetchData();
-    }, []);
-    const [selectedOptions, setSelectedOptions] = useState([]);
+
+        const dataVideo = await responseVideo.json();
+        // console.log("nammmmmmmmmmmmmmmmmmmmmmmmmmm", dataVideo); // In dữ liệu nhận được ra console
+
+        setDataVideo(dataVideo); // Cập nhật giá trị cho biến dataVideo
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  const [selectedOptions, setSelectedOptions] = useState([]);
   //hiện popup thành công---------------------------------end--------------------------------
   return (
     <Box m="20px">
@@ -495,11 +463,11 @@ const handleClickStopVideo= async () => {
           ></video> */}
 
           <iframe
-    src={`https://player.twitch.tv/?channel=${nameTwitch}&parent=${currentHost}`}
-    height="100%"
-    width="100%"
-    allowfullscreen>
-</iframe>
+            src={`https://player.twitch.tv/?channel=${nameTwitch}&parent=${currentHost}`}
+            height="100%"
+            width="100%"
+            allowfullscreen
+          ></iframe>
         </Box>
 
         <Box // phần chọn smart pole
@@ -515,7 +483,7 @@ const handleClickStopVideo= async () => {
               marginBottom: "20px",
             }}
           >
-          <SubscriptionsIcon/>
+            <SubscriptionsIcon />
             <Typography
               variant="h4"
               style={{ marginRight: "10px", paddingLeft: "10px" }}
@@ -546,7 +514,7 @@ const handleClickStopVideo= async () => {
               ))}
             </TextField>
           </Box>
-        {/* phần live stream bằng link------------begin--------------------------------------- */}
+          {/* phần live stream bằng link------------begin--------------------------------------- */}
           <Box
             style={{
               display: "flex",
@@ -554,7 +522,7 @@ const handleClickStopVideo= async () => {
               marginBottom: "20px",
             }}
           >
-          <AddLinkIcon />
+            <AddLinkIcon />
             <Typography
               variant="h4"
               style={{ marginRight: "10px", paddingLeft: "10px" }}
@@ -563,69 +531,67 @@ const handleClickStopVideo= async () => {
             </Typography>
           </Box>
           <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
-  <TextField
-    label="Đường link"
-    variant="outlined"
-    sx={{ flex: 1 }}
-    onChange={(event) => {
-      const newValue = event.target.value;
-      onChangeLink(newValue);
-    }}
-  />
-  <Button
-    variant="outlined"
-    onClick={handleClickLive}
-    sx={{
-      color: "#007FFF",
-      borderColor: "#007FFF",
-      backgroundColor: "#FFFFFF",
-      fontSize: "1.2rem",
-      fontWeight: "bold",
-      padding: "15px 20px",
-      borderRadius: "10px",
-      "&:hover": {
-        backgroundColor: "#007FFF",
-        color: "#FFFFFF",
-      },
-    }}
-  >
-    Live
-  </Button>
+            <TextField
+              label="Đường link"
+              variant="outlined"
+              sx={{ flex: 1 }}
+              onChange={(event) => {
+                const newValue = event.target.value;
+                onChangeLink(newValue);
+              }}
+            />
+            <Button
+              variant="outlined"
+              onClick={handleClickLive}
+              sx={{
+                color: "#007FFF",
+                borderColor: "#007FFF",
+                backgroundColor: "#FFFFFF",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                padding: "15px 20px",
+                borderRadius: "10px",
+                "&:hover": {
+                  backgroundColor: "#007FFF",
+                  color: "#FFFFFF",
+                },
+              }}
+            >
+              Live
+            </Button>
 
-  <Button
-  variant="outlined"
-  onClick={handleClickStop}
-  sx={{
-    color: "#FF0000", // Đổi màu chữ thành đỏ
-    borderColor: "#FF0000", // Đổi màu viền thành đỏ
-    backgroundColor: "#FFFFFF",
-    fontSize: "1.2rem",
-    fontWeight: "bold",
-    padding: "15px 20px",
-    borderRadius: "10px",
-    "&:hover": {
-      backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
-      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
-    },
-  }}
->
-  Stop
-</Button>
+            <Button
+              variant="outlined"
+              onClick={handleClickStop}
+              sx={{
+                color: "#FF0000", // Đổi màu chữ thành đỏ
+                borderColor: "#FF0000", // Đổi màu viền thành đỏ
+                backgroundColor: "#FFFFFF",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                padding: "15px 20px",
+                borderRadius: "10px",
+                "&:hover": {
+                  backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+                  color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+                },
+              }}
+            >
+              Stop
+            </Button>
+          </Box>
 
-</Box>
+          {/* phần live stream bằng link------------end--------------------------------------- */}
 
-      {/* phần live stream bằng link------------end--------------------------------------- */}
-      
-
-      {/* phần live stream bằng kênh có sẵn------------begin--------------------------------------- */}
-      <Box
+          {/* phần live stream bằng kênh có sẵn------------begin--------------------------------------- */}
+          <Box
             style={{
               display: "flex",
               alignItems: "center",
               marginBottom: "20px",
             }}
           >
-          <DvrIcon />
+            <DvrIcon />
             <Typography
               variant="h4"
               style={{ marginRight: "10px", paddingLeft: "10px" }}
@@ -634,74 +600,72 @@ const handleClickStopVideo= async () => {
             </Typography>
           </Box>
           <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
-          <Box variant="outlined"
-    sx={{ flex: 1 }}>
-            <TextField
-              select
-              label="Đài truyền hình"
-              value={selectTvChannel}
-              onChange={handleTvChannelChange}
+            <Box variant="outlined" sx={{ flex: 1 }}>
+              <TextField
+                select
+                label="Đài truyền hình"
+                value={selectTvChannel}
+                onChange={handleTvChannelChange}
+                variant="outlined"
+                fullWidth
+              >
+                {tvChannelOption.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    <Box display="flex" alignItems="center">
+                      {" "}
+                      {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
+                      <DvrIcon sx={{ marginRight: 1 }} />{" "}
+                      {/* Icon Subscriptions */}
+                      {option.label}
+                    </Box>
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+            <Button
               variant="outlined"
-              fullWidth
+              onClick={handleClickLiveTvChannel}
+              sx={{
+                color: "#007FFF",
+                borderColor: "#007FFF",
+                backgroundColor: "#FFFFFF",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                padding: "15px 20px",
+                borderRadius: "10px",
+                "&:hover": {
+                  backgroundColor: "#007FFF",
+                  color: "#FFFFFF",
+                },
+              }}
             >
-              {tvChannelOption.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  <Box display="flex" alignItems="center">
-                    {" "}
-                    {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
-                    <DvrIcon sx={{ marginRight: 1 }} />{" "}
-                    {/* Icon Subscriptions */}
-                    {option.label}
-                  </Box>
-                </MenuItem>
-              ))}
-            </TextField>
+              Live
+            </Button>
+
+            <Button
+              variant="outlined"
+              onClick={handleClickStopTvChannel}
+              sx={{
+                color: "#FF0000", // Đổi màu chữ thành đỏ
+                borderColor: "#FF0000", // Đổi màu viền thành đỏ
+                backgroundColor: "#FFFFFF",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                padding: "15px 20px",
+                borderRadius: "10px",
+                "&:hover": {
+                  backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+                  color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+                },
+              }}
+            >
+              Stop
+            </Button>
           </Box>
-  <Button
-    variant="outlined"
-    onClick={handleClickLiveTvChannel}
-    sx={{
-      color: "#007FFF",
-      borderColor: "#007FFF",
-      backgroundColor: "#FFFFFF",
-      fontSize: "1.2rem",
-      fontWeight: "bold",
-      padding: "15px 20px",
-      borderRadius: "10px",
-      "&:hover": {
-        backgroundColor: "#007FFF",
-        color: "#FFFFFF",
-      },
-    }}
-  >
-    Live
-  </Button>
 
-  <Button
-  variant="outlined"
-  onClick={handleClickStopTvChannel}
-  sx={{
-    color: "#FF0000", // Đổi màu chữ thành đỏ
-    borderColor: "#FF0000", // Đổi màu viền thành đỏ
-    backgroundColor: "#FFFFFF",
-    fontSize: "1.2rem",
-    fontWeight: "bold",
-    padding: "15px 20px",
-    borderRadius: "10px",
-    "&:hover": {
-      backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
-      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
-    },
-  }}
->
-  Stop
-</Button>
+          {/* phần live stream bằng kênh có sẵn------------end--------------------------------------- */}
 
-</Box>
-
-      {/* phần live stream bằng kênh có sẵn------------end--------------------------------------- */}
-
-      {/* phần live stream bằng camera------------begin--------------------------------------- */}
+          {/* phần live stream bằng camera------------begin--------------------------------------- */}
           <Box
             style={{
               display: "flex",
@@ -709,7 +673,7 @@ const handleClickStopVideo= async () => {
               marginBottom: "20px",
             }}
           >
-          <SettingsInputAntennaIcon />
+            <SettingsInputAntennaIcon />
             <Typography
               variant="h4"
               style={{ marginRight: "10px", paddingLeft: "10px" }}
@@ -718,9 +682,8 @@ const handleClickStopVideo= async () => {
             </Typography>
           </Box>
 
-
           {/* <Box display="flex" alignItems="center" marginLeft="50px"> */}
-            {/* <Button
+          {/* <Button
               variant="contained"
               sx={{
                 backgroundColor: isMicOn ? "#007FFF" : "#757575",
@@ -771,8 +734,7 @@ const handleClickStopVideo= async () => {
             >
               <PhoneDisabledIcon fontSize="large" />
             </Button> */}
-            <Box display="flex" alignItems="center" gap={2} marginBottom="20px"
-          >
+          <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
             <Autocomplete
               sx={{ width: 300 }}
               multiple
@@ -794,49 +756,47 @@ const handleClickStopVideo= async () => {
                 />
               )}
             />
-              <Button
-    variant="outlined"
-    onClick={handleClickLiveVideo}
-    sx={{
-      color: "#007FFF",
-      borderColor: "#007FFF",
-      backgroundColor: "#FFFFFF",
-      fontSize: "1.2rem",
-      fontWeight: "bold",
-      padding: "15px 20px",
-      borderRadius: "10px",
-      "&:hover": {
-        backgroundColor: "#007FFF",
-        color: "#FFFFFF",
-      },
-    }}
-  >
-    Live
-  </Button>
+            <Button
+              variant="outlined"
+              onClick={handleClickLiveVideo}
+              sx={{
+                color: "#007FFF",
+                borderColor: "#007FFF",
+                backgroundColor: "#FFFFFF",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                padding: "15px 20px",
+                borderRadius: "10px",
+                "&:hover": {
+                  backgroundColor: "#007FFF",
+                  color: "#FFFFFF",
+                },
+              }}
+            >
+              Live
+            </Button>
 
-  <Button
-  variant="outlined"
-  onClick={handleClickStopVideo}
-  sx={{
-    color: "#FF0000", // Đổi màu chữ thành đỏ
-    borderColor: "#FF0000", // Đổi màu viền thành đỏ
-    backgroundColor: "#FFFFFF",
-    fontSize: "1.2rem",
-    fontWeight: "bold",
-    padding: "15px 20px",
-    borderRadius: "10px",
-    "&:hover": {
-      backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
-      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
-    },
-  }}
->
-  Stop
-</Button>
-
-
+            <Button
+              variant="outlined"
+              onClick={handleClickStopVideo}
+              sx={{
+                color: "#FF0000", // Đổi màu chữ thành đỏ
+                borderColor: "#FF0000", // Đổi màu viền thành đỏ
+                backgroundColor: "#FFFFFF",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                padding: "15px 20px",
+                borderRadius: "10px",
+                "&:hover": {
+                  backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+                  color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+                },
+              }}
+            >
+              Stop
+            </Button>
           </Box>
-{/* 
+          {/* 
           </Box> */}
 
           <Box display="flex" alignItems="center" marginLeft="50px">
@@ -862,18 +822,28 @@ const handleClickStopVideo= async () => {
               Go Live Here!
             </Button>
           </Box>
-           {/* phần live stream bằng camera------------begin--------------------------------------- */}
-
+          {/* phần live stream bằng camera------------begin--------------------------------------- */}
         </Box>
       </Box>
-      <ErrorPopup open={openpopup} handleClose={handleClosepopup} errorMessage={errorMessage} />
-      <SuccessPopup open={openpopupsuccess} handleClose={handleClosepopupsuccess}/>
-      <WaitingLivePopup open={loading} handleClose={handleClosepopupLoadingLive}/>
-      <WaitingStopPopup open={loadingStop} handleClose = {handleClosepopupLoadingStop}/>
+      <ErrorPopup
+        open={openpopup}
+        handleClose={handleClosepopup}
+        errorMessage={errorMessage}
+      />
+      <SuccessPopup
+        open={openpopupsuccess}
+        handleClose={handleClosepopupsuccess}
+      />
+      <WaitingLivePopup
+        open={loading}
+        handleClose={handleClosepopupLoadingLive}
+      />
+      <WaitingStopPopup
+        open={loadingStop}
+        handleClose={handleClosepopupLoadingStop}
+      />
     </Box>
-    
   );
 };
 
 export default LiveAd;
-

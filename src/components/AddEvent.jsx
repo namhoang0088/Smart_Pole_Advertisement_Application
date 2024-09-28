@@ -713,7 +713,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         return [...prevArray, { label: label, value: newValue }];
       }
     });
-    console.log("success popup", successsubmit)
+    console.log("success popup", successsubmit);
   };
   //daily-----------------------------------------end-------------------------------------------
   //weekly-----------------------------------------begin-------------------------------------------
@@ -1024,13 +1024,12 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         if (prevSuccess) {
           setOpenpopupsuccess(1);
           // Thực hiện các hành động khác sau khi tất cả các yêu cầu API hoàn thành
-                  setTimeout(() => {
-         window.location.reload();
-        }, 2000);
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
         }
         return prevSuccess;
       });
-      
     } catch (error) {
       console.error("Error while sending API requests:", error);
       // Thêm logic xử lý khi gặp lỗi khi gửi API nếu cần
@@ -1040,7 +1039,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
   //hiện popup lỗi-----------------------------------begin---------------------------------
   const [openpopup, setOpenpopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleClickOpenpopup = () => {
     setOpenpopup(true);
@@ -1068,7 +1067,6 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         open={open}
         PaperProps={{ sx: { width: "60%", maxWidth: "100%" } }}
       >
-    
         <DialogTitle
           id="customized-dialog-title"
           sx={{ fontSize: "24px", fontWeight: "bold" }}
@@ -1324,8 +1322,15 @@ export default function AddEvent({ open, handleClose, channelStream }) {
           </Button>
         </DialogActions>
       </Dialog>
-      <ErrorPopup open={openpopup} handleClose={handleClosepopup} errorMessage={errorMessage} />
-      <SuccessPopup open={openpopupsuccess} handleClose={handleClosepopupsuccess}/>
+      <ErrorPopup
+        open={openpopup}
+        handleClose={handleClosepopup}
+        errorMessage={errorMessage}
+      />
+      <SuccessPopup
+        open={openpopupsuccess}
+        handleClose={handleClosepopupsuccess}
+      />
     </LocalizationProvider>
   );
 }

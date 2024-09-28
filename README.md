@@ -1,4 +1,3 @@
-
 ## Cài Đặt và Chạy Ứng Dụng
 
 ### 1. **Xây Dựng Docker Image**

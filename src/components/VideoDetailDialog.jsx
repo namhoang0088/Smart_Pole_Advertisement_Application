@@ -1,15 +1,15 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import SlideshowIcon from '@mui/icons-material/Slideshow';
+import * as React from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import SlideshowIcon from "@mui/icons-material/Slideshow";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { API_BASE_URL } from '../data/link_api';
+import { API_BASE_URL } from "../data/link_api";
 
 export default function VideoDetailDialog({ open, handleClose, videoname }) {
-  const [videoSrc, setVideoSrc] = React.useState('');
+  const [videoSrc, setVideoSrc] = React.useState("");
 
   const videoURL = `${API_BASE_URL}/videocontent/${videoname}`;
   console.log("video url", videoURL);
@@ -17,7 +17,7 @@ export default function VideoDetailDialog({ open, handleClose, videoname }) {
   const customFetch = async (url, options = {}) => {
     const customHeaders = {
       ...options.headers,
-      'ngrok-skip-browser-warning': 'true',
+      "ngrok-skip-browser-warning": "true",
     };
 
     const response = await fetch(url, {
@@ -45,13 +45,13 @@ export default function VideoDetailDialog({ open, handleClose, videoname }) {
 
   React.useEffect(() => {
     if (open && videoname) {
-      getVideoURL().then(url => {
+      getVideoURL().then((url) => {
         if (url) {
           setVideoSrc(url);
         }
       });
     } else {
-      setVideoSrc('');
+      setVideoSrc("");
     }
   }, [open, videoname]);
 
@@ -63,16 +63,17 @@ export default function VideoDetailDialog({ open, handleClose, videoname }) {
       aria-describedby="alert-dialog-description"
       PaperProps={{ sx: { width: "60%", maxWidth: "100%" } }}
     >
-      <DialogTitle 
-        sx={{ 
-          fontSize: "24px", 
-          fontWeight: "bold", 
-          color: "rgb(124, 189, 249)", 
-          display: 'flex', 
-          alignItems: 'center' 
+      <DialogTitle
+        sx={{
+          fontSize: "24px",
+          fontWeight: "bold",
+          color: "rgb(124, 189, 249)",
+          display: "flex",
+          alignItems: "center",
         }}
       >
-        <SlideshowIcon sx={{ marginRight: '8px', fontSize: '32px' }} /> Nội dung của Video: {videoname}
+        <SlideshowIcon sx={{ marginRight: "8px", fontSize: "32px" }} /> Nội dung
+        của Video: {videoname}
       </DialogTitle>
       <DialogContent dividers>
         {videoSrc ? (
