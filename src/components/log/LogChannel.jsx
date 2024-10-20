@@ -24,23 +24,16 @@ import Filter4Icon from "@mui/icons-material/Filter4";
 import Filter5Icon from "@mui/icons-material/Filter5";
 import Filter6Icon from "@mui/icons-material/Filter6";
 import Filter7Icon from "@mui/icons-material/Filter7";
+import InfoIcon from "@mui/icons-material/Info";
+import WarningIcon from "@mui/icons-material/Warning";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import BedtimeIcon from '@mui/icons-material/Bedtime';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import NetworkWifi2BarIcon from '@mui/icons-material/NetworkWifi2Bar';
 import { useTheme } from "@mui/material/styles";
 import { tokens } from "../../theme";
 
-const getStatusBackgroundColor = (status) => {
-  switch (status) {
-    case "idle":
-      return "purple"; // Màu tím
-    case "scheduler":
-      return "green"; // Màu xanh lá cây
-    case "live":
-      return "blue"; // Màu xanh dương
-    case "unknown":
-      return "red"; // Màu vàng
-    default:
-      return "black"; // Mặc định màu nền nếu trạng thái không xác định
-  }
-};
+// Dữ liệu kênh
 const channelData = [
   {
     id: 1,
@@ -78,7 +71,7 @@ const channelData = [
     id: 5,
     name: "Channel 5",
     status: "unknown",
-    content: "Content 4",
+    content: "Content 5",
     date: "2024-08-01",
     time: "14:00",
   },
@@ -86,7 +79,7 @@ const channelData = [
     id: 6,
     name: "Channel 6",
     status: "unknown",
-    content: "Content 4",
+    content: "Content 6",
     date: "2024-08-01",
     time: "15:00",
   },
@@ -94,55 +87,47 @@ const channelData = [
     id: 7,
     name: "Channel 7",
     status: "unknown",
-    content: "Content 4",
+    content: "Content 7",
     date: "2024-08-01",
     time: "16:00",
   },
 ];
 
+// Tạo kiểu cho các ô của bảng
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
-    textAlign: "center", // căn giữa nội dung theo chiều ngang
+    textAlign: "center",
+    position: 'sticky',
+    top: 0,
+    zIndex: 10,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
-    textAlign: "center", // căn giữa nội dung theo chiều ngang
-    verticalAlign: "middle", // căn giữa nội dung theo chiều dọc
+    textAlign: "center",
+    verticalAlign: "middle",
   },
-}));
-
-const StatusTableCell = styled(StyledTableCell)(({ status, theme }) => ({
-  position: "relative",
-  overflow: "hidden",
-  color: "white",
-  fontWeight: "bold",
-  padding: "10px", // Thay đổi padding để tạo khoảng trống cho nền
-  textAlign: "center",
-  verticalAlign: "middle",
-  backgroundColor: getStatusBackgroundColor(status), // Sử dụng màu nền dựa trên trạng thái
-  borderRadius: "50px",
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    backgroundColor: "white", // Đặt màu nền trắng cho các dòng lẻ
+    backgroundColor: "white",
   },
   "&:nth-of-type(even)": {
-    backgroundColor: "white", // Đặt màu nền trắng cho các dòng chẵn
+    backgroundColor: "white",
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
   },
 }));
 
 const ScrollableTableContainer = styled(TableContainer)(({ theme }) => ({
-  maxHeight: "375px", // Set the max height for the table container
-  overflowY: "auto", // Enable vertical scrollbar if content overflows
+  maxHeight: "375px",
+  overflowY: "auto",
 }));
 
+// Thành phần LogChannel
 export default function LogChannel({ open, handleClose }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -371,9 +356,28 @@ export default function LogChannel({ open, handleClose }) {
                         {channel.id}
                       </StyledTableCell>
                       <StyledTableCell>{channel.name}</StyledTableCell>
-                      <StatusTableCell status={channel.status}>
-                        {channel.status}
-                      </StatusTableCell>
+                      <StyledTableCell>
+                        {channel.status === "scheduler" && (
+                          <Button variant="outlined" color="success">
+                            <CalendarMonthIcon /> Scheduler
+                          </Button>
+                        )}
+                        {channel.status === "live" && (
+                          <Button variant="outlined" color="primary">
+                            <NetworkWifi2BarIcon /> Live
+                          </Button>
+                        )}
+                        {channel.status === "idle" && (
+                          <Button variant="outlined" style={{ color: 'purple', borderColor: 'purple' }}>
+                            <BedtimeIcon /> Idle
+                          </Button>
+                        )}
+                        {channel.status === "unknown" && (
+                          <Button variant="outlined" color="error">
+                            <QuestionMarkIcon /> Unknown
+                          </Button>
+                        )}
+                      </StyledTableCell>
                       <StyledTableCell>{channel.content}</StyledTableCell>
                       <StyledTableCell>{channel.date}</StyledTableCell>
                       <StyledTableCell>{channel.time}</StyledTableCell>

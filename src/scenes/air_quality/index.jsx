@@ -211,6 +211,64 @@ const AirQuality = () => {
     setAirqualityhistory(false);
   };
 
+  const [smartPoleData, setSmartPoleData] = useState({
+    name: "--",
+    coordinates: "--",
+    location: "--",
+    sensors: {
+      temperature: "--",
+      humidity: "--",
+      PM25: "--",
+      PM10: "--",
+      noise: "--",
+      lux: "--",
+    },
+  });
+
+
+  // Hàm gọi API từ Flask mỗi 2 giây
+  useEffect(() => {
+    const fetchSmartPoleData = () => {
+      fetch("http://192.168.1.209:5000/get/smartpole")
+        .then((response) => response.json())
+        .then((data) => {
+          setSmartPoleData(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching smart pole data:", error);
+        });
+    };
+
+    // Gọi API lần đầu
+    fetchSmartPoleData();
+
+    // Thiết lập khoảng thời gian gọi API mỗi 2 giây
+    const intervalId = setInterval(fetchSmartPoleData, 2000);
+
+    // Xóa khoảng thời gian khi component bị hủy
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  const onSelectFile = (event) => {
+    const selectedFiles = event.target.files;
+    const selectedFilesArray = Array.from(selectedFiles);
+
+    const imagesArray = selectedFilesArray.map((file) => {
+      return URL.createObjectURL(file);
+    });
+
+    setSelectedImages((previousImages) => previousImages.concat(imagesArray));
+
+    // FOR BUG IN CHROME
+    event.target.value = "";
+  };
+
+  function deleteHandler(image) {
+    setSelectedImages(selectedImages.filter((e) => e !== image));
+    URL.revokeObjectURL(image);
+  }
   return (
     <Box m="20px">
       <Box display="flex">
@@ -238,18 +296,18 @@ const AirQuality = () => {
             sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
           />
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Smart pole 1
+          {smartPoleData.name}
           </Typography>
 
           <MyLocationIcon
             sx={{
               color: colors.greenAccent[600],
-              fontSize: "26px",
+              fontSize: "26px", 
               marginLeft: "50px",
             }}
           />
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            10.880415:106.805633
+          {smartPoleData.coordinates}
           </Typography>
 
           <LocationOnIcon
@@ -260,7 +318,7 @@ const AirQuality = () => {
             }}
           />
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Dĩ an
+          {smartPoleData.location}
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -277,7 +335,7 @@ const AirQuality = () => {
                 variant="h6"
                 sx={{ marginRight: "10px", fontWeight: "bold" }}
               >
-                30℃{" "}
+                {smartPoleData.sensors.temperature}℃{" "}
               </Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
@@ -291,9 +349,9 @@ const AirQuality = () => {
               <Box
                 sx={{ width: "70%", marginLeft: "31px", marginRight: "10px" }}
               >
-                <HumiProgress variant="determinate" value={90} />
+                <HumiProgress variant="determinate" value={smartPoleData.sensors.humidity} />
               </Box>
-              <Typography variant="h6">90%</Typography>
+              <Typography variant="h6">{smartPoleData.sensors.humidity}%</Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
             <ListItem>
@@ -306,10 +364,10 @@ const AirQuality = () => {
               >
                 <PM25Progress
                   variant="determinate"
-                  value={getProgressPercentage(100)}
+                  value={getProgressPercentage(smartPoleData.sensors.PM25)}
                 />
               </Box>
-              <Typography variant="h6">100 µg/m³</Typography>
+              <Typography variant="h6">{smartPoleData.sensors.PM25} µg/m³</Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
             <ListItem>
@@ -322,10 +380,10 @@ const AirQuality = () => {
               >
                 <PM25Progress
                   variant="determinate"
-                  value={getProgressPercentage(150)}
+                  value={getProgressPercentage(smartPoleData.sensors.PM10)}
                 />
               </Box>
-              <Typography variant="h6">150 µg/m³</Typography>
+              <Typography variant="h6">{smartPoleData.sensors.PM10} µg/m³</Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
             <ListItem>
@@ -340,10 +398,10 @@ const AirQuality = () => {
               >
                 <NoiseProgress
                   variant="determinate"
-                  value={getProgressPercentageNoise(110)}
+                  value={getProgressPercentageNoise(smartPoleData.sensors.noise)}
                 />
               </Box>
-              <Typography variant="h6">110 db</Typography>
+              <Typography variant="h6">{smartPoleData.sensors.noise} db</Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
             <ListItem>
@@ -357,7 +415,7 @@ const AirQuality = () => {
                 variant="h6"
                 sx={{ marginRight: "10px", fontWeight: "bold" }}
               >
-                1000 lx
+                {smartPoleData.sensors.lux} lx
               </Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
@@ -389,11 +447,118 @@ const AirQuality = () => {
           </List>
         </AccordionDetails>
       </Accordion>
+
+
+
+
+
+      <Accordion
+        sx={{ borderRadius: "10px", overflow: "hidden",  marginTop:"20px"}} // Thêm borderRadius cho toàn bộ Accordion
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+          sx={{
+            backgroundColor: "#ebecf0",
+            borderRadius: "10px",
+            display: "flex",
+            alignItems: "center", // Căn chỉnh theo chiều
+            justifyContent: "center",
+            gap: 1, // Khoảng cách giữa icon và text
+          }}
+        >
+          <TrafficIcon
+            sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+          />
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Smart Pole 2
+          </Typography>
+
+          <MyLocationIcon
+            sx={{
+              color: colors.greenAccent[600],
+              fontSize: "26px",
+              marginLeft: "50px",
+            }}
+          />
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            10.880415:106.805633
+          </Typography>
+
+          <LocationOnIcon
+            sx={{
+              color: colors.greenAccent[600],
+              fontSize: "26px",
+              marginLeft: "50px",
+            }}
+          />
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            BK-CS2
+          </Typography>
+        </AccordionSummary>
+      </Accordion>
+
+
       <AirQualityHistory
         open={airqualityhistory}
         handleClose={handleCloserAirqualityhistory}
       />
+
+<section>
+      <label>
+        + Add Images
+        <br />
+        <span>up to 10 images</span>
+        <input
+          type="file"
+          name="images"
+          onChange={onSelectFile}
+          multiple
+          accept="image/png , image/jpeg, image/webp"
+        />
+      </label>
+      <br />
+
+
+
+      {selectedImages.length > 0 &&
+        (selectedImages.length > 10 ? (
+          <p className="error">
+            You can't upload more than 10 images! <br />
+            <span>
+              please delete <b> {selectedImages.length - 10} </b> of them{" "}
+            </span>
+          </p>
+        ) : (
+          <button
+            className="upload-btn"
+            onClick={() => {
+              console.log(selectedImages);
+            }}
+          >
+            UPLOAD {selectedImages.length} IMAGE
+            {selectedImages.length === 1 ? "" : "S"}
+          </button>
+        ))}
+
+      <div className="images">
+        {selectedImages &&
+          selectedImages.map((image, index) => {
+            return (
+              <div key={image} className="image">
+                <img src={image} height="200" alt="upload" />
+                <button onClick={() => deleteHandler(image)}>
+                  delete image
+                </button>
+                <p>{index + 1}</p>
+              </div>
+            );
+          })}
+      </div>
+    </section>
     </Box>
+    
   );
 };
 export default AirQuality;

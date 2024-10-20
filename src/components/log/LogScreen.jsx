@@ -33,6 +33,7 @@ import Filter3Icon from "@mui/icons-material/Filter3";
 import Filter4Icon from "@mui/icons-material/Filter4";
 import Filter5Icon from "@mui/icons-material/Filter5";
 import Filter6Icon from "@mui/icons-material/Filter6";
+import { API_BASE_URL } from "../../data/link_api";
 export default function LogScreen({ open, handleClose }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -60,7 +61,12 @@ export default function LogScreen({ open, handleClose }) {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://${window.location.hostname}:8000/get/stats`,
+          `${API_BASE_URL}/get/stats`,
+          {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          },
         );
         const data = await response.json();
         setPerformanceData1({

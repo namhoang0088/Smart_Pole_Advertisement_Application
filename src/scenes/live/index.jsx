@@ -36,6 +36,8 @@ import WaitingLivePopup from "../../components/WaitingLivePopup";
 import WaitingStopPopup from "../../components/WaitingStopPopup";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import Autocomplete from "@mui/material/Autocomplete";
+import SlideshowIcon from '@mui/icons-material/Slideshow';
+import DeleteIcon from '@mui/icons-material/Delete';
 const LiveAd = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -430,6 +432,31 @@ const LiveAd = () => {
   }, []);
   const [selectedOptions, setSelectedOptions] = useState([]);
   //hiện popup thành công---------------------------------end--------------------------------
+
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  const onSelectFile = (event) => {
+    const selectedFiles = event.target.files;
+    const selectedFilesArray = Array.from(selectedFiles);
+
+    const imagesArray = selectedFilesArray.map((file) => {
+      return URL.createObjectURL(file);
+    });
+
+    setSelectedImages((previousImages) => previousImages.concat(imagesArray));
+
+    // FOR BUG IN CHROME
+    event.target.value = "";
+  };
+
+  function deleteHandler(image) {
+    setSelectedImages(selectedImages.filter((e) => e !== image));
+    URL.revokeObjectURL(image);
+  }
+
+
+
+
   return (
     <Box m="20px">
       <Header title="Live Stream" subtitle="Welcome to Live Stream" />
@@ -799,30 +826,191 @@ const LiveAd = () => {
           {/* 
           </Box> */}
 
-          <Box display="flex" alignItems="center" marginLeft="50px">
-            <Button
-              variant="outlined"
-              sx={{
-                color: "#007FFF", // Màu chữ là màu xanh lấp biển
-                borderColor: "#007FFF", // Màu viền là màu xanh lấp biển
-                backgroundColor: "#FFFFFF", // Màu nền là màu trắng
-                marginTop: "20px",
-                marginLeft: "60px",
-                fontSize: "1.2rem", // kích thước chữ
-                fontWeight: "bold", // in đậm chữ
-                padding: "15px 20px", // padding để tạo button lớn hơn
-                borderRadius: "10px", // bo tròn góc
-                "&:hover": {
-                  // thêm hiệu ứng hover khi di chuột qua button
-                  backgroundColor: "#007FFF", // Màu nền khi hover là màu xanh lấp biển
-                  color: "#FFFFFF", // Màu chữ là màu trắng khi hover
-                },
-              }}
+          {/* phần live stream bằng slide------------begin--------------------------------------- */}
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <SlideshowIcon />
+            <Typography
+              variant="h4"
+              style={{ marginRight: "10px", paddingLeft: "10px" }}
             >
-              Go Live Here!
-            </Button>
+              <strong>LiveStream Slide</strong>
+            </Typography>
           </Box>
-          {/* phần live stream bằng camera------------begin--------------------------------------- */}
+
+          <section>
+          <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
+  <Button
+    variant="outlined"
+    component="label"
+    sx={{
+      color: "#007FFF", // Màu chữ là màu xanh lấp biển
+      borderColor: "#007FFF", // Màu viền là màu xanh lấp biển
+      backgroundColor: "#FFFFFF", // Màu nền là màu trắng
+
+      marginRight: "10px", // Thêm khoảng cách bên phải
+      fontSize: "1.2rem", // kích thước chữ
+      fontWeight: "bold", // in đậm chữ
+      padding: "15px 20px", // padding để tạo button lớn hơn
+      borderRadius: "10px", // bo tròn góc
+      "&:hover": {
+        // thêm hiệu ứng hover khi di chuột qua button
+        backgroundColor: "#007FFF", // Màu nền khi hover là màu xanh lấp biển
+        color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+      },
+    }}
+  >
+    + Add Images
+    <input
+      type="file"
+      name="images"
+      onChange={onSelectFile}
+      hidden
+      multiple
+    />
+  </Button>
+
+  <Button
+    variant="outlined"
+    onClick={handleClickLiveVideo}
+    sx={{
+      color: "#007FFF",
+      borderColor: "#007FFF",
+      backgroundColor: "#FFFFFF",
+      fontSize: "1.2rem",
+      fontWeight: "bold",
+      padding: "15px 20px",
+      borderRadius: "10px",
+      marginRight: "10px", // Thêm khoảng cách bên phải
+      "&:hover": {
+        backgroundColor: "#007FFF",
+        color: "#FFFFFF",
+      },
+    }}
+  >
+    Live
+  </Button>
+
+  <Button
+    variant="outlined"
+    onClick={handleClickStopVideo}
+    sx={{
+      color: "#FF0000", // Đổi màu chữ thành đỏ
+      borderColor: "#FF0000", // Đổi màu viền thành đỏ
+      backgroundColor: "#FFFFFF",
+      fontSize: "1.2rem",
+      fontWeight: "bold",
+      padding: "15px 20px",
+      borderRadius: "10px",
+      "&:hover": {
+        backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+        color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+      },
+    }}
+  >
+    Stop
+  </Button>
+</Box>
+
+
+      <Box className="images"
+         sx={{
+        height: '300px', // Chiều cao thanh trượt
+        overflowY: 'auto', // Cho phép cuộn dọc
+        border: '1px solid #ccc', // Viền cho thanh trượt (tùy chọn)
+        borderRadius: '10px', // Bo góc thanh trượt
+        padding: '10px', // Padding cho thanh trượt
+        backgroundColor: '#f5f5f5', // Màu nền của thanh trượt
+      }}
+      
+      >
+        {selectedImages &&
+          selectedImages.map((image, index) => {
+
+            return (
+              <Box
+  key={image}
+  className="image"
+  marginBottom="10px"
+  sx={{
+    padding: "10px", // Padding 10px
+    borderRadius: "20px", // Bo góc 20px
+    backgroundColor: "#FFFFFF", // Màu nền trắng
+  }}
+>
+              <img
+  src={image}
+  height="200"
+  alt="upload"
+  style={{
+    borderRadius: "10%", // Bo tròn ảnh
+    objectFit: "cover", // Đảm bảo ảnh không bị méo
+  }}
+/>
+<Box display="flex" justifyContent="space-between" alignItems="center">
+<Button
+  variant="outlined"
+  sx={{
+    color: "#4CAF50", // Đổi màu chữ thành xanh lá cây
+    borderColor: "#4CAF50", // Đổi màu viền thành xanh lá cây
+    backgroundColor: "#FFFFFF", // Màu nền vẫn là trắng
+    fontSize: "0.8rem",
+    fontWeight: "bold",
+    padding: "5px 5px",
+    borderRadius: "10px",
+    "&:hover": {
+      backgroundColor: "#4CAF50", // Màu nền khi hover là xanh lá cây
+      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+    },
+    marginLeft: "10px", // Thêm khoảng cách bên trái nếu cần
+  }}
+>
+  <span>Picture: {index + 1}</span>  
+</Button>
+
+
+<Button
+  variant="outlined"
+  onClick={() => deleteHandler(image)}
+  sx={{
+    color: "#FF0000", // Đổi màu chữ thành đỏ
+    borderColor: "#FF0000", // Đổi màu viền thành đỏ
+    backgroundColor: "#FFFFFF",
+    fontSize: "0.8rem",
+    fontWeight: "bold",
+    padding: "5px 5px",
+    borderRadius: "10px",
+    "&:hover": {
+      backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+    },
+    marginLeft: "10px", // Thêm khoảng cách bên trái nếu cần
+  }}
+>
+  <DeleteIcon 
+    sx={{ 
+      color: "#FF0000", // Màu biểu tượng mặc định
+      marginRight: "5px",
+      // Thay đổi màu khi hover
+      "&:hover": {
+        color: "#FFFFFF", // Màu biểu tượng khi hover
+      }
+    }} 
+  /> {/* Thêm biểu tượng Delete */}
+</Button>
+
+</Box>
+              </Box>
+            );
+          })}
+      </Box>
+    </section>
+{/* phần live stream bằng slide------------end--------------------------------------- */}
         </Box>
       </Box>
       <ErrorPopup
