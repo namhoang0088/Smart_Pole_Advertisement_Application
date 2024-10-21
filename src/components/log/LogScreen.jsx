@@ -60,14 +60,11 @@ export default function LogScreen({ open, handleClose }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/get/stats`,
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-            },
+        const response = await fetch(`${API_BASE_URL}/get/stats`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
           },
-        );
+        });
         const data = await response.json();
         setPerformanceData1({
           cpu: data.stream_1.cpu_usage,

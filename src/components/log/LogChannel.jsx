@@ -26,10 +26,10 @@ import Filter6Icon from "@mui/icons-material/Filter6";
 import Filter7Icon from "@mui/icons-material/Filter7";
 import InfoIcon from "@mui/icons-material/Info";
 import WarningIcon from "@mui/icons-material/Warning";
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import BedtimeIcon from '@mui/icons-material/Bedtime';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import NetworkWifi2BarIcon from '@mui/icons-material/NetworkWifi2Bar';
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import BedtimeIcon from "@mui/icons-material/Bedtime";
+import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import NetworkWifi2BarIcon from "@mui/icons-material/NetworkWifi2Bar";
 import { useTheme } from "@mui/material/styles";
 import { tokens } from "../../theme";
 
@@ -99,7 +99,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
     textAlign: "center",
-    position: 'sticky',
+    position: "sticky",
     top: 0,
     zIndex: 10,
   },
@@ -368,7 +368,10 @@ export default function LogChannel({ open, handleClose }) {
                           </Button>
                         )}
                         {channel.status === "idle" && (
-                          <Button variant="outlined" style={{ color: 'purple', borderColor: 'purple' }}>
+                          <Button
+                            variant="outlined"
+                            style={{ color: "purple", borderColor: "purple" }}
+                          >
                             <BedtimeIcon /> Idle
                           </Button>
                         )}

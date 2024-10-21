@@ -59,7 +59,7 @@ import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import { API_BASE_URL } from "../data/link_api";
 import ErrorPopup from "./ErrorPopup";
 import SuccessPopup from "./SuccessPopup";
-import SlideshowIcon from '@mui/icons-material/Slideshow';
+import SlideshowIcon from "@mui/icons-material/Slideshow";
 export default function AddEvent({ open, handleClose, channelStream }) {
   // console.log("adđ event channel stream", channelStream)
   const theme = useTheme();
@@ -119,6 +119,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
   const [selectedImages, setSelectedImages] = useState([]);
 
+
   const onSelectFile = (event) => {
     const selectedFiles = event.target.files;
     const selectedFilesArray = Array.from(selectedFiles);
@@ -140,8 +141,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
 
   const handleAddDayBox = () => {
-
-  
+    setBoxDailyIdCounter((prevCounter) => prevCounter + 1);
     const newBox = (
       <Box
         key={`daily${boxDailyIdCounter}`}
@@ -244,58 +244,140 @@ export default function AddEvent({ open, handleClose, channelStream }) {
             </Button>
           </Box>
 
-{/* slide show ------------------------------------------------------------------------------------*/}
-<section>
-      <label>
-        + Add Images
-        <br />
-        <span>up to 10 images</span>
-        <input
-          type="file"
-          name="images"
-          onChange={onSelectFile}
-          multiple
-          accept="image/png , image/jpeg, image/webp"
-        />
-      </label>
-      <br />
+          {/* slide show ------------------------------------------------------------------------------------*/}
+          <section>
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={2}
+                marginBottom="20px"
+              >
+                <Button
+                  variant="outlined"
+                  component="label"
+                  sx={{
+                    color: "#4CAF50", // Màu chữ là màu xanh lá cây
+                    borderColor: "#4CAF50", // Màu viền là màu xanh lá cây
+                    backgroundColor: "#FFFFFF", // Màu nền là màu trắng
+                    marginRight: "10px", // Thêm khoảng cách bên phải
+                    fontSize: "1.2rem", // Kích thước chữ
+                    fontWeight: "bold", // In đậm chữ
+                    padding: "15px 20px", // Padding để tạo button lớn hơn
+                    borderRadius: "10px", // Bo tròn góc
+                    "&:hover": {
+                      // Thêm hiệu ứng hover khi di chuột qua button
+                      backgroundColor: "#4CAF50", // Màu nền khi hover là màu xanh lá cây
+                      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+                    },
+                  }}
+                >
+                  Add Images
+                  <input
+                    type="file"
+                    name="images"
+                    onChange={onSelectFile}
+                    hidden
+                    multiple
+                  />
+                </Button>
+              </Box>
 
-      {selectedImages.length > 0 &&
-        (selectedImages.length > 10 ? (
-          <p className="error">
-            You can't upload more than 10 images! <br />
-            <span>
-              please delete <b> {selectedImages.length - 10} </b> of them{" "}
-            </span>
-          </p>
-        ) : (
-          <button
-            className="upload-btn"
-            onClick={() => {
-              console.log(selectedImages);
-            }}
-          >
-            UPLOAD {selectedImages.length} IMAGE
-            {selectedImages.length === 1 ? "" : "S"}
-          </button>
-        ))}
+              <Box
+                className="images"
+                sx={{
+                  height: "300px", // Chiều cao thanh trượt
+                  overflowY: "auto", // Cho phép cuộn dọc
+                  border: "1px solid #ccc", // Viền cho thanh trượt (tùy chọn)
+                  borderRadius: "10px", // Bo góc thanh trượt
+                  padding: "10px", // Padding cho thanh trượt
+                  backgroundColor: "#f5f5f5", // Màu nền của thanh trượt
+                }}
+              >      
+                {selectedImages &&
+                  selectedImages.map((image, index) => {
+                    console.log("Rendering image:", image); 
+                    return (
+                      <Box
+                        key={image}
+                        className="image"
+                        marginBottom="10px"
+                        sx={{
+                          padding: "10px", // Padding 10px
+                          borderRadius: "20px", // Bo góc 20px
+                          backgroundColor: "#FFFFFF", // Màu nền trắng
+                        }}
+                      >
+                        <img
+                          src={image}
+                          height="180"
+                          alt="upload"
+                          style={{
+                            borderRadius: "10%", // Bo tròn ảnh
+                            objectFit: "cover", // Đảm bảo ảnh không bị méo
+                          }}
+                        />
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <Button
+                            variant="outlined"
+                            sx={{
+                              color: "#4CAF50", // Đổi màu chữ thành xanh lá cây
+                              borderColor: "#4CAF50", // Đổi màu viền thành xanh lá cây
+                              backgroundColor: "#FFFFFF", // Màu nền vẫn là trắng
+                              fontSize: "0.8rem",
+                              fontWeight: "bold",
+                              padding: "5px 5px",
+                              borderRadius: "10px",
+                              "&:hover": {
+                                backgroundColor: "#4CAF50", // Màu nền khi hover là xanh lá cây
+                                color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+                              },
+                              marginLeft: "10px", // Thêm khoảng cách bên trái nếu cần
+                            }}
+                          >
+                            <span>Picture: {index + 1}</span>
+                          </Button>
 
-      <div className="images">
-        {selectedImages &&
-          selectedImages.map((image, index) => {
-            return (
-              <div key={image} className="image">
-                <img src={image} height="200" alt="upload" />
-                <button onClick={() => deleteHandler(image)}>
-                  delete image
-                </button>
-                <p>{index + 1}</p>
-              </div>
-            );
-          })}
-      </div>
-    </section>
-{/* slide showw -----------------------------------------------------------------------------*/}
+                          <Button
+                            variant="outlined"
+                            onClick={() => deleteHandler(image)}
+                            sx={{
+                              color: "#FF0000", // Đổi màu chữ thành đỏ
+                              borderColor: "#FF0000", // Đổi màu viền thành đỏ
+                              backgroundColor: "#FFFFFF",
+                              fontSize: "0.8rem",
+                              fontWeight: "bold",
+                              padding: "5px 5px",
+                              borderRadius: "10px",
+                              "&:hover": {
+                                backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+                                color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+                              },
+                              marginLeft: "10px", // Thêm khoảng cách bên trái nếu cần
+                            }}
+                          >
+                            <DeleteIcon
+                              sx={{
+                                color: "#FF0000", // Màu biểu tượng mặc định
+                                marginRight: "5px",
+                                // Thay đổi màu khi hover
+                                "&:hover": {
+                                  color: "#FFFFFF", // Màu biểu tượng khi hover
+                                },
+                              }}
+                            />{" "}
+                            {/* Thêm biểu tượng Delete */}
+                          </Button>
+                        </Box>
+                      </Box>
+                    );
+                  })}
+              </Box>
+            </section>
+          {/* slide showw -----------------------------------------------------------------------------*/}
           <Box marginBottom="20px" display="flex" alignItems="center">
             <HourglassEmptyIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
             <Typography variant="h5" marginRight="10px" paddingLeft="10px">
@@ -359,8 +441,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     // Thêm Box mới vào danh sách
     setDayBoxes([...dayBoxes, newBox]);
   };
-
-
+  
   //thêm lịch chiếu-----Daily------------------end---------------------
   //thêm lịch chiếu-----weekly----------------begin-------------------------------
   const [weekBoxes, setWeekBoxes] = useState([]);
