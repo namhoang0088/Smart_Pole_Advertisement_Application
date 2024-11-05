@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import {
   Box,
   ListItemButton,
@@ -108,12 +109,6 @@ const LiveAd = () => {
     { value: 5, label: "Kênh 5" },
   ];
 
-  const transitionOptions = [
-    { value: 1, label: "Cut" },
-    { value: 2, label: "Fade" },
-    { value: 3, label: "Swipe" },
-    { value: 4, label: "Slide" },
-  ];
 
   const [channel, setChannel] = React.useState(1);
   const [tvChannel, setTvChannel] = useState("");
@@ -130,7 +125,6 @@ const LiveAd = () => {
   const handleTvChannelChange = (event) => {
     const newIndex = event.target.value; // Lấy index mới được chọn từ dropdown menu
     setSelectTvChannel(newIndex); // Cập nhật giá trị mới dựa trên index
-    console.log("tvchannel ", tvChannelOption[selectTvChannel - 1].label);
   };
 
   useEffect(() => {
@@ -377,7 +371,102 @@ const LiveAd = () => {
       console.error("Error:", error);
     }
   };
+  // live bằng ảnh có sẵn-----------------------------begin----------------------------------------
+  const transitionOptions = [
+    { value: 1, label: "cut" },
+    { value: 2, label: "fade" },
+    { value: 3, label: "swipe" },
+    { value: 4, label: "slide" },
+  ];
+  const [transitionOption, setTransitionOption] = useState([]);
+  const [transitionSpeed, setTransitionSpeed] = useState(null); // ví dụ 300ms
+  const [timeBetweenSpeed, setTimeBetweenSpeed] = useState(null); // ví dụ 1000ms
+  const handleTransitionChange = (event) => {
+    const newValue = event.target.value; // Lấy giá trị mới được chọn từ dropdown menu
+  
+    // Tìm object trong transitionOptions với value tương ứng và lấy label
+    const selectedOption = transitionOptions.find(option => option.value === parseInt(newValue));
+  
+    // Cập nhật giá trị mới dựa trên label
+      setTransitionOption(selectedOption.label);
+      console.log("trasition", selectedOptionsIMG)
+  };
+  const onChangeTransitionSpeed = (newValue) => {
+    setTransitionSpeed(newValue);
+  };
+  const onChangeTimeBetweenSpeed = (newValue) => {
+    setTimeBetweenSpeed(newValue);
+  };
 
+
+  // const handleClickLiveIMG = async (event) => {
+  //   event.preventDefault();
+  //   const formData = new FormData();
+
+  //   // Đính kèm các tệp thực tế vào formData
+  //   selectedFiles.forEach((file) => {
+  //     formData.append('upload_images', file); // Đính kèm tệp thực tế
+  //   });
+
+  //   // Thêm các thông tin khác vào formData
+  //   formData.append('stream', channel);
+  //   formData.append('transition', transitionOption);
+  //   formData.append('slide_time', timeBetweenSpeed);
+  //   formData.append('transition_speed', transitionSpeed);
+  //   formData.append('image_list', imageURLs.map((url) => url.split('/').pop()).join(',')); // Lấy tên file từ URL
+
+  //   try {
+  //     const response = await axios.post(`${API_BASE_URL}/live/slide`, formData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //     });
+  //     console.log('Success:', response.data);
+  //   } catch (error) {
+  //     console.error('Error uploading images:', error.response?.data || error.message);
+  //   }
+  // };
+
+  const handleClickLiveIMG = async (event) => {
+    setLoading(true);
+    event.preventDefault();
+    const formData = new FormData();
+
+    // Đính kèm các tệp thực tế vào formData
+    selectedFiles.forEach((file) => {
+      formData.append('upload_images', file); // Đính kèm tệp thực tế
+    });
+
+    // Thêm các thông tin khác vào formData
+    formData.append('stream', channel);
+    formData.append('transition', transitionOption);
+    formData.append('slide_time', timeBetweenSpeed);
+    formData.append('transition_speed', transitionSpeed);
+    formData.append('image_list', selectedOptionsIMG);
+    // Gửi yêu cầu API với danh sách tên hình ảnh trong query string
+    try {
+      const response = await axios.post(`${API_BASE_URL}/live/slide`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setTimeout(() => {
+        setLoading(false); // Tắt trạng thái loading sau 1 giây
+    
+        // Sau khi tắt loading, mở popup thành công
+        setOpenpopupsuccess(1);
+    
+        // Tắt popup sau 1 giây
+        setTimeout(() => {
+            setOpenpopupsuccess(0); // Tắt popup sau 1 giây
+        }, 1500);
+    
+    }, 1500);
+ 
+    } catch (error) {
+      console.error('Error uploading images:', error.response?.data || error.message);
+    }
+  };
   //hiện popup lỗi-----------------------------------begin---------------------------------
   const [loading, setLoading] = useState(false);
   const [loadingStop, setLoadingStop] = useState(false);
@@ -414,9 +503,12 @@ const LiveAd = () => {
 
   // mở danh sách video để thiết lập nội dung cho quảng cáo ---------------end--------------
   const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
+  const [dataIMG, setDataIMG] = useState([]); // Khai báo biến dataVideo
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetch video data
         const responseVideo = await fetch(`${API_BASE_URL}/get/video`, {
           headers: {
             "ngrok-skip-browser-warning": "true",
@@ -428,9 +520,21 @@ const LiveAd = () => {
         }
 
         const dataVideo = await responseVideo.json();
-        // console.log("nammmmmmmmmmmmmmmmmmmmmmmmmmm", dataVideo); // In dữ liệu nhận được ra console
-
         setDataVideo(dataVideo); // Cập nhật giá trị cho biến dataVideo
+
+        // Fetch image data
+        const responseIMG = await fetch(`${API_BASE_URL}/get/images`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
+
+        if (!responseIMG.ok) {
+          throw new Error("Network response image was not ok");
+        }
+
+        const dataIMG = await responseIMG.json();
+        setDataIMG(dataIMG.images); // Cập nhật giá trị cho biến dataIMG
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -438,29 +542,37 @@ const LiveAd = () => {
 
     fetchData();
   }, []);
+
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedOptionsIMG, setSelectedOptionsIMG] = useState([]);
   //hiện popup thành công---------------------------------end--------------------------------
 
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [imageURLs, setImageURLs] = useState([]); // URL blob để hiển thị
 
+  
   const onSelectFile = (event) => {
-    const selectedFiles = event.target.files;
-    const selectedFilesArray = Array.from(selectedFiles);
+    const files = event.target.files;
+    const filesArray = Array.from(files);
 
-    const imagesArray = selectedFilesArray.map((file) => {
-      return URL.createObjectURL(file);
-    });
+    // Lưu các tệp thực tế
+    setSelectedFiles(prevFiles => [...prevFiles, ...filesArray]);
 
-    setSelectedImages((previousImages) => previousImages.concat(imagesArray));
+    // Tạo URL blob để hiển thị
+    const newImageURLs = filesArray.map(file => URL.createObjectURL(file));
+    setImageURLs(prevURLs => [...prevURLs, ...newImageURLs]);
 
-    // FOR BUG IN CHROME
-    event.target.value = "";
+    event.target.value = ""; // Reset input
   };
 
-  function deleteHandler(image) {
-    setSelectedImages(selectedImages.filter((e) => e !== image));
-    URL.revokeObjectURL(image);
-  }
+  const deleteHandler = (image, index) => {
+    setImageURLs(imageURLs.filter((_, i) => i !== index));
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+    setSelectedOptionsIMG(selectedOptionsIMG.filter((_, i) => i !== index)); // Xóa tên ảnh tương ứng
+    URL.revokeObjectURL(image); // Giải phóng tài nguyên
+    console.log("picture", imageURLs)
+  };
+
 
   return (
     <Box m="20px">
@@ -898,6 +1010,8 @@ const LiveAd = () => {
                   select
                   label="Transition"
                   variant="outlined"
+                  onChange={handleTransitionChange}
+                  
                   fullWidth
                 >
                   {transitionOptions.map((option) => (
@@ -916,6 +1030,10 @@ const LiveAd = () => {
 
               <TextField
                 label="Transition Speed"
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  onChangeTransitionSpeed(newValue);
+                }}
                 variant="outlined"
                 sx={{ width: "300px" }}
               />
@@ -925,8 +1043,30 @@ const LiveAd = () => {
               <TextField
                 label="Time Between Slides"
                 variant="outlined"
-                sx={{ width: "300px" }}
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  onChangeTimeBetweenSpeed(newValue);
+                }}
+                sx={{ width: "200px" }}
               />
+
+<Autocomplete
+        sx={{ width: 200 }}
+        multiple
+        id="list-pole-autocomplete"
+        onChange={(event, newValue) => {
+          setSelectedOptionsIMG(newValue);
+          // Xử lý sự thay đổi giá trị được chọn
+        }}
+        options={dataIMG.map((img) => img.name)} // Dùng trường "name" từ dữ liệu ảnh
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="Chọn hình ảnh"
+          />
+        )}
+      />
             </Box>
 
             <section>
@@ -967,7 +1107,7 @@ const LiveAd = () => {
 
                 <Button
                   variant="outlined"
-                  onClick={handleClickLiveVideo}
+                  onClick={handleClickLiveIMG}
                   sx={{
                     color: "#007FFF",
                     borderColor: "#007FFF",
@@ -1018,8 +1158,8 @@ const LiveAd = () => {
                   backgroundColor: "#f5f5f5", // Màu nền của thanh trượt
                 }}
               >
-                {selectedImages &&
-                  selectedImages.map((image, index) => {
+                {imageURLs &&
+                  imageURLs .map((image, index) => {
                     return (
                       <Box
                         key={image}

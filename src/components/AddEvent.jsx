@@ -5,7 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import { Box, Divider } from '@mui/material';
 import TextField from "@mui/material/TextField";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -25,6 +25,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckIcon from "@mui/icons-material/Check";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import CancelIcon from "@mui/icons-material/Cancel";
+import MenuItem from "@mui/material/MenuItem";
+import TransformIcon from '@mui/icons-material/Transform';
 import {
   DatePicker,
   TimePicker,
@@ -113,35 +115,49 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   const [contentOneTimeArray, setContentOneTimeArray] = useState([]);
   const [timeBeginOneTimeArray, setTimeBeginOneTimeArray] = useState([]);
 
-  //thêm lịch chiếu-----Daily----------------begin-------------------------------
+  const transitionOptions = [
+    { value: 1, label: "cut" },
+    { value: 2, label: "fade" },
+    { value: 3, label: "swipe" },
+    { value: 4, label: "slide" },
+  ];
+  //thêm lịch chiếu-----Daily----------------begin------------------------------------------------------------------------------
   const [dayBoxes, setDayBoxes] = useState([]);
   const [boxDailyIdCounter, setBoxDailyIdCounter] = useState(0);
 
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedImages, setSelectedImages] = useState({});
 
-
-  const onSelectFile = (event) => {
+  const onSelectFile = (event, boxId) => {
     const selectedFiles = event.target.files;
     const selectedFilesArray = Array.from(selectedFiles);
-
+  
     const imagesArray = selectedFilesArray.map((file) => {
       return URL.createObjectURL(file);
     });
-
-    setSelectedImages((previousImages) => previousImages.concat(imagesArray));
-
-    // FOR BUG IN CHROME
+  
+    // Cập nhật hình ảnh cho box tương ứng
+    setSelectedImages((prevImages) => ({
+      ...prevImages,
+      [boxId]: prevImages[boxId] ? prevImages[boxId].concat(imagesArray) : imagesArray,
+    }));
+  
+    // Để xử lý lỗi trong Chrome
     event.target.value = "";
   };
-
+  
   function deleteHandler(image) {
-    setSelectedImages(selectedImages.filter((e) => e !== image));
-    URL.revokeObjectURL(image);
+    setSelectedImages((previousImages) => {
+      const newImages = previousImages.filter((e) => e !== image);
+      URL.revokeObjectURL(image); // Giải phóng URL
+      return newImages; // Trả về mảng mới
+    });
   }
 
 
   const handleAddDayBox = () => {
     setBoxDailyIdCounter((prevCounter) => prevCounter + 1);
+    
+    console.log("iddddd",boxDailyIdCounter )
     const newBox = (
       <Box
         key={`daily${boxDailyIdCounter}`}
@@ -197,6 +213,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
             />
           </Box>
 
+          
           <Box
             marginBottom="30px"
             marginTop="20px"
@@ -245,13 +262,23 @@ export default function AddEvent({ open, handleClose, channelStream }) {
           </Box>
 
           {/* slide show ------------------------------------------------------------------------------------*/}
+          <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
           <section>
               <Box
                 display="flex"
                 alignItems="center"
-                gap={2}
                 marginBottom="20px"
               >
+            <SlideshowIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
+            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
+              <strong>Slide show</strong>
+            </Typography>
+
                 <Button
                   variant="outlined"
                   component="label"
@@ -262,7 +289,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
                     marginRight: "10px", // Thêm khoảng cách bên phải
                     fontSize: "1.2rem", // Kích thước chữ
                     fontWeight: "bold", // In đậm chữ
-                    padding: "15px 20px", // Padding để tạo button lớn hơn
+                    padding: "5px 10px", // Padding để tạo button lớn hơn
                     borderRadius: "10px", // Bo tròn góc
                     "&:hover": {
                       // Thêm hiệu ứng hover khi di chuột qua button
@@ -275,15 +302,85 @@ export default function AddEvent({ open, handleClose, channelStream }) {
                   <input
                     type="file"
                     name="images"
-                    onChange={onSelectFile}
+                    onChange={(event) => onSelectFile(event, boxDailyIdCounter)}
                     hidden
                     multiple
                   />
                 </Button>
               </Box>
 
+
+              <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
+              <Box width="150px">
+                <TextField
+                  select
+                  label="Transition"
+                  variant="outlined"
+                  // onChange={handleTransitionChange}
+                  
+                  fullWidth
+                >
+                  {transitionOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      <Box display="flex" alignItems="center">
+                        {" "}
+                        {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
+                        <TransformIcon sx={{ marginRight: 1 }} />{" "}
+                        {/* Icon Subscriptions */}
+                        {option.label}
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+
+              <TextField
+                label="Transition Speed"
+                // onChange={(event) => {
+                //   const newValue = event.target.value;
+                //   onChangeTransitionSpeed(newValue);
+                // }}
+                variant="outlined"
+                sx={{ width: "300px" }}
+              />
+            </Box>
+
+
+            <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
+              <TextField
+                label="Time Between Slides"
+                variant="outlined"
+                // onChange={(event) => {
+                //   const newValue = event.target.value;
+                //   onChangeTimeBetweenSpeed(newValue);
+                // }}
+                sx={{ width: "200px" }}
+              />
+
+<Autocomplete
+        sx={{ width: 200 }}
+        multiple
+        id="list-pole-autocomplete"
+        // onChange={(event, newValue) => {
+        //   setSelectedOptionsIMG(newValue);
+        //   // Xử lý sự thay đổi giá trị được chọn
+        // }}
+        options={dataIMG.map((img) => img.name)} // Dùng trường "name" từ dữ liệu ảnh
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="Chọn hình ảnh có sẵn"
+          />
+        )}
+      />
+            </Box>
+
+
+
+
               <Box
-                className="images"
+               id={`displaypicture-${boxDailyIdCounter}`}
                 sx={{
                   height: "300px", // Chiều cao thanh trượt
                   overflowY: "auto", // Cho phép cuộn dọc
@@ -293,92 +390,18 @@ export default function AddEvent({ open, handleClose, channelStream }) {
                   backgroundColor: "#f5f5f5", // Màu nền của thanh trượt
                 }}
               >      
-                {selectedImages &&
-                  selectedImages.map((image, index) => {
-                    console.log("Rendering image:", image); 
-                    return (
-                      <Box
-                        key={image}
-                        className="image"
-                        marginBottom="10px"
-                        sx={{
-                          padding: "10px", // Padding 10px
-                          borderRadius: "20px", // Bo góc 20px
-                          backgroundColor: "#FFFFFF", // Màu nền trắng
-                        }}
-                      >
-                        <img
-                          src={image}
-                          height="180"
-                          alt="upload"
-                          style={{
-                            borderRadius: "10%", // Bo tròn ảnh
-                            objectFit: "cover", // Đảm bảo ảnh không bị méo
-                          }}
-                        />
-                        <Box
-                          display="flex"
-                          justifyContent="space-between"
-                          alignItems="center"
-                        >
-                          <Button
-                            variant="outlined"
-                            sx={{
-                              color: "#4CAF50", // Đổi màu chữ thành xanh lá cây
-                              borderColor: "#4CAF50", // Đổi màu viền thành xanh lá cây
-                              backgroundColor: "#FFFFFF", // Màu nền vẫn là trắng
-                              fontSize: "0.8rem",
-                              fontWeight: "bold",
-                              padding: "5px 5px",
-                              borderRadius: "10px",
-                              "&:hover": {
-                                backgroundColor: "#4CAF50", // Màu nền khi hover là xanh lá cây
-                                color: "#FFFFFF", // Màu chữ là màu trắng khi hover
-                              },
-                              marginLeft: "10px", // Thêm khoảng cách bên trái nếu cần
-                            }}
-                          >
-                            <span>Picture: {index + 1}</span>
-                          </Button>
 
-                          <Button
-                            variant="outlined"
-                            onClick={() => deleteHandler(image)}
-                            sx={{
-                              color: "#FF0000", // Đổi màu chữ thành đỏ
-                              borderColor: "#FF0000", // Đổi màu viền thành đỏ
-                              backgroundColor: "#FFFFFF",
-                              fontSize: "0.8rem",
-                              fontWeight: "bold",
-                              padding: "5px 5px",
-                              borderRadius: "10px",
-                              "&:hover": {
-                                backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
-                                color: "#FFFFFF", // Màu chữ là màu trắng khi hover
-                              },
-                              marginLeft: "10px", // Thêm khoảng cách bên trái nếu cần
-                            }}
-                          >
-                            <DeleteIcon
-                              sx={{
-                                color: "#FF0000", // Màu biểu tượng mặc định
-                                marginRight: "5px",
-                                // Thay đổi màu khi hover
-                                "&:hover": {
-                                  color: "#FFFFFF", // Màu biểu tượng khi hover
-                                },
-                              }}
-                            />{" "}
-                            {/* Thêm biểu tượng Delete */}
-                          </Button>
-                        </Box>
-                      </Box>
-                    );
-                  })}
               </Box>
             </section>
+
+            <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
           {/* slide showw -----------------------------------------------------------------------------*/}
-          <Box marginBottom="20px" display="flex" alignItems="center">
+          <Box marginBottom="20px" display="flex" alignItems="center" marginTop="20px">
             <HourglassEmptyIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
             <Typography variant="h5" marginRight="10px" paddingLeft="10px">
               <strong>Hiệu lực từ</strong>
@@ -441,6 +464,100 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     // Thêm Box mới vào danh sách
     setDayBoxes([...dayBoxes, newBox]);
   };
+
+  useEffect(() => {
+    dayBoxes.forEach((box) => {
+      const boxId = box.key.split('daily')[1]; // Lấy ID từ key
+  
+      // Gọi hàm render hoặc cập nhật DOM cho box này
+      const boxElement = document.getElementById(`displaypicture-${boxId}`);
+      if (boxElement) {
+        // Xóa nội dung hiện tại
+        boxElement.innerHTML = '';
+  
+        // Nếu có hình ảnh được chọn cho box này
+        if (selectedImages[boxId] && selectedImages[boxId].length > 0) {
+          selectedImages[boxId].forEach((image, index) => {
+            // Tạo thẻ Box (dùng div thay thế)
+            const boxDiv = document.createElement('div');
+            boxDiv.style.padding = '10px';
+            boxDiv.style.borderRadius = '20px';
+            boxDiv.style.backgroundColor = '#FFFFFF';
+            boxDiv.style.marginBottom = '10px';
+  
+            // Tạo thẻ img
+            const imgElement = document.createElement('img');
+            imgElement.src = image;
+            imgElement.height = 180;
+            imgElement.style.borderRadius = '10%';
+            imgElement.style.objectFit = 'cover';
+            imgElement.alt = `upload-${index}`;
+            boxDiv.appendChild(imgElement);
+  
+            // Tạo thẻ chứa các nút
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.justifyContent = 'space-between';
+            buttonContainer.style.alignItems = 'center';
+            boxDiv.appendChild(buttonContainer);
+  
+            // Nút Picture
+            const pictureButton = document.createElement('button');
+            pictureButton.innerHTML = `Picture: ${index + 1}`;
+            pictureButton.style.color = '#4CAF50';
+            pictureButton.style.border = '1px solid #4CAF50';
+            pictureButton.style.backgroundColor = '#FFFFFF';
+            pictureButton.style.fontSize = '0.8rem';
+            pictureButton.style.fontWeight = 'bold';
+            pictureButton.style.padding = '5px 5px';
+            pictureButton.style.borderRadius = '10px';
+            pictureButton.style.marginLeft = '10px';
+            pictureButton.onmouseover = function () {
+              pictureButton.style.backgroundColor = '#4CAF50';
+              pictureButton.style.color = '#FFFFFF';
+            };
+            pictureButton.onmouseout = function () {
+              pictureButton.style.backgroundColor = '#FFFFFF';
+              pictureButton.style.color = '#4CAF50';
+            };
+            buttonContainer.appendChild(pictureButton);
+  
+            // Nút Delete
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = 'Delete';
+            deleteButton.style.color = '#FF0000';
+            deleteButton.style.border = '1px solid #FF0000';
+            deleteButton.style.backgroundColor = '#FFFFFF';
+            deleteButton.style.fontSize = '0.8rem';
+            deleteButton.style.fontWeight = 'bold';
+            deleteButton.style.padding = '5px 5px';
+            deleteButton.style.borderRadius = '10px';
+            deleteButton.style.marginLeft = '10px';
+            deleteButton.onmouseover = function () {
+              deleteButton.style.backgroundColor = '#FF0000';
+              deleteButton.style.color = '#FFFFFF';
+            };
+            deleteButton.onmouseout = function () {
+              deleteButton.style.backgroundColor = '#FFFFFF';
+              deleteButton.style.color = '#FF0000';
+            };
+  
+            // Gán sự kiện xóa ảnh
+            deleteButton.onclick = function () {
+              deleteHandler(image);
+            };
+  
+            // Thêm nút Delete vào container nút
+            buttonContainer.appendChild(deleteButton);
+  
+            // Thêm boxDiv vào phần tử DOM
+            boxElement.appendChild(boxDiv);
+          });
+        }
+      }
+    });
+  }, [selectedImages, dayBoxes, deleteHandler]);
+  
   
   //thêm lịch chiếu-----Daily------------------end---------------------
   //thêm lịch chiếu-----weekly----------------begin-------------------------------
@@ -750,6 +867,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
   // mở danh sách video để thiết lập nội dung cho quảng cáo ---------------end--------------
   const [dataVideo, setDataVideo] = useState([]); // Khai báo biến dataVideo
+  const [dataIMG, setDataIMG] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -767,6 +885,20 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         // console.log("nammmmmmmmmmmmmmmmmmmmmmmmmmm", dataVideo); // In dữ liệu nhận được ra console
 
         setDataVideo(dataVideo); // Cập nhật giá trị cho biến dataVideo
+
+        const responseIMG = await fetch(`${API_BASE_URL}/get/images`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
+
+        if (!responseIMG.ok) {
+          throw new Error("Network response image was not ok");
+        }
+
+        const dataIMG = await responseIMG.json();
+        setDataIMG(dataIMG.images); // Cập nhật giá trị cho biến dataIMG
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -1297,7 +1429,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
                   <ListItemButton onClick={handleClickDay}>
                     <ListItemIcon>
                       <img
-                        src="/assets/day.png"
+                      src={`${process.env.PUBLIC_URL}/assets/day.png`}
                         alt="Day Icon"
                         style={{
                           width: "36px",
@@ -1347,7 +1479,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
                   <ListItemButton onClick={handleClickWeek}>
                     <ListItemIcon>
                       <img
-                        src="/assets/week.png"
+                        src={`${process.env.PUBLIC_URL}/assets/week.png`}
                         alt="Day Icon"
                         style={{
                           width: "36px",
@@ -1393,7 +1525,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
                   <ListItemButton onClick={handleClickFlex}>
                     <ListItemIcon>
                       <img
-                        src="/assets/flex.png"
+                        src={`${process.env.PUBLIC_URL}/assets/flex.png`}
                         alt="Day Icon"
                         style={{
                           width: "36px",

@@ -315,10 +315,8 @@ const SmartPoleManage = () => {
 
   return (
     <Box m="20px">
-      {/* Overlay */}
-      {openDialog && (
-        <div className="overlay" onClick={handleCloseDialog}></div>
-      )}
+  
+
       {/* Dialog */}
       <CustomDialog
         open={openDialog}
@@ -326,15 +324,13 @@ const SmartPoleManage = () => {
         selectedVideo={selectedVideo}
         channelStream={channelStream}
       />
-      {/* Overlay */}
-      {openAddEvent && (
-        <div className="overlay" onClick={handleCloseAddEvent}></div>
-      )}
+
       {/* Dialog */}
       <AddEvent
         open={openAddEvent}
         handleClose={handleCloseAddEvent}
         channelStream={channel}
+        
       />
       <Box display="flex">
         <Header

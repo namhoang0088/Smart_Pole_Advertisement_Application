@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
@@ -12,58 +12,26 @@ import GeographyChart from "../../components/GeographyChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, useGLTF } from "@react-three/drei";
+import React, { Suspense, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+
+function SmartPoleModel() {
+  const model = useGLTF(`${process.env.PUBLIC_URL}/smart_pole_3d.glb`);
+  const ref = useRef();
+
+  // Rotate the model slowly
+  useFrame(() => {
+    ref.current.rotation.y += 0.01; // Adjust rotation speed as needed
+  });
+
+  return <primitive object={model.scene} ref={ref} />;
+}
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const key = "AIzaSyCvorrtENjvCFtTTIKAAO9dLAEiS7Y3xpk";
-  const mapStyles = {
-    height: "100%",
-    width: "100%",
-  };
-
-  const defaultCenter = {
-    lat: 10.880415,
-    lng: 106.805633,
-  };
-  const locations = [
-    {
-      name: "Pole 1",
-      location: {
-        lat: 10.88021,
-        lng: 106.805461,
-      },
-    },
-    {
-      name: "Pole 2",
-      location: {
-        lat: 10.880274,
-        lng: 106.805502,
-      },
-    },
-    {
-      name: "Pole 3",
-      location: {
-        lat: 10.880331,
-        lng: 106.805541,
-      },
-    },
-    {
-      name: "Pole 4",
-      location: {
-        lat: 10.880417,
-        lng: 106.805596,
-      },
-    },
-    {
-      name: "Pole 5",
-      location: {
-        lat: 10.880514,
-        lng: 106.805658,
-      },
-    },
-  ];
 
   return (
     <Box m="20px">
@@ -172,97 +140,7 @@ const Dashboard = () => {
           />
         </Box>
 
-        {/* ROW 2 */}
-        {/* <Box
-          gridColumn="span 8"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box>
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                color={colors.grey[100]}
-              >
-                Doanh thu các khu vực
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              ></Typography>
-            </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          overflow="auto"
-        >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
-            p="15px"
-          >
-            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Giao dịch mua quảng cáo gần đây
-            </Typography>
-          </Box>
-          {mockTransactions.map((transaction, i) => (
-            <Box
-              key={`${transaction.txId}-${i}`}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              borderBottom={`4px solid ${colors.primary[500]}`}
-              p="15px"
-            >
-              <Box>
-                <Typography
-                  color={colors.greenAccent[500]}
-                  variant="h5"
-                  fontWeight="600"
-                >
-                  {transaction.txId}
-                </Typography>
-                <Typography color={colors.grey[100]}>
-                  {transaction.user}
-                </Typography>
-              </Box>
-              <Box color={colors.grey[100]}>{transaction.date}</Box>
-              <Box
-                backgroundColor={colors.greenAccent[500]}
-                p="5px 10px"
-                borderRadius="4px"
-              >
-                ${transaction.cost}
-              </Box>
-            </Box>
-          ))}
-        </Box> */}
-
-        {/* ROW 3 */}
+        {/* 3D Model Section */}
         <Box
           gridColumn="span 12"
           gridRow="span 2"
@@ -271,18 +149,16 @@ const Dashboard = () => {
           width="1375px"
           height="600px"
         >
-          <LoadScript googleMapsApiKey="AIzaSyCvorrtENjvCFtTTIKAAO9dLAEiS7Y3xpk">
-            <GoogleMap
-              mapContainerStyle={mapStyles}
-              zoom={18}
-              center={defaultCenter}
-            >
-              {/* Child components, markers, etc. */}
-              {locations.map((item) => {
-                return <Marker key={item.name} position={item.location} />;
-              })}
-            </GoogleMap>
-          </LoadScript>
+          <Canvas>
+            <ambientLight intensity={3} />
+            <directionalLight position={[5, 5, 5]} intensity={0.5} />
+            <Suspense fallback={null}>
+              <group scale={[6, 6, 6]}>
+                <SmartPoleModel />
+              </group>
+            </Suspense>
+            <OrbitControls />
+          </Canvas>
         </Box>
       </Box>
     </Box>
