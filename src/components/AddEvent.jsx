@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from 'axios';
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -102,6 +103,10 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   const [timeBeginDailyArray, setTimeBeginDailyArray] = useState([]);
   const [timeUntilDailyArray, setTimeUntilDailyArray] = useState([]);
   const [durationDailyArray, setDurationDailyArray] = useState([]);
+  const [transitionOptionDaily, setTransitionOptionDaily] = useState([]);
+  const [transitionSpeedDaily, setTransitionSpeedDaily] = useState(null); // ví dụ 300ms
+  const [timeBetweenSpeedDaily, setTimeBetweenSpeedDaily] = useState(null); // ví dụ 1000ms
+  const [selectedOptionsIMGDaily, setSelectedOptionsIMGDaily] = useState([]);
 
   const [timeStartWeeklyArray, setTimeStartWeeklyArray] = useState([]);
   const [timeEndWeeklyArray, setTimeEndWeeklyArray] = useState([]);
@@ -125,8 +130,26 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   const [dayBoxes, setDayBoxes] = useState([]);
   const [boxDailyIdCounter, setBoxDailyIdCounter] = useState(0);
 
-  const [selectedImages, setSelectedImages] = useState({});
+  const handleTransitionChangeDaily = (event) => {
+    const newValue = event.target.value; // Lấy giá trị mới được chọn từ dropdown menu
+  
+    // Tìm object trong transitionOptions với value tương ứng và lấy label
+    const selectedOption = transitionOptions.find(option => option.value === parseInt(newValue));
+  
+    // Cập nhật giá trị mới dựa trên label
+      setTransitionOptionDaily(selectedOption.label);
+      console.log("trasitiondaily", transitionOptionDaily)
+  };
+  const onChangeTransitionSpeedDaily = (newValue) => {
+    setTransitionSpeedDaily(newValue);
+  };
+  const onChangeTimeBetweenSpeedDaily = (newValue) => {
+    setTimeBetweenSpeedDaily(newValue);
+  };
 
+
+  
+  const [selectedImagesDaily, setSelectedImagesDaily] = useState([]);
   const onSelectFile = (event, boxId) => {
     const selectedFiles = event.target.files;
     const selectedFilesArray = Array.from(selectedFiles);
@@ -136,7 +159,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     });
   
     // Cập nhật hình ảnh cho box tương ứng
-    setSelectedImages((prevImages) => ({
+    setSelectedImagesDaily((prevImages) => ({
       ...prevImages,
       [boxId]: prevImages[boxId] ? prevImages[boxId].concat(imagesArray) : imagesArray,
     }));
@@ -146,7 +169,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   };
   
   function deleteHandler(image) {
-    setSelectedImages((previousImages) => {
+    setSelectedImagesDaily((previousImages) => {
       const newImages = previousImages.filter((e) => e !== image);
       URL.revokeObjectURL(image); // Giải phóng URL
       return newImages; // Trả về mảng mới
@@ -170,49 +193,6 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         borderRadius="10px"
       >
         <Box marginBottom="20px">
-          <Box display="flex" alignItems="center">
-            <TimePicker
-              label="Thời gian bắt đầu"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeStartDaily(
-                  formattedTime,
-                  boxDailyIdCounter.toString(),
-                );
-              }}
-            />
-            <span
-              style={{
-                fontSize: "1.5em",
-                margin: "0 10px",
-              }}
-            >
-              -
-            </span>
-            <TimePicker
-              label="Thời gian kết thúc"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeEndDaily(
-                  formattedTime,
-                  boxDailyIdCounter.toString(),
-                );
-              }}
-            />
-          </Box>
-
           
           <Box
             marginBottom="30px"
@@ -262,12 +242,13 @@ export default function AddEvent({ open, handleClose, channelStream }) {
           </Box>
 
           {/* slide show ------------------------------------------------------------------------------------*/}
+          <Box>
           <Divider 
         sx={{
           backgroundColor: 'black',
           my: 2
         }}
-      />
+      />   <Box>
           <section>
               <Box
                 display="flex"
@@ -316,7 +297,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
                   select
                   label="Transition"
                   variant="outlined"
-                  // onChange={handleTransitionChange}
+                  onChange={handleTransitionChangeDaily}
                   
                   fullWidth
                 >
@@ -336,10 +317,10 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
               <TextField
                 label="Transition Speed"
-                // onChange={(event) => {
-                //   const newValue = event.target.value;
-                //   onChangeTransitionSpeed(newValue);
-                // }}
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  onChangeTransitionSpeedDaily(newValue);
+                }}
                 variant="outlined"
                 sx={{ width: "300px" }}
               />
@@ -350,10 +331,10 @@ export default function AddEvent({ open, handleClose, channelStream }) {
               <TextField
                 label="Time Between Slides"
                 variant="outlined"
-                // onChange={(event) => {
-                //   const newValue = event.target.value;
-                //   onChangeTimeBetweenSpeed(newValue);
-                // }}
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  onChangeTimeBetweenSpeedDaily(newValue);
+                }}
                 sx={{ width: "200px" }}
               />
 
@@ -361,10 +342,10 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         sx={{ width: 200 }}
         multiple
         id="list-pole-autocomplete"
-        // onChange={(event, newValue) => {
-        //   setSelectedOptionsIMG(newValue);
-        //   // Xử lý sự thay đổi giá trị được chọn
-        // }}
+        onChange={(event, newValue) => {
+          setSelectedOptionsIMGDaily(newValue);
+          // Xử lý sự thay đổi giá trị được chọn
+        }}
         options={dataIMG.map((img) => img.name)} // Dùng trường "name" từ dữ liệu ảnh
         renderInput={(params) => (
           <TextField
@@ -393,14 +374,60 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
               </Box>
             </section>
-
+            </Box>
             <Divider 
         sx={{
           backgroundColor: 'black',
           my: 2
         }}
       />
+      </Box>
           {/* slide showw -----------------------------------------------------------------------------*/}
+          <Box display="flex" alignItems="center">
+            <TimePicker
+              label="Thời gian bắt đầu"
+              onChange={(newTime) => {
+                const hours = newTime.$d.getHours().toString().padStart(2, "0");
+                const minutes = newTime.$d
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0");
+                const formattedTime = `${hours}:${minutes}`;
+                console.log("Giá trị mới: ", formattedTime);
+                onChangeTimeStartDaily(
+                  formattedTime,
+                  boxDailyIdCounter.toString(),
+                );
+              }}
+            />
+            <span
+              style={{
+                fontSize: "1.5em",
+                margin: "0 10px",
+              }}
+            >
+              -
+            </span>
+            <TimePicker
+              label="Thời gian kết thúc"
+              onChange={(newTime) => {
+                const hours = newTime.$d.getHours().toString().padStart(2, "0");
+                const minutes = newTime.$d
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0");
+                const formattedTime = `${hours}:${minutes}`;
+                console.log("Giá trị mới: ", formattedTime);
+                onChangeTimeEndDaily(
+                  formattedTime,
+                  boxDailyIdCounter.toString(),
+                );
+              }}
+            />
+          </Box>
+
+
+          
           <Box marginBottom="20px" display="flex" alignItems="center" marginTop="20px">
             <HourglassEmptyIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
             <Typography variant="h5" marginRight="10px" paddingLeft="10px">
@@ -466,6 +493,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   };
 
   useEffect(() => {
+    console.log("picture", selectedImagesDaily)
     dayBoxes.forEach((box) => {
       const boxId = box.key.split('daily')[1]; // Lấy ID từ key
   
@@ -476,8 +504,8 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         boxElement.innerHTML = '';
   
         // Nếu có hình ảnh được chọn cho box này
-        if (selectedImages[boxId] && selectedImages[boxId].length > 0) {
-          selectedImages[boxId].forEach((image, index) => {
+        if (selectedImagesDaily[boxId] && selectedImagesDaily[boxId].length > 0) {
+          selectedImagesDaily[boxId].forEach((image, index) => {
             // Tạo thẻ Box (dùng div thay thế)
             const boxDiv = document.createElement('div');
             boxDiv.style.padding = '10px';
@@ -556,7 +584,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         }
       }
     });
-  }, [selectedImages, dayBoxes, deleteHandler]);
+  }, [selectedImagesDaily, dayBoxes, deleteHandler]);
   
   
   //thêm lịch chiếu-----Daily------------------end---------------------
@@ -1179,10 +1207,11 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   const [successsubmit, setSuccesssubmit] = useState(true);
   const handleSubmit = async () => {
     //api------daily---------------------begin-------------------------------------------
+
     for (let i = 0; i < timeStartDailyArray.length; i++) {
       const startTime = timeStartDailyArray[i].value; // Thời gian bắt đầu
       const endTime = timeEndDailyArray[i].value; // Thời gian kết thúc
-      const list = contentDailyArray[i].value.join(","); // Danh sách nội dung
+      
       const duration = durationDailyArray[i].value; // Độ dài
       const startDateParts = timeBeginDailyArray[i].value.split("/"); // Tách ngày, tháng và năm
       const startDate = `${startDateParts[2]}-${startDateParts[0]}-${startDateParts[1]}`; // Định dạng lại theo yyyy-mm-dd
@@ -1190,8 +1219,9 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       const untilParts = timeUntilDailyArray[i].value.split("/"); // Tách ngày, tháng và năm
       const until = `${untilParts[2]}-${untilParts[0]}-${untilParts[1]}`; // Định dạng lại theo yyyy-mm-dd
       const label = labelOfScheduler; // Nhãn
-
-      // Tạo đường dẫn API
+      if (contentDailyArray.length !== 0) {
+        const list = contentDailyArray[i].value.join(","); // Danh sách nội dung
+      //Tạo đường dẫn API
       const url = `${API_BASE_URL}//schedule/addTask/daily?stream=${channelStream}&list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
       console.log(url);
       // Gửi yêu cầu API
@@ -1217,6 +1247,44 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       } catch (error) {
         console.error("Error:", error);
       }
+      }
+      //--------------------slide-----------------------------------------------
+      // event.preventDefault();
+      const formData = new FormData();
+  
+      // Đính kèm các tệp thực tế vào formData
+      Object.values(selectedImagesDaily).forEach((imageArray) => {
+        imageArray.forEach((file) => {
+          formData.append('upload_images', file); // Đính kèm từng tệp thực tế
+        });
+      });
+
+      // Thêm các thông tin khác vào formData
+      formData.append('starttime', startTime);
+      formData.append('endtime', endTime);
+      formData.append('startdate', startDate);
+      formData.append('duration', duration);
+      formData.append('until', until);
+      formData.append('label', label);
+
+      formData.append('stream', channelStream);
+      formData.append('transition', transitionOptionDaily);
+      formData.append('slide_time', timeBetweenSpeedDaily);
+      formData.append('transition_speed', transitionSpeedDaily);
+      formData.append('image_list', selectedOptionsIMGDaily);
+      // Gửi yêu cầu API với danh sách tên hình ảnh trong query string
+      try {
+        const response = await axios.post(`${API_BASE_URL}/schedule/slide/daily`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+   
+      } catch (error) {
+        console.error('Error uploading images:', error.response?.data || error.message);
+      }
+
+
     }
     //api------daily---------------------end-------------------------------------------
 
@@ -1261,6 +1329,10 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       } catch (error) {
         console.error("Error:", error);
       }
+
+
+
+
     }
     //api------weekly---------------------end-------------------------------------------
 
