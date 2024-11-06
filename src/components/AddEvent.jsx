@@ -114,11 +114,20 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   const [listDayWeeklyArray, setListDayWeeklyArray] = useState([]);
   const [timeBeginWeeklyArray, setTimeBeginWeeklyArray] = useState([]);
   const [timeUntilWeeklyArray, setTimeUntilWeeklyArray] = useState([]);
+  const [transitionOptionWeekly, setTransitionOptionWeekly] = useState([]);
+  const [transitionSpeedWeekly, setTransitionSpeedWeekly] = useState(null); // ví dụ 300ms
+  const [timeBetweenSpeedWeekly, setTimeBetweenSpeedWeekly] = useState(null); // ví dụ 1000ms
+  const [selectedOptionsIMGWeekly, setSelectedOptionsIMGWeekly] = useState([]);
+
 
   const [timeStartOneTimeArray, setTimeStartOneTimeArray] = useState([]);
   const [timeEndOneTimeArray, setTimeEndOneTimeArray] = useState([]);
   const [contentOneTimeArray, setContentOneTimeArray] = useState([]);
   const [timeBeginOneTimeArray, setTimeBeginOneTimeArray] = useState([]);
+  const [transitionOptionOneTime, setTransitionOptionOneTime] = useState([]);
+  const [transitionSpeedOneTime, setTransitionSpeedOneTime] = useState(null); // ví dụ 300ms
+  const [timeBetweenSpeedOneTime, setTimeBetweenSpeedOneTime] = useState(null); // ví dụ 1000ms
+  const [selectedOptionsIMGOneTime, setSelectedOptionsIMGOneTime] = useState([]);
 
   const transitionOptions = [
     { value: 1, label: "cut" },
@@ -150,7 +159,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
   
   const [selectedImagesDaily, setSelectedImagesDaily] = useState([]);
-  const onSelectFile = (event, boxId) => {
+  const onSelectFileDaily = (event, boxId) => {
     const selectedFiles = event.target.files;
     const selectedFilesArray = Array.from(selectedFiles);
   
@@ -168,7 +177,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     event.target.value = "";
   };
   
-  function deleteHandler(image) {
+  function deleteHandlerDaily(image) {
     setSelectedImagesDaily((previousImages) => {
       const newImages = previousImages.filter((e) => e !== image);
       URL.revokeObjectURL(image); // Giải phóng URL
@@ -283,7 +292,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
                   <input
                     type="file"
                     name="images"
-                    onChange={(event) => onSelectFile(event, boxDailyIdCounter)}
+                    onChange={(event) => onSelectFileDaily(event, boxDailyIdCounter)}
                     hidden
                     multiple
                   />
@@ -361,7 +370,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
 
               <Box
-               id={`displaypicture-${boxDailyIdCounter}`}
+               id={`displaypicturedaily-${boxDailyIdCounter}`}
                 sx={{
                   height: "300px", // Chiều cao thanh trượt
                   overflowY: "auto", // Cho phép cuộn dọc
@@ -493,12 +502,11 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   };
 
   useEffect(() => {
-    console.log("picture", selectedImagesDaily)
     dayBoxes.forEach((box) => {
       const boxId = box.key.split('daily')[1]; // Lấy ID từ key
   
       // Gọi hàm render hoặc cập nhật DOM cho box này
-      const boxElement = document.getElementById(`displaypicture-${boxId}`);
+      const boxElement = document.getElementById(`displaypicturedaily-${boxId}`);
       if (boxElement) {
         // Xóa nội dung hiện tại
         boxElement.innerHTML = '';
@@ -572,7 +580,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   
             // Gán sự kiện xóa ảnh
             deleteButton.onclick = function () {
-              deleteHandler(image);
+              deleteHandlerDaily(image);
             };
   
             // Thêm nút Delete vào container nút
@@ -584,18 +592,66 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         }
       }
     });
-  }, [selectedImagesDaily, dayBoxes, deleteHandler]);
+  }, [selectedImagesDaily, dayBoxes, deleteHandlerDaily]);
   
   
   //thêm lịch chiếu-----Daily------------------end---------------------
   //thêm lịch chiếu-----weekly----------------begin-------------------------------
   const [weekBoxes, setWeekBoxes] = useState([]);
   const [boxWeeklyIdCounter, setBoxWeeklyIdCounter] = useState(0);
+
+  const handleTransitionChangeWeekly = (event) => {
+    const newValue = event.target.value; // Lấy giá trị mới được chọn từ dropdown menu
+  
+    // Tìm object trong transitionOptions với value tương ứng và lấy label
+    const selectedOption = transitionOptions.find(option => option.value === parseInt(newValue));
+  
+    // Cập nhật giá trị mới dựa trên label
+      setTransitionOptionWeekly(selectedOption.label);
+  };
+  const onChangeTransitionSpeedWeekly = (newValue) => {
+    setTransitionSpeedWeekly(newValue);
+  };
+  const onChangeTimeBetweenSpeedWeekly = (newValue) => {
+    setTimeBetweenSpeedWeekly(newValue);
+  };
+
+
+  
+  const [selectedImagesWeekly, setSelectedImagesWeekly] = useState([]);
+  const onSelectFileWeekly = (event, boxId) => {
+    const selectedFiles = event.target.files;
+    const selectedFilesArray = Array.from(selectedFiles);
+  
+    const imagesArray = selectedFilesArray.map((file) => {
+      return URL.createObjectURL(file);
+    });
+  
+    // Cập nhật hình ảnh cho box tương ứng
+    setSelectedImagesWeekly((prevImages) => ({
+      ...prevImages,
+      [boxId]: prevImages[boxId] ? prevImages[boxId].concat(imagesArray) : imagesArray,
+    }));
+  
+    // Để xử lý lỗi trong Chrome
+    event.target.value = "";
+  };
+  
+  function deleteHandlerWeekly(image) {
+    setSelectedImagesWeekly((previousImages) => {
+      const newImages = previousImages.filter((e) => e !== image);
+      URL.revokeObjectURL(image); // Giải phóng URL
+      return newImages; // Trả về mảng mới
+    });
+  }
+
+
   const handleAddWeekBox = () => {
     setBoxWeeklyIdCounter((prevCounter) => prevCounter + 1);
     // Tạo một Box mới
     const newBox = (
       <Box
+      key={`weekly${boxWeeklyIdCounter}`}
         marginTop="10px"
         marginBottom="20px"
         padding="20px 10px 10px 10px"
@@ -605,48 +661,6 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         borderRadius="10px"
       >
         <Box marginBottom="20px">
-          <Box display="flex" alignItems="center">
-            <TimePicker
-              label="Thời gian bắt đầu"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeStartWeekly(
-                  formattedTime,
-                  boxWeeklyIdCounter.toString(),
-                );
-              }}
-            />
-            <span
-              style={{
-                fontSize: "1.5em",
-                margin: "0 10px",
-              }}
-            >
-              -
-            </span>
-            <TimePicker
-              label="Thời gian kết thúc"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeEndWeekly(
-                  formattedTime,
-                  boxWeeklyIdCounter.toString(),
-                );
-              }}
-            />
-          </Box>
 
           <Box
             marginBottom="30px"
@@ -695,7 +709,195 @@ export default function AddEvent({ open, handleClose, channelStream }) {
             </Button>
           </Box>
 
-          <Box marginBottom="20px" display="flex" alignItems="center">
+          <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+{/* slide weekly---------------------------------------------------------------begin-------------- */}
+
+<section> 
+              <Box
+                display="flex"
+                alignItems="center"
+                marginBottom="20px"
+              >
+            <SlideshowIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
+            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
+              <strong>Slide show</strong>
+            </Typography>
+
+                <Button
+                  variant="outlined"
+                  component="label"
+                  sx={{
+                    color: "#4CAF50", // Màu chữ là màu xanh lá cây
+                    borderColor: "#4CAF50", // Màu viền là màu xanh lá cây
+                    backgroundColor: "#FFFFFF", // Màu nền là màu trắng
+                    marginRight: "10px", // Thêm khoảng cách bên phải
+                    fontSize: "1.2rem", // Kích thước chữ
+                    fontWeight: "bold", // In đậm chữ
+                    padding: "5px 10px", // Padding để tạo button lớn hơn
+                    borderRadius: "10px", // Bo tròn góc
+                    "&:hover": {
+                      // Thêm hiệu ứng hover khi di chuột qua button
+                      backgroundColor: "#4CAF50", // Màu nền khi hover là màu xanh lá cây
+                      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+                    },
+                  }}
+                >
+                  Add Images
+                  <input
+                    type="file"
+                    name="images"
+                    onChange={(event) => onSelectFileWeekly(event, boxWeeklyIdCounter)}
+                    hidden
+                    multiple
+                  />
+                </Button>
+              </Box>
+
+
+              <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
+              <Box width="150px">
+                <TextField
+                  select
+                  label="Transition"
+                  variant="outlined"
+                  onChange={handleTransitionChangeWeekly}
+                  
+                  fullWidth
+                >
+                  {transitionOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      <Box display="flex" alignItems="center">
+                        {" "}
+                        {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
+                        <TransformIcon sx={{ marginRight: 1 }} />{" "}
+                        {/* Icon Subscriptions */}
+                        {option.label}
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+
+              <TextField
+                label="Transition Speed"
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  onChangeTransitionSpeedWeekly(newValue);
+                }}
+                variant="outlined"
+                sx={{ width: "300px" }}
+              />
+            </Box>
+
+
+            <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
+              <TextField
+                label="Time Between Slides"
+                variant="outlined"
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  onChangeTimeBetweenSpeedWeekly(newValue);
+                }}
+                sx={{ width: "200px" }}
+              />
+
+<Autocomplete
+        sx={{ width: 200 }}
+        multiple
+        id="list-pole-autocomplete"
+        onChange={(event, newValue) => {
+          setSelectedOptionsIMGWeekly(newValue);
+          // Xử lý sự thay đổi giá trị được chọn
+        }}
+        options={dataIMG.map((img) => img.name)} // Dùng trường "name" từ dữ liệu ảnh
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="Chọn hình ảnh có sẵn"
+          />
+        )}
+      />
+            </Box>
+
+
+
+
+              <Box
+               id={`displaypictureweekly-${boxWeeklyIdCounter}`}
+                sx={{
+                  height: "300px", // Chiều cao thanh trượt
+                  overflowY: "auto", // Cho phép cuộn dọc
+                  border: "1px solid #ccc", // Viền cho thanh trượt (tùy chọn)
+                  borderRadius: "10px", // Bo góc thanh trượt
+                  padding: "10px", // Padding cho thanh trượt
+                  backgroundColor: "#f5f5f5", // Màu nền của thanh trượt
+                }}
+              >      
+
+              </Box>
+            </section>
+
+{/* slide weekly---------------------------------------------------------------end-------------- */}
+          <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+
+          <Box display="flex" alignItems="center">
+            <TimePicker
+              label="Thời gian bắt đầu"
+              onChange={(newTime) => {
+                const hours = newTime.$d.getHours().toString().padStart(2, "0");
+                const minutes = newTime.$d
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0");
+                const formattedTime = `${hours}:${minutes}`;
+                console.log("Giá trị mới: ", formattedTime);
+                onChangeTimeStartWeekly(
+                  formattedTime,
+                  boxWeeklyIdCounter.toString(),
+                );
+              }}
+            />
+            <span
+              style={{
+                fontSize: "1.5em",
+                margin: "0 10px",
+              }}
+            >
+              -
+            </span>
+            <TimePicker
+              label="Thời gian kết thúc"
+              onChange={(newTime) => {
+                const hours = newTime.$d.getHours().toString().padStart(2, "0");
+                const minutes = newTime.$d
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0");
+                const formattedTime = `${hours}:${minutes}`;
+                console.log("Giá trị mới: ", formattedTime);
+                onChangeTimeEndWeekly(
+                  formattedTime,
+                  boxWeeklyIdCounter.toString(),
+                );
+              }}
+            />
+          </Box>
+
+
+
+
+          <Box marginBottom="10px" display="flex" alignItems="center">
             <DateRangeIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
             <Typography variant="h5" marginRight="10px" paddingLeft="10px">
               <strong>Các ngày trong tuần</strong>
@@ -755,15 +957,157 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     // Thêm Box mới vào danh sách
     setWeekBoxes([...weekBoxes, newBox]);
   };
+
+
+  useEffect(() => {
+    weekBoxes.forEach((box) => {
+      const boxId = box.key.split('weekly')[1];// Lấy ID từ key
+  
+      // Gọi hàm render hoặc cập nhật DOM cho box này
+      const boxElement = document.getElementById(`displaypictureweekly-${boxId}`);
+      if (boxElement) {
+        // Xóa nội dung hiện tại
+        boxElement.innerHTML = '';
+  
+        // Nếu có hình ảnh được chọn cho box này
+        if (selectedImagesWeekly[boxId] && selectedImagesWeekly[boxId].length > 0) {
+          selectedImagesWeekly[boxId].forEach((image, index) => {
+            // Tạo thẻ Box (dùng div thay thế)
+            const boxDiv = document.createElement('div');
+            boxDiv.style.padding = '10px';
+            boxDiv.style.borderRadius = '20px';
+            boxDiv.style.backgroundColor = '#FFFFFF';
+            boxDiv.style.marginBottom = '10px';
+  
+            // Tạo thẻ img
+            const imgElement = document.createElement('img');
+            imgElement.src = image;
+            imgElement.height = 180;
+            imgElement.style.borderRadius = '10%';
+            imgElement.style.objectFit = 'cover';
+            imgElement.alt = `upload-${index}`;
+            boxDiv.appendChild(imgElement);
+  
+            // Tạo thẻ chứa các nút
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.justifyContent = 'space-between';
+            buttonContainer.style.alignItems = 'center';
+            boxDiv.appendChild(buttonContainer);
+  
+            // Nút Picture
+            const pictureButton = document.createElement('button');
+            pictureButton.innerHTML = `Picture: ${index + 1}`;
+            pictureButton.style.color = '#4CAF50';
+            pictureButton.style.border = '1px solid #4CAF50';
+            pictureButton.style.backgroundColor = '#FFFFFF';
+            pictureButton.style.fontSize = '0.8rem';
+            pictureButton.style.fontWeight = 'bold';
+            pictureButton.style.padding = '5px 5px';
+            pictureButton.style.borderRadius = '10px';
+            pictureButton.style.marginLeft = '10px';
+            pictureButton.onmouseover = function () {
+              pictureButton.style.backgroundColor = '#4CAF50';
+              pictureButton.style.color = '#FFFFFF';
+            };
+            pictureButton.onmouseout = function () {
+              pictureButton.style.backgroundColor = '#FFFFFF';
+              pictureButton.style.color = '#4CAF50';
+            };
+            buttonContainer.appendChild(pictureButton);
+  
+            // Nút Delete
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = 'Delete';
+            deleteButton.style.color = '#FF0000';
+            deleteButton.style.border = '1px solid #FF0000';
+            deleteButton.style.backgroundColor = '#FFFFFF';
+            deleteButton.style.fontSize = '0.8rem';
+            deleteButton.style.fontWeight = 'bold';
+            deleteButton.style.padding = '5px 5px';
+            deleteButton.style.borderRadius = '10px';
+            deleteButton.style.marginLeft = '10px';
+            deleteButton.onmouseover = function () {
+              deleteButton.style.backgroundColor = '#FF0000';
+              deleteButton.style.color = '#FFFFFF';
+            };
+            deleteButton.onmouseout = function () {
+              deleteButton.style.backgroundColor = '#FFFFFF';
+              deleteButton.style.color = '#FF0000';
+            };
+  
+            // Gán sự kiện xóa ảnh
+            deleteButton.onclick = function () {
+              deleteHandlerWeekly(image);
+            };
+ 
+            // Thêm nút Delete vào container nút
+            buttonContainer.appendChild(deleteButton);
+  
+            // Thêm boxDiv vào phần tử DOM
+            boxElement.appendChild(boxDiv);
+          });
+        }
+      }
+    });
+  }, [selectedImagesWeekly, weekBoxes, deleteHandlerWeekly]);
+
   //thêm lịch chiếu-----weekly------------------end---------------------
   //thêm lịch chiếu------onetime-----------------begin---------------
   const [oneTimeBoxes, setOneTimeBoxes] = useState([]);
   const [boxOneTimeIdCounter, setBoxOneTimeIdCounter] = useState(0);
+
+  const handleTransitionChangeOneTime = (event) => {
+    const newValue = event.target.value; // Lấy giá trị mới được chọn từ dropdown menu
+  
+    // Tìm object trong transitionOptions với value tương ứng và lấy label
+    const selectedOption = transitionOptions.find(option => option.value === parseInt(newValue));
+  
+    // Cập nhật giá trị mới dựa trên label
+      setTransitionOptionOneTime(selectedOption.label);
+  };
+  const onChangeTransitionSpeedOneTime = (newValue) => {
+    setTransitionSpeedOneTime(newValue);
+  };
+  const onChangeTimeBetweenSpeedOneTime = (newValue) => {
+    setTimeBetweenSpeedOneTime(newValue);
+  };
+
+
+  
+  const [selectedImagesOneTime, setSelectedImagesOneTime] = useState([]);
+  const onSelectFileOneTime = (event, boxId) => {
+    const selectedFiles = event.target.files;
+    const selectedFilesArray = Array.from(selectedFiles);
+  
+    const imagesArray = selectedFilesArray.map((file) => {
+      return URL.createObjectURL(file);
+    });
+  
+    // Cập nhật hình ảnh cho box tương ứng
+    setSelectedImagesOneTime((prevImages) => ({
+      ...prevImages,
+      [boxId]: prevImages[boxId] ? prevImages[boxId].concat(imagesArray) : imagesArray,
+    }));
+  
+    // Để xử lý lỗi trong Chrome
+    event.target.value = "";
+  };
+  
+  function deleteHandlerOneTime(image) {
+    setSelectedImagesOneTime((previousImages) => {
+      const newImages = previousImages.filter((e) => e !== image);
+      URL.revokeObjectURL(image); // Giải phóng URL
+      return newImages; // Trả về mảng mới
+    });
+  }
+
   const handleAddOneTimeBox = () => {
     setBoxOneTimeIdCounter((prevCounter) => prevCounter + 1);
     // Tạo một Box mới
     const newBox = (
       <Box
+       key={`onetime${boxOneTimeIdCounter}`}
         marginTop="10px"
         marginBottom="20px"
         padding="20px 10px 10px 10px"
@@ -773,48 +1117,6 @@ export default function AddEvent({ open, handleClose, channelStream }) {
         borderRadius="10px"
       >
         <Box marginBottom="20px">
-          <Box display="flex" alignItems="center">
-            <TimePicker
-              label="Thời gian bắt đầu"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeStartOneTime(
-                  formattedTime,
-                  boxOneTimeIdCounter.toString(),
-                );
-              }}
-            />
-            <span
-              style={{
-                fontSize: "1.5em",
-                margin: "0 10px",
-              }}
-            >
-              -
-            </span>
-            <TimePicker
-              label="Thời gian kết thúc"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeEndOneTime(
-                  formattedTime,
-                  boxOneTimeIdCounter.toString(),
-                );
-              }}
-            />
-          </Box>
 
           <Box
             marginBottom="30px"
@@ -866,7 +1168,194 @@ export default function AddEvent({ open, handleClose, channelStream }) {
             </Button>
           </Box>
 
-          <Box marginBottom="20px" display="flex" alignItems="center">
+          <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+{/* slide onetime---------------------------------------------------------------begin-------------- */}
+
+<section> 
+              <Box
+                display="flex"
+                alignItems="center"
+                marginBottom="20px"
+              >
+            <SlideshowIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
+            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
+              <strong>Slide show</strong>
+            </Typography>
+
+                <Button
+                  variant="outlined"
+                  component="label"
+                  sx={{
+                    color: "#4CAF50", // Màu chữ là màu xanh lá cây
+                    borderColor: "#4CAF50", // Màu viền là màu xanh lá cây
+                    backgroundColor: "#FFFFFF", // Màu nền là màu trắng
+                    marginRight: "10px", // Thêm khoảng cách bên phải
+                    fontSize: "1.2rem", // Kích thước chữ
+                    fontWeight: "bold", // In đậm chữ
+                    padding: "5px 10px", // Padding để tạo button lớn hơn
+                    borderRadius: "10px", // Bo tròn góc
+                    "&:hover": {
+                      // Thêm hiệu ứng hover khi di chuột qua button
+                      backgroundColor: "#4CAF50", // Màu nền khi hover là màu xanh lá cây
+                      color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+                    },
+                  }}
+                >
+                  Add Images
+                  <input
+                    type="file"
+                    name="images"
+                    onChange={(event) => onSelectFileOneTime(event, boxOneTimeIdCounter)}
+                    hidden
+                    multiple
+                  />
+                </Button>
+              </Box>
+
+
+              <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
+              <Box width="150px">
+                <TextField
+                  select
+                  label="Transition"
+                  variant="outlined"
+                  onChange={handleTransitionChangeOneTime}
+                  
+                  fullWidth
+                >
+                  {transitionOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      <Box display="flex" alignItems="center">
+                        {" "}
+                        {/* Sử dụng Flexbox để căn chỉnh các phần tử ngang nhau */}
+                        <TransformIcon sx={{ marginRight: 1 }} />{" "}
+                        {/* Icon Subscriptions */}
+                        {option.label}
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+
+              <TextField
+                label="Transition Speed"
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  onChangeTransitionSpeedOneTime(newValue);
+                }}
+                variant="outlined"
+                sx={{ width: "300px" }}
+              />
+            </Box>
+
+
+            <Box display="flex" alignItems="center" gap={2} marginBottom="20px">
+              <TextField
+                label="Time Between Slides"
+                variant="outlined"
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  onChangeTimeBetweenSpeedOneTime(newValue);
+                }}
+                sx={{ width: "200px" }}
+              />
+
+<Autocomplete
+        sx={{ width: 200 }}
+        multiple
+        id="list-pole-autocomplete"
+        onChange={(event, newValue) => {
+          setSelectedOptionsIMGOneTime(newValue);
+          // Xử lý sự thay đổi giá trị được chọn
+        }}
+        options={dataIMG.map((img) => img.name)} // Dùng trường "name" từ dữ liệu ảnh
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="Chọn hình ảnh có sẵn"
+          />
+        )}
+      />
+            </Box>
+
+
+
+
+              <Box
+               id={`displaypictureonetime-${boxOneTimeIdCounter}`}
+                sx={{
+                  height: "300px", // Chiều cao thanh trượt
+                  overflowY: "auto", // Cho phép cuộn dọc
+                  border: "1px solid #ccc", // Viền cho thanh trượt (tùy chọn)
+                  borderRadius: "10px", // Bo góc thanh trượt
+                  padding: "10px", // Padding cho thanh trượt
+                  backgroundColor: "#f5f5f5", // Màu nền của thanh trượt
+                }}
+              >      
+
+              </Box>
+            </section>
+
+{/* slide onetime---------------------------------------------------------------end-------------- */}
+          <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+
+          <Box display="flex" alignItems="center">
+            <TimePicker
+              label="Thời gian bắt đầu"
+              onChange={(newTime) => {
+                const hours = newTime.$d.getHours().toString().padStart(2, "0");
+                const minutes = newTime.$d
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0");
+                const formattedTime = `${hours}:${minutes}`;
+                console.log("Giá trị mới: ", formattedTime);
+                onChangeTimeStartOneTime(
+                  formattedTime,
+                  boxOneTimeIdCounter.toString(),
+                );
+              }}
+            />
+            <span
+              style={{
+                fontSize: "1.5em",
+                margin: "0 10px",
+              }}
+            >
+              -
+            </span>
+            <TimePicker
+              label="Thời gian kết thúc"
+              onChange={(newTime) => {
+                const hours = newTime.$d.getHours().toString().padStart(2, "0");
+                const minutes = newTime.$d
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0");
+                const formattedTime = `${hours}:${minutes}`;
+                console.log("Giá trị mới: ", formattedTime);
+                onChangeTimeEndOneTime(
+                  formattedTime,
+                  boxOneTimeIdCounter.toString(),
+                );
+              }}
+            />
+          </Box>
+
+
+
+          <Box marginBottom="20px" display="flex" alignItems="center" marginTop="10px">
             <HourglassEmptyIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
             <Typography variant="h5" marginRight="10px" paddingLeft="10px">
               <strong>Hiệu lực từ</strong>
@@ -891,6 +1380,100 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     // Thêm Box mới vào danh sách
     setOneTimeBoxes([...oneTimeBoxes, newBox]);
   };
+
+  useEffect(() => {
+    oneTimeBoxes.forEach((box) => {
+      const boxId = box.key.split('onetime')[1];// Lấy ID từ key
+  
+      // Gọi hàm render hoặc cập nhật DOM cho box này
+      const boxElement = document.getElementById(`displaypictureonetime-${boxId}`);
+      if (boxElement) {
+        // Xóa nội dung hiện tại
+        boxElement.innerHTML = '';
+  
+        // Nếu có hình ảnh được chọn cho box này
+        if (selectedImagesOneTime[boxId] && selectedImagesOneTime[boxId].length > 0) {
+          selectedImagesOneTime[boxId].forEach((image, index) => {
+            // Tạo thẻ Box (dùng div thay thế)
+            const boxDiv = document.createElement('div');
+            boxDiv.style.padding = '10px';
+            boxDiv.style.borderRadius = '20px';
+            boxDiv.style.backgroundColor = '#FFFFFF';
+            boxDiv.style.marginBottom = '10px';
+  
+            // Tạo thẻ img
+            const imgElement = document.createElement('img');
+            imgElement.src = image;
+            imgElement.height = 180;
+            imgElement.style.borderRadius = '10%';
+            imgElement.style.objectFit = 'cover';
+            imgElement.alt = `upload-${index}`;
+            boxDiv.appendChild(imgElement);
+  
+            // Tạo thẻ chứa các nút
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.justifyContent = 'space-between';
+            buttonContainer.style.alignItems = 'center';
+            boxDiv.appendChild(buttonContainer);
+  
+            // Nút Picture
+            const pictureButton = document.createElement('button');
+            pictureButton.innerHTML = `Picture: ${index + 1}`;
+            pictureButton.style.color = '#4CAF50';
+            pictureButton.style.border = '1px solid #4CAF50';
+            pictureButton.style.backgroundColor = '#FFFFFF';
+            pictureButton.style.fontSize = '0.8rem';
+            pictureButton.style.fontWeight = 'bold';
+            pictureButton.style.padding = '5px 5px';
+            pictureButton.style.borderRadius = '10px';
+            pictureButton.style.marginLeft = '10px';
+            pictureButton.onmouseover = function () {
+              pictureButton.style.backgroundColor = '#4CAF50';
+              pictureButton.style.color = '#FFFFFF';
+            };
+            pictureButton.onmouseout = function () {
+              pictureButton.style.backgroundColor = '#FFFFFF';
+              pictureButton.style.color = '#4CAF50';
+            };
+            buttonContainer.appendChild(pictureButton);
+  
+            // Nút Delete
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = 'Delete';
+            deleteButton.style.color = '#FF0000';
+            deleteButton.style.border = '1px solid #FF0000';
+            deleteButton.style.backgroundColor = '#FFFFFF';
+            deleteButton.style.fontSize = '0.8rem';
+            deleteButton.style.fontWeight = 'bold';
+            deleteButton.style.padding = '5px 5px';
+            deleteButton.style.borderRadius = '10px';
+            deleteButton.style.marginLeft = '10px';
+            deleteButton.onmouseover = function () {
+              deleteButton.style.backgroundColor = '#FF0000';
+              deleteButton.style.color = '#FFFFFF';
+            };
+            deleteButton.onmouseout = function () {
+              deleteButton.style.backgroundColor = '#FFFFFF';
+              deleteButton.style.color = '#FF0000';
+            };
+  
+            // Gán sự kiện xóa ảnh
+            deleteButton.onclick = function () {
+              deleteHandlerOneTime(image);
+            };
+ 
+            // Thêm nút Delete vào container nút
+            buttonContainer.appendChild(deleteButton);
+  
+            // Thêm boxDiv vào phần tử DOM
+            boxElement.appendChild(boxDiv);
+          });
+        }
+      }
+    });
+  }, [selectedImagesOneTime, oneTimeBoxes, deleteHandlerOneTime]);
+
   //thêm lịch chiếu--------onetime-----------------end--------------
 
   // mở danh sách video để thiết lập nội dung cho quảng cáo ---------------end--------------
@@ -1219,8 +1802,9 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       const untilParts = timeUntilDailyArray[i].value.split("/"); // Tách ngày, tháng và năm
       const until = `${untilParts[2]}-${untilParts[0]}-${untilParts[1]}`; // Định dạng lại theo yyyy-mm-dd
       const label = labelOfScheduler; // Nhãn
+
       if (contentDailyArray.length !== 0) {
-        const list = contentDailyArray[i].value.join(","); // Danh sách nội dung
+      const list = contentDailyArray[i].value.join(","); // Danh sách nội dung
       //Tạo đường dẫn API
       const url = `${API_BASE_URL}//schedule/addTask/daily?stream=${channelStream}&list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
       console.log(url);
@@ -1292,7 +1876,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     for (let i = 0; i < timeStartWeeklyArray.length; i++) {
       const startTime = timeStartWeeklyArray[i].value; // Thời gian bắt đầu
       const endTime = timeEndWeeklyArray[i].value; // Thời gian kết thúc
-      const list = contentWeeklyArray[i].value.join(","); // Danh sách nội dung
+      
 
       const startDateParts = timeBeginWeeklyArray[i].value.split("/"); // Tách ngày, tháng và năm
       const startDate = `${startDateParts[2]}-${startDateParts[0]}-${startDateParts[1]}`; // Định dạng lại theo yyyy-mm-dd
@@ -1303,6 +1887,8 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
       const daypick = listDayWeeklyArray[i].value.join(",");
 
+      if (contentWeeklyArray.length !== 0) {
+      const list = contentWeeklyArray[i].value.join(","); // Danh sách nội dung
       // Tạo đường dẫn API
       const url = `${API_BASE_URL}//schedule/addTask/weekly?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}&days=${daypick}`;
       //console.log(url);
@@ -1329,6 +1915,43 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       } catch (error) {
         console.error("Error:", error);
       }
+    }
+
+         //--------------------slide-----------------------------------------------
+      // event.preventDefault();
+      const formData = new FormData();
+  
+      // Đính kèm các tệp thực tế vào formData
+      Object.values(selectedImagesWeekly).forEach((imageArray) => {
+        imageArray.forEach((file) => {
+          formData.append('upload_images', file); // Đính kèm từng tệp thực tế
+        });
+      });
+
+      // Thêm các thông tin khác vào formData
+      formData.append('starttime', startTime);
+      formData.append('endtime', endTime);
+      formData.append('startdate', startDate);
+      formData.append('days', daypick);
+      formData.append('until', until);
+      formData.append('label', label);
+
+      formData.append('stream', channelStream);
+      formData.append('transition', transitionOptionWeekly);
+      formData.append('slide_time', timeBetweenSpeedWeekly);
+      formData.append('transition_speed', transitionSpeedWeekly);
+      formData.append('image_list', selectedOptionsIMGWeekly);
+      // Gửi yêu cầu API với danh sách tên hình ảnh trong query string
+      try {
+        const response = await axios.post(`${API_BASE_URL}/schedule/slide/weekly`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+   
+      } catch (error) {
+        console.error('Error uploading images:', error.response?.data || error.message);
+      }
 
 
 
@@ -1340,7 +1963,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     for (let i = 0; i < timeStartOneTimeArray.length; i++) {
       const startTime = timeStartOneTimeArray[i].value; // Thời gian bắt đầu
       const endTime = timeEndOneTimeArray[i].value; // Thời gian kết thúc
-      const list = contentOneTimeArray[i].value.join(","); // Danh sách nội dung
+      
 
       const startDateParts = timeBeginOneTimeArray[i].value.split("/"); // Tách ngày, tháng và năm
       const startDate = `${startDateParts[2]}-${startDateParts[0]}-${startDateParts[1]}`; // Định dạng lại theo yyyy-mm-dd
@@ -1348,6 +1971,8 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       const label = labelOfScheduler; // Nhãn
 
       // Tạo đường dẫn API
+      if (contentOneTimeArray.length !== 0) {
+      const list = contentOneTimeArray[i].value.join(","); // Danh sách nội dung
       const url = `${API_BASE_URL}//schedule/addTask/onetime?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&label=${label}`;
       //console.log(url);
       //Gửi yêu cầu API
@@ -1373,7 +1998,43 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       } catch (error) {
         console.error("Error:", error);
         setSuccesssubmit(false);
+      }}
+
+
+            //--------------------slide-----------------------------------------------
+      // event.preventDefault();
+      const formData = new FormData();
+  
+      // Đính kèm các tệp thực tế vào formData
+      Object.values(selectedImagesOneTime).forEach((imageArray) => {
+        imageArray.forEach((file) => {
+          formData.append('upload_images', file); // Đính kèm từng tệp thực tế
+        });
+      });
+
+      // Thêm các thông tin khác vào formData
+      formData.append('starttime', startTime);
+      formData.append('endtime', endTime);
+      formData.append('startdate', startDate);
+      formData.append('label', label);
+
+      formData.append('stream', channelStream);
+      formData.append('transition', transitionOptionOneTime);
+      formData.append('slide_time', timeBetweenSpeedOneTime);
+      formData.append('transition_speed', transitionSpeedOneTime);
+      formData.append('image_list', selectedOptionsIMGOneTime);
+      // Gửi yêu cầu API với danh sách tên hình ảnh trong query string
+      try {
+        const response = await axios.post(`${API_BASE_URL}/schedule/slide/onetime`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+   
+      } catch (error) {
+        console.error('Error uploading images:', error.response?.data || error.message);
       }
+
     }
     //api------onetime---------------------end-------------------------------------------
     //window.location.reload();

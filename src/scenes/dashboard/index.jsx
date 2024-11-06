@@ -142,12 +142,11 @@ const Dashboard = () => {
 
         {/* 3D Model Section */}
         <Box
-          gridColumn="span 12"
+          gridColumn="span 3"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
           p="30px"
-          width="1375px"
-          height="600px"
+          borderRadius="20px"
         >
           <Canvas>
             <ambientLight intensity={3} />
@@ -160,6 +159,10 @@ const Dashboard = () => {
             <OrbitControls />
           </Canvas>
         </Box>
+
+      
+
+
       </Box>
     </Box>
   );
