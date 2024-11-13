@@ -434,6 +434,7 @@ const LiveAd = () => {
 
     // Đính kèm các tệp thực tế vào formData
     selectedFiles.forEach((file) => {
+      console.log("fileeee",file)
       formData.append('upload_images', file); // Đính kèm tệp thực tế
     });
 
@@ -563,6 +564,7 @@ const LiveAd = () => {
     setImageURLs(prevURLs => [...prevURLs, ...newImageURLs]);
 
     event.target.value = ""; // Reset input
+    console.log("picture",selectedFiles)
   };
 
   const deleteHandler = (image, index) => {
@@ -1206,35 +1208,35 @@ const LiveAd = () => {
                           </Button>
 
                           <Button
-                            variant="outlined"
-                            onClick={() => deleteHandler(image)}
-                            sx={{
-                              color: "#FF0000", // Đổi màu chữ thành đỏ
-                              borderColor: "#FF0000", // Đổi màu viền thành đỏ
-                              backgroundColor: "#FFFFFF",
-                              fontSize: "0.8rem",
-                              fontWeight: "bold",
-                              padding: "5px 5px",
-                              borderRadius: "10px",
-                              "&:hover": {
-                                backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
-                                color: "#FFFFFF", // Màu chữ là màu trắng khi hover
-                              },
-                              marginLeft: "10px", // Thêm khoảng cách bên trái nếu cần
-                            }}
-                          >
-                            <DeleteIcon
-                              sx={{
-                                color: "#FF0000", // Màu biểu tượng mặc định
-                                marginRight: "5px",
-                                // Thay đổi màu khi hover
-                                "&:hover": {
-                                  color: "#FFFFFF", // Màu biểu tượng khi hover
-                                },
-                              }}
-                            />{" "}
-                            {/* Thêm biểu tượng Delete */}
-                          </Button>
+    key={index} // Thêm key cho mỗi item trong list
+    variant="outlined"
+    onClick={() => deleteHandler(image, index)} // Truyền cả image và index
+    sx={{
+      color: "#FF0000", // Đổi màu chữ thành đỏ
+      borderColor: "#FF0000", // Đổi màu viền thành đỏ
+      backgroundColor: "#FFFFFF",
+      fontSize: "0.8rem",
+      fontWeight: "bold",
+      padding: "5px 5px",
+      borderRadius: "10px",
+      "&:hover": {
+        backgroundColor: "#FF0000", // Màu nền khi hover là màu đỏ
+        color: "#FFFFFF", // Màu chữ là màu trắng khi hover
+      },
+      marginLeft: "10px", // Thêm khoảng cách bên trái nếu cần
+    }}
+  >
+    <DeleteIcon
+      sx={{
+        color: "#FF0000", // Màu biểu tượng mặc định
+        marginRight: "5px",
+        "&:hover": {
+          color: "#FFFFFF", // Màu biểu tượng khi hover
+        },
+      }}
+    />{" "}
+    {/* Thêm biểu tượng Delete */}
+  </Button>
                         </Box>
                       </Box>
                     );

@@ -30,7 +30,6 @@ import NoiseControlOffIcon from "@mui/icons-material/NoiseControlOff";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import HistoryIcon from "@mui/icons-material/History";
 import AirQualityHistory from "../../components/air_quality/AirHistory";
-
 const getProgressColorHumi = (value) => {
   if (value <= 30) {
     return "red"; // 0-30: Đỏ
@@ -205,46 +204,95 @@ const AirQuality = () => {
   const colors = tokens(theme.palette.mode);
 
   const [airqualityhistory, setAirqualityhistory] = useState(false);
-  const handleClickAirqualityhistory = () => {
+  const [historyId, setHistoryId] = useState(); 
+
+  const handleClickAirqualityhistory = (id) => {
+    setHistoryId(id); 
     setAirqualityhistory(true);
+    console.log("idddddddd",historyId)
   };
   const handleCloserAirqualityhistory = () => {
     setAirqualityhistory(false);
   };
 
-  const [smartPoleData, setSmartPoleData] = useState({
-    name: "--",
-    coordinates: "--",
-    location: "--",
-    sensors: {
-      temperature: "--",
-      humidity: "--",
-      PM25: "--",
-      PM10: "--",
-      noise: "--",
-      lux: "--",
+  const [smartPoleData, setSmartPoleData] = useState([
+    {
+      avg_data: {
+        air_pressure: "--",
+        humidity: "--",
+        lux: "--",
+        noise: "--",
+        pm10: "--",
+        pm2_5: "--",
+        temperature: "--",
+      },
+      timestamp: "--",
     },
-  });
+  ]);
+
+  const [smartPoleData2, setSmartPoleData2] = useState([
+    {
+      avg_data: {
+        air_pressure: "--",
+        humidity: "--",
+        lux: "--",
+        noise: "--",
+        pm10: "--",
+        pm2_5: "--",
+        temperature: "--",
+      },
+      timestamp: "--",
+    },
+  ]);
 
   // Hàm gọi API từ Flask mỗi 2 giây
   useEffect(() => {
-    const fetchSmartPoleData = () => {
-      fetch("http://192.168.1.209:5000/get/smartpole")
-        .then((response) => response.json())
-        .then((data) => {
-          setSmartPoleData(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching smart pole data:", error);
+    const fetchSmartPoleData = async () => {
+      try {
+        // Thực hiện request với header để skip ngrok browser warning
+        const response = await fetch(`${API_BASE_URL}/get/sensor_value?pole_id=1`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
         });
-    };
+  
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+  
+        const data = await response.json();
+        setSmartPoleData(data);
+  
+      } catch (error) {
+        console.error("Error fetching smart pole data:", error);
+      }
 
+      try {
+        // Thực hiện request với header để skip ngrok browser warning
+        const response = await fetch(`${API_BASE_URL}/get/sensor_value?pole_id=2`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+  
+        const data = await response.json();
+        setSmartPoleData2(data);
+  
+      } catch (error) {
+        console.error("Error fetching smart pole data:", error);
+      }
+    };
+  
     // Gọi API lần đầu
     fetchSmartPoleData();
-
-    // Thiết lập khoảng thời gian gọi API mỗi 2 giây
-    const intervalId = setInterval(fetchSmartPoleData, 2000);
-
+  
+    // Thiết lập khoảng thời gian gọi API mỗi 20 giây
+    const intervalId = setInterval(fetchSmartPoleData, 20000);
+  
     // Xóa khoảng thời gian khi component bị hủy
     return () => clearInterval(intervalId);
   }, []);
@@ -276,7 +324,7 @@ const AirQuality = () => {
             sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
           />
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {smartPoleData.name}
+            Smart Pole 1
           </Typography>
 
           <MyLocationIcon
@@ -287,7 +335,7 @@ const AirQuality = () => {
             }}
           />
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {smartPoleData.coordinates}
+          10.880123:106.805011
           </Typography>
 
           <LocationOnIcon
@@ -298,7 +346,7 @@ const AirQuality = () => {
             }}
           />
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {smartPoleData.location}
+            BK-CS1
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -315,7 +363,7 @@ const AirQuality = () => {
                 variant="h6"
                 sx={{ marginRight: "10px", fontWeight: "bold" }}
               >
-                {smartPoleData.sensors.temperature}℃{" "}
+                {smartPoleData[0]?.avg_data?.temperature}℃{" "}
               </Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
@@ -331,11 +379,11 @@ const AirQuality = () => {
               >
                 <HumiProgress
                   variant="determinate"
-                  value={smartPoleData.sensors.humidity}
+                  value={smartPoleData[0]?.avg_data?.humidity}
                 />
               </Box>
               <Typography variant="h6">
-                {smartPoleData.sensors.humidity}%
+              {smartPoleData[0]?.avg_data?.humidity}%
               </Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
@@ -349,11 +397,11 @@ const AirQuality = () => {
               >
                 <PM25Progress
                   variant="determinate"
-                  value={getProgressPercentage(smartPoleData.sensors.PM25)}
+                  value={getProgressPercentage(smartPoleData[0]?.avg_data?.pm2_5)}
                 />
               </Box>
               <Typography variant="h6">
-                {smartPoleData.sensors.PM25} µg/m³
+                {smartPoleData[0]?.avg_data?.pm2_5} µg/m³
               </Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
@@ -367,11 +415,11 @@ const AirQuality = () => {
               >
                 <PM25Progress
                   variant="determinate"
-                  value={getProgressPercentage(smartPoleData.sensors.PM10)}
+                  value={getProgressPercentage(smartPoleData[0]?.avg_data?.pm10)}
                 />
               </Box>
               <Typography variant="h6">
-                {smartPoleData.sensors.PM10} µg/m³
+                {smartPoleData[0]?.avg_data?.pm10} µg/m³
               </Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
@@ -388,12 +436,12 @@ const AirQuality = () => {
                 <NoiseProgress
                   variant="determinate"
                   value={getProgressPercentageNoise(
-                    smartPoleData.sensors.noise,
+                    smartPoleData[0]?.avg_data?.noise,
                   )}
                 />
               </Box>
               <Typography variant="h6">
-                {smartPoleData.sensors.noise} db
+                {smartPoleData[0]?.avg_data?.noise} db
               </Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
@@ -408,7 +456,7 @@ const AirQuality = () => {
                 variant="h6"
                 sx={{ marginRight: "10px", fontWeight: "bold" }}
               >
-                {smartPoleData.sensors.lux} lx
+                {smartPoleData[0]?.avg_data?.lux} lx
               </Typography>
             </ListItem>
             {/* //------------------------------------------------------------------------------------------------------*/}
@@ -426,7 +474,7 @@ const AirQuality = () => {
                     backgroundColor: "#e0e0e0",
                   },
                 }}
-                onClick={handleClickAirqualityhistory}
+                onClick={() => handleClickAirqualityhistory(1)}
               >
                 <HistoryIcon sx={{ color: "white", fontSize: "26px" }} />
                 <Typography
@@ -486,11 +534,151 @@ const AirQuality = () => {
             BK-CS2
           </Typography>
         </AccordionSummary>
+        <AccordionDetails>
+          <List>
+            {/* //------------------------------------------------------------------------------------------------------*/}
+            <ListItem>
+              <DeviceThermostatIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+              <Typography variant="h6" sx={{ marginRight: "10px" }}>
+                Nhiệt độ
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{ marginRight: "10px", fontWeight: "bold" }}
+              >
+                {smartPoleData2[0]?.avg_data?.temperature}℃{" "}
+              </Typography>
+            </ListItem>
+            {/* //------------------------------------------------------------------------------------------------------*/}
+            <ListItem
+              sx={{ height: "50px", display: "flex", alignItems: "center" }}
+            >
+              <OpacityIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+              <Typography variant="h6">Độ ẩm</Typography>
+              <Box
+                sx={{ width: "70%", marginLeft: "31px", marginRight: "10px" }}
+              >
+                <HumiProgress
+                  variant="determinate"
+                  value={smartPoleData2[0]?.avg_data?.humidity}
+                />
+              </Box>
+              <Typography variant="h6">
+              {smartPoleData2[0]?.avg_data?.humidity}%
+              </Typography>
+            </ListItem>
+            {/* //------------------------------------------------------------------------------------------------------*/}
+            <ListItem>
+              <AirIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+              <Typography variant="h6">PM2.5</Typography>
+              <Box
+                sx={{ width: "70%", marginLeft: "34px", marginRight: "10px" }}
+              >
+                <PM25Progress
+                  variant="determinate"
+                  value={getProgressPercentage(smartPoleData2[0]?.avg_data?.pm2_5)}
+                />
+              </Box>
+              <Typography variant="h6">
+                {smartPoleData2[0]?.avg_data?.pm2_5} µg/m³
+              </Typography>
+            </ListItem>
+            {/* //------------------------------------------------------------------------------------------------------*/}
+            <ListItem>
+              <GrainIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+              <Typography variant="h6">PM10</Typography>
+              <Box
+                sx={{ width: "70%", marginLeft: "38px", marginRight: "10px" }}
+              >
+                <PM25Progress
+                  variant="determinate"
+                  value={getProgressPercentage(smartPoleData2[0]?.avg_data?.pm10)}
+                />
+              </Box>
+              <Typography variant="h6">
+                {smartPoleData2[0]?.avg_data?.pm10} µg/m³
+              </Typography>
+            </ListItem>
+            {/* //------------------------------------------------------------------------------------------------------*/}
+            <ListItem>
+              <NoiseControlOffIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+              <Typography variant="h6" sx={{ marginRight: "10px" }}>
+                Tiếng ồn
+              </Typography>
+              <Box
+                sx={{ width: "70%", marginLeft: "10px", marginRight: "10px" }}
+              >
+                <NoiseProgress
+                  variant="determinate"
+                  value={getProgressPercentageNoise(
+                    smartPoleData2[0]?.avg_data?.noise,
+                  )}
+                />
+              </Box>
+              <Typography variant="h6">
+                {smartPoleData2[0]?.avg_data?.noise} db
+              </Typography>
+            </ListItem>
+            {/* //------------------------------------------------------------------------------------------------------*/}
+            <ListItem>
+              <LightModeIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+              <Typography variant="h6" sx={{ marginRight: "10px" }}>
+                Cường độ ánh sáng
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{ marginRight: "10px", fontWeight: "bold" }}
+              >
+                {smartPoleData2[0]?.avg_data?.lux} lx
+              </Typography>
+            </ListItem>
+            {/* //------------------------------------------------------------------------------------------------------*/}
+            <ListItem>
+              <Button
+                sx={{
+                  backgroundColor: colors.greenAccent[600],
+                  color: "text.primary",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "10px 15px",
+                  borderRadius: "5px",
+                  transition: "background-color 0.3s, color 0.3s",
+                  "&:hover": {
+                    backgroundColor: "#e0e0e0",
+                  },
+                }}
+                onClick={() => handleClickAirqualityhistory(2)}
+              >
+                <HistoryIcon sx={{ color: "white", fontSize: "26px" }} />
+                <Typography
+                  variant="h6"
+                  sx={{ marginLeft: "10px", color: "white" }}
+                >
+                  Lịch sử
+                </Typography>
+              </Button>
+            </ListItem>
+          </List>
+        </AccordionDetails>
+
       </Accordion>
 
       <AirQualityHistory
         open={airqualityhistory}
         handleClose={handleCloserAirqualityhistory}
+        historyId={historyId}
       />
     </Box>
   );

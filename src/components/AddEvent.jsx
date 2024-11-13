@@ -158,33 +158,32 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
 
   
-  const [selectedImagesDaily, setSelectedImagesDaily] = useState([]);
+  const [selectedImagesDaily, setSelectedImagesDaily] = useState({});
+
+  // Hàm xử lý chọn tệp cho từng boxId
   const onSelectFileDaily = (event, boxId) => {
     const selectedFiles = event.target.files;
     const selectedFilesArray = Array.from(selectedFiles);
   
-    const imagesArray = selectedFilesArray.map((file) => {
-      return URL.createObjectURL(file);
-    });
-  
-    // Cập nhật hình ảnh cho box tương ứng
+    // Cập nhật các tệp cho box tương ứng với boxId
     setSelectedImagesDaily((prevImages) => ({
       ...prevImages,
-      [boxId]: prevImages[boxId] ? prevImages[boxId].concat(imagesArray) : imagesArray,
+      [boxId]: prevImages[boxId]
+        ? prevImages[boxId].concat(selectedFilesArray) // Thêm các tệp vào boxId hiện có
+        : selectedFilesArray, // Khởi tạo boxId với các tệp mới nếu chưa tồn tại
     }));
   
     // Để xử lý lỗi trong Chrome
     event.target.value = "";
   };
   
-  function deleteHandlerDaily(image) {
-    setSelectedImagesDaily((previousImages) => {
-      const newImages = previousImages.filter((e) => e !== image);
-      URL.revokeObjectURL(image); // Giải phóng URL
-      return newImages; // Trả về mảng mới
-    });
+  // Hàm xử lý xóa ảnh cho từng boxId
+  function deleteHandlerDaily(boxId, fileToDelete) {
+    setSelectedImagesDaily((prevImages) => ({
+      ...prevImages,
+      [boxId]: prevImages[boxId].filter((file) => file !== fileToDelete), // Lọc tệp cần xóa cho boxId tương ứng
+    }));
   }
-
 
   const handleAddDayBox = () => {
     setBoxDailyIdCounter((prevCounter) => prevCounter + 1);
@@ -382,6 +381,9 @@ export default function AddEvent({ open, handleClose, channelStream }) {
               >      
 
               </Box>
+
+
+              
             </section>
             </Box>
             <Divider 
@@ -505,32 +507,27 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     dayBoxes.forEach((box) => {
       const boxId = box.key.split('daily')[1]; // Lấy ID từ key
   
-      // Gọi hàm render hoặc cập nhật DOM cho box này
       const boxElement = document.getElementById(`displaypicturedaily-${boxId}`);
       if (boxElement) {
-        // Xóa nội dung hiện tại
         boxElement.innerHTML = '';
   
-        // Nếu có hình ảnh được chọn cho box này
         if (selectedImagesDaily[boxId] && selectedImagesDaily[boxId].length > 0) {
           selectedImagesDaily[boxId].forEach((image, index) => {
-            // Tạo thẻ Box (dùng div thay thế)
             const boxDiv = document.createElement('div');
             boxDiv.style.padding = '10px';
             boxDiv.style.borderRadius = '20px';
             boxDiv.style.backgroundColor = '#FFFFFF';
             boxDiv.style.marginBottom = '10px';
   
-            // Tạo thẻ img
+            // Tạo thẻ img với URL hợp lệ
             const imgElement = document.createElement('img');
-            imgElement.src = image;
+            imgElement.src = URL.createObjectURL(image); // Chuyển đổi file thành URL
             imgElement.height = 180;
             imgElement.style.borderRadius = '10%';
             imgElement.style.objectFit = 'cover';
             imgElement.alt = `upload-${index}`;
             boxDiv.appendChild(imgElement);
   
-            // Tạo thẻ chứa các nút
             const buttonContainer = document.createElement('div');
             buttonContainer.style.display = 'flex';
             buttonContainer.style.justifyContent = 'space-between';
@@ -580,10 +577,9 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   
             // Gán sự kiện xóa ảnh
             deleteButton.onclick = function () {
-              deleteHandlerDaily(image);
+              deleteHandlerDaily(boxId, image); // Truyền boxId và file image
             };
   
-            // Thêm nút Delete vào container nút
             buttonContainer.appendChild(deleteButton);
   
             // Thêm boxDiv vào phần tử DOM
@@ -593,7 +589,6 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       }
     });
   }, [selectedImagesDaily, dayBoxes, deleteHandlerDaily]);
-  
   
   //thêm lịch chiếu-----Daily------------------end---------------------
   //thêm lịch chiếu-----weekly----------------begin-------------------------------
@@ -618,31 +613,31 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
 
   
-  const [selectedImagesWeekly, setSelectedImagesWeekly] = useState([]);
+  const [selectedImagesWeekly, setSelectedImagesWeekly] = useState({});
+
+  // Hàm xử lý chọn tệp cho từng boxId
   const onSelectFileWeekly = (event, boxId) => {
     const selectedFiles = event.target.files;
     const selectedFilesArray = Array.from(selectedFiles);
   
-    const imagesArray = selectedFilesArray.map((file) => {
-      return URL.createObjectURL(file);
-    });
-  
-    // Cập nhật hình ảnh cho box tương ứng
+    // Cập nhật các tệp cho box tương ứng với boxId
     setSelectedImagesWeekly((prevImages) => ({
       ...prevImages,
-      [boxId]: prevImages[boxId] ? prevImages[boxId].concat(imagesArray) : imagesArray,
+      [boxId]: prevImages[boxId]
+        ? prevImages[boxId].concat(selectedFilesArray) // Thêm các tệp vào boxId hiện có
+        : selectedFilesArray, // Khởi tạo boxId với các tệp mới nếu chưa tồn tại
     }));
   
     // Để xử lý lỗi trong Chrome
     event.target.value = "";
   };
   
-  function deleteHandlerWeekly(image) {
-    setSelectedImagesWeekly((previousImages) => {
-      const newImages = previousImages.filter((e) => e !== image);
-      URL.revokeObjectURL(image); // Giải phóng URL
-      return newImages; // Trả về mảng mới
-    });
+  // Hàm xử lý xóa ảnh cho từng boxId
+  function deleteHandlerWeekly(boxId, fileToDelete) {
+    setSelectedImagesWeekly((prevImages) => ({
+      ...prevImages,
+      [boxId]: prevImages[boxId].filter((file) => file !== fileToDelete), // Lọc tệp cần xóa cho boxId tương ứng
+    }));
   }
 
 
@@ -961,34 +956,29 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
   useEffect(() => {
     weekBoxes.forEach((box) => {
-      const boxId = box.key.split('weekly')[1];// Lấy ID từ key
+      const boxId = box.key.split('weekly')[1]; // Lấy ID từ key
   
-      // Gọi hàm render hoặc cập nhật DOM cho box này
       const boxElement = document.getElementById(`displaypictureweekly-${boxId}`);
       if (boxElement) {
-        // Xóa nội dung hiện tại
         boxElement.innerHTML = '';
   
-        // Nếu có hình ảnh được chọn cho box này
         if (selectedImagesWeekly[boxId] && selectedImagesWeekly[boxId].length > 0) {
           selectedImagesWeekly[boxId].forEach((image, index) => {
-            // Tạo thẻ Box (dùng div thay thế)
             const boxDiv = document.createElement('div');
             boxDiv.style.padding = '10px';
             boxDiv.style.borderRadius = '20px';
             boxDiv.style.backgroundColor = '#FFFFFF';
             boxDiv.style.marginBottom = '10px';
   
-            // Tạo thẻ img
+            // Tạo thẻ img với URL hợp lệ
             const imgElement = document.createElement('img');
-            imgElement.src = image;
+            imgElement.src = URL.createObjectURL(image); // Chuyển đổi file thành URL
             imgElement.height = 180;
             imgElement.style.borderRadius = '10%';
             imgElement.style.objectFit = 'cover';
             imgElement.alt = `upload-${index}`;
             boxDiv.appendChild(imgElement);
   
-            // Tạo thẻ chứa các nút
             const buttonContainer = document.createElement('div');
             buttonContainer.style.display = 'flex';
             buttonContainer.style.justifyContent = 'space-between';
@@ -1038,19 +1028,18 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   
             // Gán sự kiện xóa ảnh
             deleteButton.onclick = function () {
-              deleteHandlerWeekly(image);
+              deleteHandlerWeekly(boxId, image); // Truyền boxId và file image
             };
- 
-            // Thêm nút Delete vào container nút
+  
             buttonContainer.appendChild(deleteButton);
   
-            // Thêm boxDiv vào phần tử DOM
             boxElement.appendChild(boxDiv);
           });
         }
       }
     });
   }, [selectedImagesWeekly, weekBoxes, deleteHandlerWeekly]);
+  
 
   //thêm lịch chiếu-----weekly------------------end---------------------
   //thêm lịch chiếu------onetime-----------------begin---------------
@@ -1080,26 +1069,24 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     const selectedFiles = event.target.files;
     const selectedFilesArray = Array.from(selectedFiles);
   
-    const imagesArray = selectedFilesArray.map((file) => {
-      return URL.createObjectURL(file);
-    });
-  
-    // Cập nhật hình ảnh cho box tương ứng
+    // Cập nhật các tệp cho box tương ứng với boxId
     setSelectedImagesOneTime((prevImages) => ({
       ...prevImages,
-      [boxId]: prevImages[boxId] ? prevImages[boxId].concat(imagesArray) : imagesArray,
+      [boxId]: prevImages[boxId]
+        ? prevImages[boxId].concat(selectedFilesArray) // Thêm các tệp vào boxId hiện có
+        : selectedFilesArray, // Khởi tạo boxId với các tệp mới nếu chưa tồn tại
     }));
   
     // Để xử lý lỗi trong Chrome
     event.target.value = "";
   };
   
-  function deleteHandlerOneTime(image) {
-    setSelectedImagesOneTime((previousImages) => {
-      const newImages = previousImages.filter((e) => e !== image);
-      URL.revokeObjectURL(image); // Giải phóng URL
-      return newImages; // Trả về mảng mới
-    });
+  // Hàm xử lý xóa ảnh cho từng boxId
+  function deleteHandlerOneTime(boxId, fileToDelete) {
+    setSelectedImagesOneTime((prevImages) => ({
+      ...prevImages,
+      [boxId]: prevImages[boxId].filter((file) => file !== fileToDelete), // Lọc tệp cần xóa cho boxId tương ứng
+    }));
   }
 
   const handleAddOneTimeBox = () => {
@@ -1383,34 +1370,29 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
   useEffect(() => {
     oneTimeBoxes.forEach((box) => {
-      const boxId = box.key.split('onetime')[1];// Lấy ID từ key
+      const boxId = box.key.split('onetime')[1]; // Lấy ID từ key
   
-      // Gọi hàm render hoặc cập nhật DOM cho box này
       const boxElement = document.getElementById(`displaypictureonetime-${boxId}`);
       if (boxElement) {
-        // Xóa nội dung hiện tại
         boxElement.innerHTML = '';
   
-        // Nếu có hình ảnh được chọn cho box này
         if (selectedImagesOneTime[boxId] && selectedImagesOneTime[boxId].length > 0) {
           selectedImagesOneTime[boxId].forEach((image, index) => {
-            // Tạo thẻ Box (dùng div thay thế)
             const boxDiv = document.createElement('div');
             boxDiv.style.padding = '10px';
             boxDiv.style.borderRadius = '20px';
             boxDiv.style.backgroundColor = '#FFFFFF';
             boxDiv.style.marginBottom = '10px';
   
-            // Tạo thẻ img
+            // Tạo thẻ img với URL hợp lệ
             const imgElement = document.createElement('img');
-            imgElement.src = image;
+            imgElement.src = URL.createObjectURL(image); // Chuyển đổi file thành URL
             imgElement.height = 180;
             imgElement.style.borderRadius = '10%';
             imgElement.style.objectFit = 'cover';
             imgElement.alt = `upload-${index}`;
             boxDiv.appendChild(imgElement);
   
-            // Tạo thẻ chứa các nút
             const buttonContainer = document.createElement('div');
             buttonContainer.style.display = 'flex';
             buttonContainer.style.justifyContent = 'space-between';
@@ -1460,13 +1442,11 @@ export default function AddEvent({ open, handleClose, channelStream }) {
   
             // Gán sự kiện xóa ảnh
             deleteButton.onclick = function () {
-              deleteHandlerOneTime(image);
+              deleteHandlerOneTime(boxId, image); // Truyền boxId và file image
             };
- 
-            // Thêm nút Delete vào container nút
+  
             buttonContainer.appendChild(deleteButton);
   
-            // Thêm boxDiv vào phần tử DOM
             boxElement.appendChild(boxDiv);
           });
         }
@@ -2049,7 +2029,7 @@ export default function AddEvent({ open, handleClose, channelStream }) {
           setOpenpopupsuccess(1);
           // Thực hiện các hành động khác sau khi tất cả các yêu cầu API hoàn thành
           setTimeout(() => {
-            window.location.reload();
+            // window.location.reload();
           }, 2000);
         }
         return prevSuccess;
