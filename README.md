@@ -1,13 +1,10 @@
-## Cài Đặt và Chạy Ứng Dụng
+# Smart Pole System
 
-### 1. **Xây Dựng Docker Image**
+## Introduction
 
-Để xây dựng Docker image từ Dockerfile, sử dụng lệnh sau trong thư mục chứa Dockerfile:
+The **Smart Pole System** is an innovative infrastructure solution designed to enhance urban spaces by providing dynamic content display and real-time streaming capabilities. Smart poles are street poles equipped with digital displays, sensors, and network connectivity, enabling them to deliver information, advertisements, and livestream events. This system facilitates remote management, scheduling, and control of the content displayed on these smart poles, allowing cities and organizations to engage with the public in a new, interactive way.
+![Smart Pole 3D Model](https://skfb.ly/p8O9w)
+## System Architecture
 
-docker build -t smart-pole-app .
+The Smart Pole System consists of several key modules that work together to deliver and manage content on the poles. Each module has a specific role, from content scheduling to communication between devices. Below is a breakdown of each module and its functionality:
 
-### 1. **Chạy Docker Container**
-
-Sau khi xây dựng image thành công, có thể chạy container từ image này bằng lệnh:
-
-docker run -d -p 3000:3000 --name smart-pole-app-container smart-pole-app
