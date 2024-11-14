@@ -3,7 +3,7 @@
 ## Introduction
 
 The **Smart Pole System** is an innovative infrastructure solution designed to enhance urban spaces by providing dynamic content display and real-time streaming capabilities. Smart poles are street poles equipped with digital displays, sensors, and network connectivity, enabling them to deliver information, advertisements, and livestream events. This system facilitates remote management, scheduling, and control of the content displayed on these smart poles, allowing cities and organizations to engage with the public in a new, interactive way.
-![Smart Pole 3D Model](https://sketchfab.com/3d-models/smart-pole-3d-b9885d4994d048d4ad8794c369e889d2)
+![Smart Pole ](public/assets/smart_pole.png)
 ## System Architecture
 
 The Smart Pole System consists of several key modules that work together to deliver and manage content on the poles. Each module has a specific role, from content scheduling to communication between devices. Below is a breakdown of each module and its functionality:
@@ -15,6 +15,17 @@ The Smart Pole System consists of several key modules that work together to deli
   - Allows users to schedule, manage, and control the content displayed on smart poles.
   - Supports real-time monitoring of the system’s status.
   - Communicates with the **Content Manager** module via HTTP requests.
+#### 1.1 Video Management
+![Video management ](public/assets/ui/upload_video.png)
+#### 1.2 Advertising Management
+![Advertising management ](public/assets/ui/adv_management.png)
+![Weekly ](public/assets/ui/weekly.png)
+### 1.3 Smartpole Management
+![SmartPole management ](public/assets/ui/smartpole.png)
+### 1.4 LiveStream
+![LiveStream ](public/assets/ui/live.png)
+### 1.5 Air QUality
+![LiveStream ](public/assets/ui/aiir.png)
 ### 2. Content Manager
 
 - **Description**: The Content Manager is the core of the system, managing content distribution and coordinating communication between different modules.
