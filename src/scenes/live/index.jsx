@@ -860,7 +860,7 @@ const LiveAd = () => {
                 variant="h4"
                 style={{ marginRight: "10px", paddingLeft: "10px" }}
               >
-                <strong>LiveStream trực tiếp</strong>
+                <strong>LiveStream video</strong>
               </Typography>
             </Box>
 

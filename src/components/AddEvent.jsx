@@ -63,6 +63,7 @@ import { API_BASE_URL } from "../data/link_api";
 import ErrorPopup from "./ErrorPopup";
 import SuccessPopup from "./SuccessPopup";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
+import WaitingLivePopup from "./WaitingLivePopup";
 export default function AddEvent({ open, handleClose, channelStream }) {
   // console.log("adđ event channel stream", channelStream)
   const theme = useTheme();
@@ -2022,14 +2023,20 @@ export default function AddEvent({ open, handleClose, channelStream }) {
 
   const handleSave = async () => {
     try {
+      setOpenpopupwait(true);
       setSuccesssubmit(true);
+      
       await handleSubmit(); // Gọi hàm để xử lý việc gửi API
       setSuccesssubmit((prevSuccess) => {
         if (prevSuccess) {
-          setOpenpopupsuccess(1);
+          setTimeout(() => {
+            setOpenpopupwait(false);
+            setOpenpopupsuccess(1);
+          }, 1000);
+
           // Thực hiện các hành động khác sau khi tất cả các yêu cầu API hoàn thành
           setTimeout(() => {
-            // window.location.reload();
+            window.location.reload();
           }, 2000);
         }
         return prevSuccess;
@@ -2064,6 +2071,17 @@ export default function AddEvent({ open, handleClose, channelStream }) {
     setOpenpopupsuccess(false);
   };
   //hiện popup thành công---------------------------------end--------------------------------
+    //hiện popup waiting---------------------------------begin------------------------------
+    const [openpopupwait, setOpenpopupwait] = useState(false);
+
+    const handleClickOpenpopupwait = () => {
+      setOpenpopupwait(true);
+    };
+  
+    const handleClosepopupwait = () => {
+      setOpenpopupwait(false);
+    };
+    //hiện popup waiting---------------------------------end--------------------------------
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Dialog
@@ -2334,6 +2352,10 @@ export default function AddEvent({ open, handleClose, channelStream }) {
       <SuccessPopup
         open={openpopupsuccess}
         handleClose={handleClosepopupsuccess}
+      />
+            <WaitingLivePopup
+        open={openpopupwait}
+        handleClose={handleClosepopupwait}
       />
     </LocalizationProvider>
   );

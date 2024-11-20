@@ -5,7 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import { Box, Divider } from '@mui/material';
 import TextField from "@mui/material/TextField";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -57,7 +57,7 @@ import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import { API_BASE_URL } from "../data/link_api";
-
+import SlideshowIcon from "@mui/icons-material/Slideshow";
 export default function CustomDialog({
   open,
   handleClose,
@@ -93,7 +93,7 @@ export default function CustomDialog({
 
   const handleClickFlex = () => {
     setOpenFlex(!openFlex);
-  };
+  };  
 
   const [videoname, setVideoname] = useState([]); // Khai báo biến dataVideo
   const [id, setId] = useState([]);
@@ -107,6 +107,7 @@ export default function CustomDialog({
   const [days, setDays] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [dataVideo, setDataVideo] = useState([]);
+  const [inputtype, setInputtype] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -144,6 +145,7 @@ export default function CustomDialog({
         const until = responseData.Schedule.map((item) => item.until);
         const typetask = responseData.Schedule.map((item) => item.typetask);
         const days = responseData.Schedule.map((item) => item.days);
+        const inputtype = responseData.Schedule.map((item) => item.input_type);
         // console.log("Labelllllllllllllllllllllllllll:", label);
         //console.log("Videonamemmmmmmmmmmmmmmmmmmmmmm:", videoname);
         // console.log("Starttttttttttttttttttttttttttt:", start);
@@ -153,7 +155,6 @@ export default function CustomDialog({
         // console.log("untilllllllllllllllllllllllllll:", until);
         // console.log("typeeeeeeeeeeeeeeeeeeeeeeeeeeee:", type);
         //console.log("dayssssssssssssssssssssssssssss:", days);
-
         setDataVideo(dataVideo);
 
         setId(id);
@@ -166,6 +167,7 @@ export default function CustomDialog({
         setUntil(until);
         setTypeTask(typetask);
         setDays(days);
+        setInputtype(inputtype);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -196,6 +198,7 @@ export default function CustomDialog({
   const defaultType = indexes.map((index) => typetask[index]);
   const defaultDays = indexes.map((index) => days[index]);
   const defaultId = indexes.map((index) => id[index]);
+  const defaultinputType = indexes.map((index) => inputtype[index]);
   const daysToIndex = {
     mon: 0,
     tue: 1,
@@ -215,904 +218,6 @@ export default function CustomDialog({
       })
     : [];
 
-  // console.log("dayssssssssssssssssssssssssssss", defaultDaysIndices);
-  //------thêm lịch chiếu----------------------------------------------beign------------------------------------------------
-  //-----------------------------------------------------------------------------------------------------------------------------------------
-
-  const [timeStartDailyArray, setTimeStartDailyArray] = useState([]);
-  const [timeEndDailyArray, setTimeEndDailyArray] = useState([]);
-  const [contentDailyArray, setContentDailyArray] = useState([]);
-  const [timeBeginDailyArray, setTimeBeginDailyArray] = useState([]);
-  const [timeUntilDailyArray, setTimeUntilDailyArray] = useState([]);
-  const [durationDailyArray, setDurationDailyArray] = useState([]);
-
-  const [timeStartWeeklyArray, setTimeStartWeeklyArray] = useState([]);
-  const [timeEndWeeklyArray, setTimeEndWeeklyArray] = useState([]);
-  const [contentWeeklyArray, setContentWeeklyArray] = useState([]);
-  const [listDayWeeklyArray, setListDayWeeklyArray] = useState([]);
-  const [timeBeginWeeklyArray, setTimeBeginWeeklyArray] = useState([]);
-  const [timeUntilWeeklyArray, setTimeUntilWeeklyArray] = useState([]);
-
-  const [timeStartOneTimeArray, setTimeStartOneTimeArray] = useState([]);
-  const [timeEndOneTimeArray, setTimeEndOneTimeArray] = useState([]);
-  const [contentOneTimeArray, setContentOneTimeArray] = useState([]);
-  const [timeBeginOneTimeArray, setTimeBeginOneTimeArray] = useState([]);
-
-  //thêm lịch chiếu-----Daily----------------begin-------------------------------
-  const [dayBoxes, setDayBoxes] = useState([]);
-  const [boxDailyIdCounter, setBoxDailyIdCounter] = useState(0);
-  const handleAddDayBox = () => {
-    // Tạo một Box mới
-    setBoxDailyIdCounter((prevCounter) => prevCounter + 1);
-    const newBox = (
-      <Box
-        marginTop="10px"
-        marginBottom="20px"
-        padding="20px 10px 10px 10px"
-        flexDirection="column"
-        alignItems="center"
-        backgroundColor={colors.grey[900]}
-        borderRadius="10px"
-      >
-        <Box marginBottom="20px">
-          <Box display="flex" alignItems="center">
-            <TimePicker
-              label="Thời gian bắt đầu"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeStartDaily(
-                  formattedTime,
-                  boxDailyIdCounter.toString(),
-                );
-              }}
-            />
-            <span
-              style={{
-                fontSize: "1.5em",
-                margin: "0 10px",
-              }}
-            >
-              -
-            </span>
-            <TimePicker
-              label="Thời gian kết thúc"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeEndDaily(
-                  formattedTime,
-                  boxDailyIdCounter.toString(),
-                );
-              }}
-            />
-          </Box>
-
-          <Box
-            marginBottom="30px"
-            marginTop="20px"
-            display="flex"
-            alignItems="center"
-          >
-            <ChangeCircleIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
-              <strong>Thay đổi nội dung</strong>
-            </Typography>
-            <Autocomplete
-              sx={{ width: 300 }}
-              multiple
-              id="list-pole-autocomplete"
-              onChange={(event, newValue) => {
-                setSelectedOptions(newValue);
-                onChangeContentDaily(newValue, boxDailyIdCounter.toString());
-              }}
-              options={
-                dataVideo && dataVideo["Video name"]
-                  ? dataVideo["Video name"]
-                  : []
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  label="Chọn nội dung"
-                />
-              )}
-            />
-
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#757575",
-                color: "#fff",
-                marginLeft: "20px",
-                display: "flex",
-                alignItems: "center",
-                padding: "5px",
-              }}
-            >
-              <DeleteForeverIcon />
-            </Button>
-          </Box>
-
-          <Box marginBottom="20px" display="flex" alignItems="center">
-            <HourglassEmptyIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
-              <strong>Hiệu lực từ</strong>
-            </Typography>
-            <DatePicker
-              label="Ngày bắt đầy"
-              onChange={(newDate) => {
-                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-                const year = newDate.$y; // Lấy năm
-                const formattedDate = `${month}/${day}/${year}`;
-                onChangeTimeBeginDaily(
-                  formattedDate,
-                  boxDailyIdCounter.toString(),
-                );
-              }}
-            />
-            <span
-              style={{
-                fontSize: "1.5em",
-                margin: "0 10px",
-              }}
-            >
-              {" "}
-              -{" "}
-            </span>
-            <DatePicker
-              label="Ngày kết thúc"
-              onChange={(newDate) => {
-                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-                const year = newDate.$y; // Lấy năm
-                const formattedDate = `${month}/${day}/${year}`;
-                onChangeTimeUntilDaily(
-                  formattedDate,
-                  boxDailyIdCounter.toString(),
-                );
-              }}
-            />
-          </Box>
-
-          <Box marginBottom="20px" display="flex" alignItems="center">
-            <EventRepeatIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
-              <strong>Chu kỳ lặp</strong>
-            </Typography>
-            <TextField
-              label="Số ngày"
-              variant="outlined"
-              sx={{ width: "300px" }}
-              onChange={(event) => {
-                const newValue = event.target.value;
-                onChangeDurationDaily(newValue, boxDailyIdCounter);
-              }}
-            />
-          </Box>
-        </Box>
-      </Box>
-    );
-    // Thêm Box mới vào danh sách
-    setDayBoxes([...dayBoxes, newBox]);
-  };
-  //thêm lịch chiếu-----Daily------------------end---------------------
-  //thêm lịch chiếu-----weekly----------------begin-------------------------------
-  const [weekBoxes, setWeekBoxes] = useState([]);
-  const [boxWeeklyIdCounter, setBoxWeeklyIdCounter] = useState(0);
-  const handleAddWeekBox = () => {
-    setBoxWeeklyIdCounter((prevCounter) => prevCounter + 1);
-    // Tạo một Box mới
-    const newBox = (
-      <Box
-        marginTop="10px"
-        marginBottom="20px"
-        padding="20px 10px 10px 10px"
-        flexDirection="column"
-        alignItems="center"
-        backgroundColor={colors.grey[900]}
-        borderRadius="10px"
-      >
-        <Box marginBottom="20px">
-          <Box display="flex" alignItems="center">
-            <TimePicker
-              label="Thời gian bắt đầu"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeStartWeekly(
-                  formattedTime,
-                  boxWeeklyIdCounter.toString(),
-                );
-              }}
-            />
-            <span
-              style={{
-                fontSize: "1.5em",
-                margin: "0 10px",
-              }}
-            >
-              -
-            </span>
-            <TimePicker
-              label="Thời gian kết thúc"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeEndWeekly(
-                  formattedTime,
-                  boxWeeklyIdCounter.toString(),
-                );
-              }}
-            />
-          </Box>
-
-          <Box
-            marginBottom="30px"
-            marginTop="20px"
-            display="flex"
-            alignItems="center"
-          >
-            <ChangeCircleIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
-              <strong>Thay đổi nội dung</strong>
-            </Typography>
-            <Autocomplete
-              sx={{ width: 300 }}
-              multiple
-              id="list-pole-autocomplete"
-              onChange={(event, newValue) => {
-                setSelectedOptions(newValue);
-                onChangeContentWeekly(newValue, boxWeeklyIdCounter.toString());
-              }}
-              options={
-                dataVideo && dataVideo["Video name"]
-                  ? dataVideo["Video name"]
-                  : []
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  label="Chọn nội dung"
-                />
-              )}
-            />
-
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#757575",
-                color: "#fff",
-                marginLeft: "20px",
-                display: "flex",
-                alignItems: "center",
-                padding: "5px",
-              }}
-            >
-              <DeleteForeverIcon />
-            </Button>
-          </Box>
-
-          <Box marginBottom="20px" display="flex" alignItems="center">
-            <DateRangeIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
-              <strong>Các ngày trong tuần</strong>
-            </Typography>
-
-            <ToggleDays
-              onChange={(event, newValue) =>
-                onChangePickDayOfWeek(event, newValue, boxWeeklyIdCounter)
-              }
-            />
-          </Box>
-
-          <Box marginBottom="20px" display="flex" alignItems="center">
-            <HourglassEmptyIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
-              <strong>Hiệu lực từ</strong>
-            </Typography>
-            <DatePicker
-              label="Ngày bắt đầy"
-              onChange={(newDate) => {
-                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-                const year = newDate.$y; // Lấy năm
-                const formattedDate = `${month}/${day}/${year}`;
-                onChangeTimeBeginWeekly(
-                  formattedDate,
-                  boxWeeklyIdCounter.toString(),
-                );
-              }}
-            />
-            <span
-              style={{
-                fontSize: "1.5em",
-                margin: "0 10px",
-              }}
-            >
-              {" "}
-              -{" "}
-            </span>
-            <DatePicker
-              label="Ngày kết thúc"
-              onChange={(newDate) => {
-                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-                const year = newDate.$y; // Lấy năm
-                const formattedDate = `${month}/${day}/${year}`;
-                onChangeTimeUntilWeekly(
-                  formattedDate,
-                  boxWeeklyIdCounter.toString(),
-                );
-              }}
-            />
-          </Box>
-        </Box>
-      </Box>
-    );
-    // Thêm Box mới vào danh sách
-    setWeekBoxes([...weekBoxes, newBox]);
-  };
-  //thêm lịch chiếu-----weekly------------------end---------------------
-  //thêm lịch chiếu------onetime-----------------begin---------------
-  const [oneTimeBoxes, setOneTimeBoxes] = useState([]);
-  const [boxOneTimeIdCounter, setBoxOneTimeIdCounter] = useState(0);
-  const handleAddOneTimeBox = () => {
-    setBoxOneTimeIdCounter((prevCounter) => prevCounter + 1);
-    // Tạo một Box mới
-    const newBox = (
-      <Box
-        marginTop="10px"
-        marginBottom="20px"
-        padding="20px 10px 10px 10px"
-        flexDirection="column"
-        alignItems="center"
-        backgroundColor={colors.grey[900]}
-        borderRadius="10px"
-      >
-        <Box marginBottom="20px">
-          <Box display="flex" alignItems="center">
-            <TimePicker
-              label="Thời gian bắt đầu"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeStartOneTime(
-                  formattedTime,
-                  boxOneTimeIdCounter.toString(),
-                );
-              }}
-            />
-            <span
-              style={{
-                fontSize: "1.5em",
-                margin: "0 10px",
-              }}
-            >
-              -
-            </span>
-            <TimePicker
-              label="Thời gian kết thúc"
-              onChange={(newTime) => {
-                const hours = newTime.$d.getHours().toString().padStart(2, "0");
-                const minutes = newTime.$d
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0");
-                const formattedTime = `${hours}:${minutes}`;
-                console.log("Giá trị mới: ", formattedTime);
-                onChangeTimeEndOneTime(
-                  formattedTime,
-                  boxOneTimeIdCounter.toString(),
-                );
-              }}
-            />
-          </Box>
-
-          <Box
-            marginBottom="30px"
-            marginTop="20px"
-            display="flex"
-            alignItems="center"
-          >
-            <ChangeCircleIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
-              <strong>Thay đổi nội dung</strong>
-            </Typography>
-            <Autocomplete
-              sx={{ width: 300 }}
-              multiple
-              id="list-pole-autocomplete"
-              onChange={(event, newValue) => {
-                setSelectedOptions(newValue);
-                onChangeContentOneTime(
-                  newValue,
-                  boxOneTimeIdCounter.toString(),
-                );
-              }}
-              options={
-                dataVideo && dataVideo["Video name"]
-                  ? dataVideo["Video name"]
-                  : []
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  label="Chọn nội dung"
-                />
-              )}
-            />
-
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#757575",
-                color: "#fff",
-                marginLeft: "20px",
-                display: "flex",
-                alignItems: "center",
-                padding: "5px",
-              }}
-            >
-              <DeleteForeverIcon />
-            </Button>
-          </Box>
-
-          <Box marginBottom="20px" display="flex" alignItems="center">
-            <HourglassEmptyIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
-              <strong>Hiệu lực từ</strong>
-            </Typography>
-            <DatePicker
-              label="Ngày bắt đầy"
-              onChange={(newDate) => {
-                const month = (newDate.$M + 1).toString().padStart(2, "0"); // Lấy tháng và thêm 1 vì tháng bắt đầu từ 0
-                const day = newDate.$D.toString().padStart(2, "0"); // Lấy ngày
-                const year = newDate.$y; // Lấy năm
-                const formattedDate = `${month}/${day}/${year}`;
-                onChangeTimeBeginOneTime(
-                  formattedDate,
-                  boxOneTimeIdCounter.toString(),
-                );
-              }}
-            />
-          </Box>
-        </Box>
-      </Box>
-    );
-    // Thêm Box mới vào danh sách
-    setOneTimeBoxes([...oneTimeBoxes, newBox]);
-  };
-  //thêm lịch chiếu--------onetime-----------------end--------------
-
-  //gửi dữ liệu lập lịch------------------------------------begin--------------------------
-
-  //daily-----------------------------------------begin-------------------------------------------
-  const onChangeTimeStartDaily = (formattedTime, boxDailyIdCounter) => {
-    const label = "dailyTimeStart" + boxDailyIdCounter;
-    setTimeStartDailyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // If label exists, update the value
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: formattedTime } : item,
-        );
-      } else {
-        // If label doesn't exist, add a new item
-        return [...prevArray, { label: label, value: formattedTime }];
-      }
-    });
-  };
-
-  const onChangeTimeEndDaily = (formattedTime, boxDailyIdCounter) => {
-    const label = "dailyTimeEnd" + boxDailyIdCounter;
-    setTimeEndDailyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // If label exists, update the value
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: formattedTime } : item,
-        );
-      } else {
-        // If label doesn't exist, add a new item
-        return [...prevArray, { label: label, value: formattedTime }];
-      }
-    });
-  };
-
-  const onChangeContentDaily = (newValue, boxDailyIdCounter) => {
-    const label = "dailyContent" + boxDailyIdCounter;
-    setContentDailyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newValue } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: newValue }];
-      }
-    });
-  };
-
-  const onChangeTimeBeginDaily = (newTime, boxDailyIdCounter) => {
-    const label = "dailyTimeBegin" + boxDailyIdCounter;
-    setTimeBeginDailyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newTime } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: newTime }];
-      }
-    });
-  };
-
-  const onChangeTimeUntilDaily = (newTime, boxDailyIdCounter) => {
-    const label = "dailyTimeUntil" + boxDailyIdCounter;
-    setTimeUntilDailyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newTime } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: newTime }];
-      }
-    });
-  };
-
-  const onChangeDurationDaily = (newValue, boxDailyIdCounter) => {
-    const label = `dailyDuration${boxDailyIdCounter}`;
-    setDurationDailyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newValue } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: newValue }];
-      }
-    });
-  };
-  //daily-----------------------------------------end-------------------------------------------
-  //weekly-----------------------------------------begin-------------------------------------------
-
-  const onChangeTimeStartWeekly = (formattedTime, boxWeeklyIdCounter) => {
-    const label = "weeklyTimeStart" + boxWeeklyIdCounter;
-    setTimeStartWeeklyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: formattedTime } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: formattedTime }];
-      }
-    });
-  };
-
-  const onChangeTimeEndWeekly = (formattedTime, boxWeeklyIdCounter) => {
-    const label = "weeklyTimeEnd" + boxWeeklyIdCounter;
-    setTimeEndWeeklyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: formattedTime } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: formattedTime }];
-      }
-    });
-  };
-
-  const onChangeContentWeekly = (newValue, boxWeeklyIdCounter) => {
-    const label = "weeklyContent" + boxWeeklyIdCounter;
-    setContentWeeklyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newValue } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: newValue }];
-      }
-    });
-  };
-
-  const onChangeTimeBeginWeekly = (newTime, boxWeeklyIdCounter) => {
-    const label = "weeklyTimeBegin" + boxWeeklyIdCounter;
-    setTimeBeginWeeklyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newTime } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: newTime }];
-      }
-    });
-  };
-
-  const onChangeTimeUntilWeekly = (newTime, boxWeeklyIdCounter) => {
-    const label = "weeklyTimeUntil" + boxWeeklyIdCounter;
-    setTimeUntilWeeklyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newTime } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: newTime }];
-      }
-    });
-  };
-
-  // Hàm xử lý khi có sự thay đổi trong các ngày được chọn
-  const onChangePickDayOfWeek = (event, newValue, boxWeeklyIdCounter) => {
-    const daysOfWeek = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
-    const selectedDays = newValue.map((index) => daysOfWeek[index]);
-
-    const label = "weeklyDayOfWeek" + boxWeeklyIdCounter;
-    setListDayWeeklyArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: selectedDays } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: selectedDays }];
-      }
-    });
-  };
-  //weekly-----------------------------------------end-------------------------------------------
-
-  //onetime------------------------------------------begin---------------------------------------
-  const onChangeTimeStartOneTime = (formattedTime, boxOneTimeIdCounter) => {
-    const label = "onetimeTimeStart" + boxOneTimeIdCounter;
-    setTimeStartOneTimeArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: formattedTime } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: formattedTime }];
-      }
-    });
-  };
-
-  const onChangeTimeEndOneTime = (formattedTime, boxOneTimeIdCounter) => {
-    const label = "onetimeTimeEnd" + boxOneTimeIdCounter;
-    setTimeEndOneTimeArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: formattedTime } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: formattedTime }];
-      }
-    });
-  };
-
-  const onChangeContentOneTime = (newValue, boxOneTimeIdCounter) => {
-    const label = "onetimeContent" + boxOneTimeIdCounter;
-    setContentOneTimeArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newValue } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: newValue }];
-      }
-    });
-  };
-
-  const onChangeTimeBeginOneTime = (newTime, boxOneTimeIdCounter) => {
-    const label = "onetimeTimeBegin" + boxOneTimeIdCounter;
-    setTimeBeginOneTimeArray((prevArray) => {
-      const index = prevArray.findIndex((item) => item.label === label);
-      if (index !== -1) {
-        // Nếu nhãn đã tồn tại, cập nhật giá trị
-        return prevArray.map((item, idx) =>
-          idx === index ? { ...item, value: newTime } : item,
-        );
-      } else {
-        // Nếu nhãn không tồn tại, thêm một mục mới
-        return [...prevArray, { label: label, value: newTime }];
-      }
-    });
-  };
-  //onetime----------------------------------------------end-----------------------------------
-
-  const handleSubmit = async () => {
-    //api------daily---------------------begin-------------------------------------------
-    for (let i = 0; i < timeStartDailyArray.length; i++) {
-      const startTime = timeStartDailyArray[i].value; // Thời gian bắt đầu
-      const endTime = timeEndDailyArray[i].value; // Thời gian kết thúc
-      const list = contentDailyArray[i].value.join(","); // Danh sách nội dung
-      const duration = durationDailyArray[i].value; // Độ dài
-      const startDateParts = timeBeginDailyArray[i].value.split("/"); // Tách ngày, tháng và năm
-      const startDate = `${startDateParts[2]}-${startDateParts[0]}-${startDateParts[1]}`; // Định dạng lại theo yyyy-mm-dd
-
-      const untilParts = timeUntilDailyArray[i].value.split("/"); // Tách ngày, tháng và năm
-      const until = `${untilParts[2]}-${untilParts[0]}-${untilParts[1]}`; // Định dạng lại theo yyyy-mm-dd
-      const label = defaultAdvertisementName; // Nhãn
-
-      // Tạo đường dẫn API
-      const url = `${API_BASE_URL}//schedule/addTask/daily?stream=${channelStream}&list=${list}&duration=${duration}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}`;
-      console.log(url);
-      // Gửi yêu cầu API
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true",
-          },
-          // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        console.log("Response data:", data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-    //api------daily---------------------end-------------------------------------------
-
-    //api------weekly---------------------begin-------------------------------------------
-    for (let i = 0; i < timeStartWeeklyArray.length; i++) {
-      const startTime = timeStartWeeklyArray[i].value; // Thời gian bắt đầu
-      const endTime = timeEndWeeklyArray[i].value; // Thời gian kết thúc
-      const list = contentWeeklyArray[i].value.join(","); // Danh sách nội dung
-
-      const startDateParts = timeBeginWeeklyArray[i].value.split("/"); // Tách ngày, tháng và năm
-      const startDate = `${startDateParts[2]}-${startDateParts[0]}-${startDateParts[1]}`; // Định dạng lại theo yyyy-mm-dd
-
-      const untilParts = timeUntilWeeklyArray[i].value.split("/"); // Tách ngày, tháng và năm
-      const until = `${untilParts[2]}-${untilParts[0]}-${untilParts[1]}`; // Định dạng lại theo yyyy-mm-dd
-      const label = defaultAdvertisementName; // Nhãn
-
-      const daypick = listDayWeeklyArray[i].value.join(",");
-
-      // Tạo đường dẫn API
-      const url = `${API_BASE_URL}//schedule/addTask/weekly?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&until=${until}&label=${label}&days=${daypick}`;
-      console.log(url);
-      //Gửi yêu cầu API
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true",
-          },
-          // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        console.log("Response data:", data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-    //api------weekly---------------------end-------------------------------------------
-
-    //api------onetime---------------------begin-------------------------------------------
-    for (let i = 0; i < timeStartOneTimeArray.length; i++) {
-      const startTime = timeStartOneTimeArray[i].value; // Thời gian bắt đầu
-      const endTime = timeEndOneTimeArray[i].value; // Thời gian kết thúc
-      const list = contentOneTimeArray[i].value.join(","); // Danh sách nội dung
-
-      const startDateParts = timeBeginOneTimeArray[i].value.split("/"); // Tách ngày, tháng và năm
-      const startDate = `${startDateParts[2]}-${startDateParts[0]}-${startDateParts[1]}`; // Định dạng lại theo yyyy-mm-dd
-
-      const label = defaultAdvertisementName; // Nhãn
-
-      // Tạo đường dẫn API
-      const url = `${API_BASE_URL}//schedule/addTask/onetime?stream=${channelStream}&list=${list}&starttime=${startTime}&endtime=${endTime}&startdate=${startDate}&label=${label}`;
-      console.log(url);
-      //Gửi yêu cầu API
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true",
-          },
-          // body: JSON.stringify(payload) // Nếu cần gửi dữ liệu cụ thể, hãy thêm vào đây
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        console.log("Response data:", data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-    //window.location.reload();
-    //api------onetime---------------------end-------------------------------------------
-  };
-
-  const handleSave = async () => {
-    try {
-      await handleSubmit(); // Gọi hàm để xử lý việc gửi API
-      console.log("API requests sent successfully");
-      // Thêm logic xử lý sau khi gửi API thành công nếu cần
-    } catch (error) {
-      console.error("Error while sending API requests:", error);
-      // Thêm logic xử lý khi gặp lỗi khi gửi API nếu cần
-    }
-    handleClose();
-  };
-  //gửi dữ liệu lập lịch------------------------------------end--------------------------
   //xóa quảng cáo-----------------------------------begin--------------------------------------
   const handleDeleteAdvertisement = () => {
     // Gửi yêu cầu API đến localhost:5000//schedule/deleteTask
@@ -1179,7 +284,7 @@ export default function CustomDialog({
           id="customized-dialog-title"
           sx={{ fontSize: "24px", fontWeight: "bold" }}
         >
-          Chỉnh sửa lịch phát quảng cáo
+          Lịch phát quảng cáo
         </DialogTitle>
         <DialogContent dividers>
           <Box
@@ -1200,7 +305,7 @@ export default function CustomDialog({
               <TextField
                 label="Đổi tên quảng cáo"
                 variant="outlined"
-                defaultValue={defaultAdvertisementName}
+                defaultValue={selectedVideo}
                 sx={{ width: "300px" }}
               />
             </Box>
@@ -1208,18 +313,7 @@ export default function CustomDialog({
             {/* Dòng thứ hai: "Chọn video" và trường nhập dữ liệu --------------------------------------*/}
 
             {/* Dòng thứ ba -------------------------------------------------------------------*/}
-            <Box marginBottom="20px" display="flex" alignItems="center">
-              <OndemandVideoIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
-              <Typography variant="h4" marginRight="10px" paddingLeft="10px">
-                <strong>Nội dung</strong>
-              </Typography>
-              <ReactPlayer
-                url={[{ src: "", type: "video/mp4", quality: "1080" }]}
-                controls={true}
-                width="640px"
-                height="360px"
-              />
-            </Box>
+
 
             {/* Dòng thứ tư ----------------------------------------------------*/}
             <Box marginBottom="30px" display="flex" alignItems="center">
@@ -1257,7 +351,7 @@ export default function CustomDialog({
                   <ListItemButton onClick={handleClickDay}>
                     <ListItemIcon>
                       <img
-                        src="/assets/day.png"
+                        src={`${process.env.PUBLIC_URL}/assets/day.png`}
                         alt="Day Icon"
                         style={{
                           width: "36px",
@@ -1290,8 +384,163 @@ export default function CustomDialog({
                               backgroundColor={colors.grey[900]}
                               borderRadius="10px"
                             >
+
+
+
+
+
                               <Box key={index} marginBottom="20px">
-                                <Box display="flex" alignItems="center">
+
+                                <Box
+                                  marginBottom="30px"
+                                  marginTop="20px"
+                                  display="flex"
+                                  alignItems="center"
+                                >
+                                  <ChangeCircleIcon
+                                    sx={{ color: "#4cceac", fontSize: "36px" }}
+                                  />
+                                  <Typography
+                                    variant="h5"
+                                    marginRight="10px"
+                                    paddingLeft="10px"
+                                  >
+                                    <strong>Video</strong>
+                                  </Typography>
+                                  <Autocomplete
+                                    sx={{ width: 300 }}
+                                    multiple
+                                    id="list-pole-autocomplete"
+                                    defaultValue={
+    defaultinputType[index] === "video" ? defaultvideoname[index] : [] 
+  }
+                                    onChange={(event, newValue) => {
+                                      setSelectedOptions(newValue);
+                                    }}
+                                    options={
+                                      dataVideo && dataVideo["Video name"]
+                                        ? dataVideo["Video name"]
+                                        : []
+                                    }
+                                    renderInput={(params) => (
+                                      <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        label="Nội dung"
+                                      />
+                                    )}
+                                  />
+
+                                  <Button
+                                    variant="contained"
+                                    onClick={() =>
+                                      handleDeleteId(defaultId[index])
+                                    }
+                                    sx={{
+                                      backgroundColor: "#757575",
+                                      color: "#fff",
+                                      marginLeft: "20px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      padding: "5px",
+                                    }}
+                                  >
+                                    <DeleteForeverIcon />
+                                  </Button>
+                                </Box>
+
+
+
+                                <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+
+
+
+<Box>
+          <section>
+              <Box
+                display="flex"
+                alignItems="center"
+                marginBottom="20px"
+              >
+            <SlideshowIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
+            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
+              <strong>Slide show</strong>
+            </Typography>
+
+              </Box>
+
+              <Box
+                sx={{
+                  height: "300px", // Chiều cao thanh trượt
+                  overflowY: "auto", // Cho phép cuộn dọc
+                  border: "1px solid #ccc", // Viền cho thanh trượt (tùy chọn)
+                  borderRadius: "10px", // Bo góc thanh trượt
+                  padding: "10px", // Padding cho thanh trượt
+                  backgroundColor: "#f5f5f5", // Màu nền của thanh trượt
+                }}
+              >      
+
+{defaultinputType[index] === "image" && (
+  <div key={index} id={`displayimage-${index}`}>
+    {Array.isArray(defaultvideoname[index]) &&
+      defaultvideoname[index].map((imageName, imageIndex) => (
+        <div
+          key={imageIndex}
+          style={{
+            padding: "10px",
+            borderRadius: "20px",
+            backgroundColor: "#FFFFFF",
+            marginBottom: "10px",
+          }}
+        >
+          {/* Hiển thị hình ảnh */}
+          <img
+            src={`${API_BASE_URL}/image/${imageName.trim()}`} // Kết hợp base URL với tên ảnh
+            alt={`image-${imageIndex}`}
+            height={180}
+            style={{
+              borderRadius: "10%",
+              objectFit: "cover",
+            }}
+          />
+
+          {/* Hiển thị tên ảnh */}
+          <p
+            style={{
+              fontSize: "0.9rem",
+              fontWeight: "bold",
+              color: "#333",
+              marginTop: "10px",
+            }}
+          >
+            {imageName.trim()}
+          </p>
+        </div>
+      ))}
+  </div>
+)}
+              </Box>
+
+
+              
+            </section>
+            </Box>
+
+
+
+                                <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+
+                                <Box display="flex" alignItems="center" marginBottom="15px">
                                   <TimePicker
                                     label="Thời gian bắt đầu"
                                     defaultValue={dayjs(
@@ -1314,61 +563,6 @@ export default function CustomDialog({
                                   />
                                 </Box>
 
-                                <Box
-                                  marginBottom="30px"
-                                  marginTop="20px"
-                                  display="flex"
-                                  alignItems="center"
-                                >
-                                  <ChangeCircleIcon
-                                    sx={{ color: "#4cceac", fontSize: "36px" }}
-                                  />
-                                  <Typography
-                                    variant="h5"
-                                    marginRight="10px"
-                                    paddingLeft="10px"
-                                  >
-                                    <strong>Thay đổi nội dung</strong>
-                                  </Typography>
-                                  <Autocomplete
-                                    sx={{ width: 300 }}
-                                    multiple
-                                    id="list-pole-autocomplete"
-                                    defaultValue={defaultvideoname[index]}
-                                    onChange={(event, newValue) => {
-                                      setSelectedOptions(newValue);
-                                    }}
-                                    options={
-                                      dataVideo && dataVideo["Video name"]
-                                        ? dataVideo["Video name"]
-                                        : []
-                                    }
-                                    renderInput={(params) => (
-                                      <TextField
-                                        {...params}
-                                        variant="outlined"
-                                        label="Chọn nội dung"
-                                      />
-                                    )}
-                                  />
-
-                                  <Button
-                                    variant="contained"
-                                    onClick={() =>
-                                      handleDeleteId(defaultId[index])
-                                    }
-                                    sx={{
-                                      backgroundColor: "#757575",
-                                      color: "#fff",
-                                      marginLeft: "20px",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      padding: "5px",
-                                    }}
-                                  >
-                                    <DeleteForeverIcon />
-                                  </Button>
-                                </Box>
 
                                 <Box
                                   marginBottom="20px"
@@ -1433,19 +627,9 @@ export default function CustomDialog({
                       })}
 
                       {/* Thêm box để nhập khi click vào thêm lịch chiếu */}
-                      {dayBoxes.map((box, index) => (
-                        <React.Fragment key={index}>{box}</React.Fragment>
-                      ))}
+
 
                       {/*nội dung trong collapse của lặp lại hằng ngày---------------end --------------*/}
-                      <Button
-                        onClick={handleAddDayBox}
-                        variant="outlined"
-                        sx={{ marginLeft: "200px" }}
-                        startIcon={<AddIcon />}
-                      >
-                        Thêm lịch chiếu
-                      </Button>
                     </List>
                   </Collapse>
                 </Box>
@@ -1460,7 +644,7 @@ export default function CustomDialog({
                   <ListItemButton onClick={handleClickWeek}>
                     <ListItemIcon>
                       <img
-                        src="/assets/week.png"
+                        src={`${process.env.PUBLIC_URL}/assets/week.png`}
                         alt="Day Icon"
                         style={{
                           width: "36px",
@@ -1493,28 +677,6 @@ export default function CustomDialog({
                               borderRadius="10px"
                             >
                               <Box key={index} marginBottom="20px">
-                                <Box display="flex" alignItems="center">
-                                  <TimePicker
-                                    label="Thời gian bắt đầu"
-                                    defaultValue={dayjs(
-                                      `2022-04-17T${defaultStart[index]}`,
-                                    )}
-                                  />
-                                  <span
-                                    style={{
-                                      fontSize: "1.5em",
-                                      margin: "0 10px",
-                                    }}
-                                  >
-                                    -
-                                  </span>
-                                  <TimePicker
-                                    label="Thời gian kết thúc"
-                                    defaultValue={dayjs(
-                                      `2022-04-17T${defaultEnd[index]}`,
-                                    )}
-                                  />
-                                </Box>
 
                                 <Box
                                   marginBottom="30px"
@@ -1530,13 +692,15 @@ export default function CustomDialog({
                                     marginRight="10px"
                                     paddingLeft="10px"
                                   >
-                                    <strong>Thay đổi nội dung</strong>
+                                    <strong>Video</strong>
                                   </Typography>
                                   <Autocomplete
                                     sx={{ width: 300 }}
                                     multiple
                                     id="list-pole-autocomplete"
-                                    defaultValue={defaultvideoname[index]}
+                                    defaultValue={
+    defaultinputType[index] === "video" ? defaultvideoname[index] : [] 
+  }
                                     onChange={(event, newValue) => {
                                       setSelectedOptions(newValue);
                                     }}
@@ -1549,7 +713,7 @@ export default function CustomDialog({
                                       <TextField
                                         {...params}
                                         variant="outlined"
-                                        label="Chọn nội dung"
+                                        label="Nội dung"
                                       />
                                     )}
                                   />
@@ -1570,6 +734,119 @@ export default function CustomDialog({
                                   >
                                     <DeleteForeverIcon />
                                   </Button>
+                                </Box>
+
+                                <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+
+
+
+<Box>
+          <section>
+              <Box
+                display="flex"
+                alignItems="center"
+                marginBottom="20px"
+              >
+            <SlideshowIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
+            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
+              <strong>Slide show</strong>
+            </Typography>
+
+              </Box>
+
+
+              <Box
+                sx={{
+                  height: "300px", // Chiều cao thanh trượt
+                  overflowY: "auto", // Cho phép cuộn dọc
+                  border: "1px solid #ccc", // Viền cho thanh trượt (tùy chọn)
+                  borderRadius: "10px", // Bo góc thanh trượt
+                  padding: "10px", // Padding cho thanh trượt
+                  backgroundColor: "#f5f5f5", // Màu nền của thanh trượt
+                }}
+              >      
+
+{defaultinputType[index] === "image" && (
+  <div key={index} id={`displayimage-${index}`}>
+    {Array.isArray(defaultvideoname[index]) &&
+      defaultvideoname[index].map((imageName, imageIndex) => (
+        <div
+          key={imageIndex}
+          style={{
+            padding: "10px",
+            borderRadius: "20px",
+            backgroundColor: "#FFFFFF",
+            marginBottom: "10px",
+          }}
+        >
+          {/* Hiển thị hình ảnh */}
+          <img
+            src={`${API_BASE_URL}/image/${imageName.trim()}`} // Kết hợp base URL với tên ảnh
+            alt={`image-${imageIndex}`}
+            height={180}
+            style={{
+              borderRadius: "10%",
+              objectFit: "cover",
+            }}
+          />
+
+          {/* Hiển thị tên ảnh */}
+          <p
+            style={{
+              fontSize: "0.9rem",
+              fontWeight: "bold",
+              color: "#333",
+              marginTop: "10px",
+            }}
+          >
+            {imageName.trim()}
+          </p>
+        </div>
+      ))}
+  </div>
+)}
+
+              </Box>
+
+
+              
+            </section>
+            </Box>
+
+
+
+                                <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+                                                              <Box display="flex" alignItems="center" marginBottom="15px">
+                                  <TimePicker
+                                    label="Thời gian bắt đầu"
+                                    defaultValue={dayjs(
+                                      `2022-04-17T${defaultStart[index]}`,
+                                    )}
+                                  />
+                                  <span
+                                    style={{
+                                      fontSize: "1.5em",
+                                      margin: "0 10px",
+                                    }}
+                                  >
+                                    -
+                                  </span>
+                                  <TimePicker
+                                    label="Thời gian kết thúc"
+                                    defaultValue={dayjs(
+                                      `2022-04-17T${defaultEnd[index]}`,
+                                    )}
+                                  />
                                 </Box>
 
                                 <Box
@@ -1636,18 +913,6 @@ export default function CustomDialog({
                         }
                       })}
 
-                      {weekBoxes.map((box, index) => (
-                        <React.Fragment key={index}>{box}</React.Fragment>
-                      ))}
-
-                      <Button
-                        onClick={handleAddWeekBox}
-                        variant="outlined"
-                        sx={{ marginLeft: "200px" }}
-                        startIcon={<AddIcon />}
-                      >
-                        Thêm lịch chiếu
-                      </Button>
                     </List>
                   </Collapse>
                 </Box>
@@ -1662,7 +927,7 @@ export default function CustomDialog({
                   <ListItemButton onClick={handleClickFlex}>
                     <ListItemIcon>
                       <img
-                        src="/assets/flex.png"
+                        src={`${process.env.PUBLIC_URL}/assets/flex.png`}
                         alt="Day Icon"
                         style={{
                           width: "36px",
@@ -1696,7 +961,154 @@ export default function CustomDialog({
                               borderRadius="10px"
                             >
                               <Box key={index} marginBottom="20px">
-                                <Box display="flex" alignItems="center">
+
+                                <Box
+                                  marginBottom="30px"
+                                  marginTop="20px"
+                                  display="flex"
+                                  alignItems="center"
+                                >
+                                  <ChangeCircleIcon
+                                    sx={{ color: "#4cceac", fontSize: "36px" }}
+                                  />
+                                  <Typography
+                                    variant="h5"
+                                    marginRight="10px"
+                                    paddingLeft="10px"
+                                  >
+                                    <strong>Video</strong>
+                                  </Typography>
+                                  <Autocomplete
+                                    sx={{ width: 300 }}
+                                    multiple
+                                    id="list-pole-autocomplete"
+                                    defaultValue={
+    defaultinputType[index] === "video" ? defaultvideoname[index] : [] 
+  }
+                                    onChange={(event, newValue) => {
+                                      setSelectedOptions(newValue);
+                                    }}
+                                    options={
+                                      dataVideo && dataVideo["Video name"]
+                                        ? dataVideo["Video name"]
+                                        : []
+                                    }
+                                    renderInput={(params) => (
+                                      <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        label="Nội dung"
+                                      />
+                                    )}
+                                  />
+
+                                  <Button
+                                    variant="contained"
+                                    onClick={() =>
+                                      handleDeleteId(defaultId[index])
+                                    }
+                                    sx={{
+                                      backgroundColor: "#757575",
+                                      color: "#fff",
+                                      marginLeft: "20px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      padding: "5px",
+                                    }}
+                                  >
+                                    <DeleteForeverIcon />
+                                  </Button>
+                                </Box>
+
+                                <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+
+
+
+<Box>
+          <section>
+              <Box
+                display="flex"
+                alignItems="center"
+                marginBottom="20px"
+              >
+            <SlideshowIcon sx={{ color: "#4cceac", fontSize: "36px" }} />
+            <Typography variant="h5" marginRight="10px" paddingLeft="10px">
+              <strong>Slide show</strong>
+            </Typography>
+
+              </Box>
+
+              <Box
+                sx={{
+                  height: "300px", // Chiều cao thanh trượt
+                  overflowY: "auto", // Cho phép cuộn dọc
+                  border: "1px solid #ccc", // Viền cho thanh trượt (tùy chọn)
+                  borderRadius: "10px", // Bo góc thanh trượt
+                  padding: "10px", // Padding cho thanh trượt
+                  backgroundColor: "#f5f5f5", // Màu nền của thanh trượt
+                }}
+              >      
+
+{defaultinputType[index] === "image" && (
+  <div key={index} id={`displayimage-${index}`}>
+    {Array.isArray(defaultvideoname[index]) &&
+      defaultvideoname[index].map((imageName, imageIndex) => (
+        <div
+          key={imageIndex}
+          style={{
+            padding: "10px",
+            borderRadius: "20px",
+            backgroundColor: "#FFFFFF",
+            marginBottom: "10px",
+          }}
+        >
+          {/* Hiển thị hình ảnh */}
+          <img
+            src={`${API_BASE_URL}/image/${imageName.trim()}`} // Kết hợp base URL với tên ảnh
+            alt={`image-${imageIndex}`}
+            height={180}
+            style={{
+              borderRadius: "10%",
+              objectFit: "cover",
+            }}
+          />
+
+          {/* Hiển thị tên ảnh */}
+          <p
+            style={{
+              fontSize: "0.9rem",
+              fontWeight: "bold",
+              color: "#333",
+              marginTop: "10px",
+            }}
+          >
+            {imageName.trim()}
+          </p>
+        </div>
+      ))}
+  </div>
+)}
+              </Box>
+
+
+              
+            </section>
+            </Box>
+
+
+
+                                <Divider 
+        sx={{
+          backgroundColor: 'black',
+          my: 2
+        }}
+      />
+                                                                 <Box display="flex" alignItems="center" marginBottom="15px">
                                   <TimePicker
                                     label="Thời gian bắt đầu"
                                     defaultValue={dayjs(
@@ -1719,61 +1131,6 @@ export default function CustomDialog({
                                   />
                                 </Box>
 
-                                <Box
-                                  marginBottom="30px"
-                                  marginTop="20px"
-                                  display="flex"
-                                  alignItems="center"
-                                >
-                                  <ChangeCircleIcon
-                                    sx={{ color: "#4cceac", fontSize: "36px" }}
-                                  />
-                                  <Typography
-                                    variant="h5"
-                                    marginRight="10px"
-                                    paddingLeft="10px"
-                                  >
-                                    <strong>Thay đổi nội dung</strong>
-                                  </Typography>
-                                  <Autocomplete
-                                    sx={{ width: 300 }}
-                                    multiple
-                                    id="list-pole-autocomplete"
-                                    defaultValue={defaultvideoname[index]}
-                                    onChange={(event, newValue) => {
-                                      setSelectedOptions(newValue);
-                                    }}
-                                    options={
-                                      dataVideo && dataVideo["Video name"]
-                                        ? dataVideo["Video name"]
-                                        : []
-                                    }
-                                    renderInput={(params) => (
-                                      <TextField
-                                        {...params}
-                                        variant="outlined"
-                                        label="Chọn nội dung"
-                                      />
-                                    )}
-                                  />
-
-                                  <Button
-                                    variant="contained"
-                                    onClick={() =>
-                                      handleDeleteId(defaultId[index])
-                                    }
-                                    sx={{
-                                      backgroundColor: "#757575",
-                                      color: "#fff",
-                                      marginLeft: "20px",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      padding: "5px",
-                                    }}
-                                  >
-                                    <DeleteForeverIcon />
-                                  </Button>
-                                </Box>
 
                                 <Box
                                   marginBottom="20px"
@@ -1800,19 +1157,6 @@ export default function CustomDialog({
                           );
                         }
                       })}
-
-                      {oneTimeBoxes.map((box, index) => (
-                        <React.Fragment key={index}>{box}</React.Fragment>
-                      ))}
-
-                      <Button
-                        onClick={handleAddOneTimeBox}
-                        variant="outlined"
-                        sx={{ marginLeft: "200px" }}
-                        startIcon={<AddIcon />}
-                      >
-                        Thêm lịch chiếu
-                      </Button>
                     </List>
                   </Collapse>
                 </Box>
@@ -1855,7 +1199,7 @@ export default function CustomDialog({
           </Button>
           <Button
             autoFocus
-            onClick={handleSave}
+            
             variant="contained"
             sx={{
               backgroundColor: "#4cceac",
