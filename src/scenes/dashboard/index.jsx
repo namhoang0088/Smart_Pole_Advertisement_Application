@@ -28,7 +28,17 @@ function SmartPoleModel() {
 
   return <primitive object={model.scene} ref={ref} />;
 }
+function SensorModel() {
+  const model = useGLTF(`${process.env.PUBLIC_URL}/sensor_3d.glb`);
+  const ref = useRef();
 
+  // Rotate the model slowly
+  useFrame(() => {
+    ref.current.rotation.y += 0.01; // Adjust rotation speed as needed
+  });
+
+  return <primitive object={model.scene} ref={ref} />;
+}
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -39,20 +49,6 @@ const Dashboard = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
 
-        <Box>
-          <Button
-            sx={{
-              backgroundColor: colors.blueAccent[700],
-              color: colors.grey[100],
-              fontSize: "14px",
-              fontWeight: "bold",
-              padding: "10px 20px",
-            }}
-          >
-            <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-            Download Reports
-          </Button>
-        </Box>
       </Box>
 
       {/* GRID & CHARTS */}
@@ -62,91 +58,14 @@ const Dashboard = () => {
         gridAutoRows="140px"
         gap="20px"
       >
-        {/* ROW 1 */}
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="100"
-            subtitle="Emails mới"
-            progress="0.75"
-            increase="+15%"
-            icon={
-              <EmailIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="431"
-            subtitle="Đơn chờ mua quảng cáo"
-            progress="0.50"
-            increase="+21%"
-            icon={
-              <PointOfSaleIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="32"
-            subtitle="Khách hàng mới"
-            progress="0.30"
-            increase="+5%"
-            icon={
-              <PersonAddIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="100"
-            subtitle="Trụ quảng cáo hoạt động"
-            progress="1"
-            increase="100%"
-            icon={
-              <TrafficIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
 
         {/* 3D Model Section */}
         <Box
           gridColumn="span 3"
-          gridRow="span 2"
           backgroundColor={colors.primary[400]}
           p="30px"
           borderRadius="20px"
+          height = "500px"
         >
           <Canvas>
             <ambientLight intensity={3} />
@@ -158,6 +77,61 @@ const Dashboard = () => {
             </Suspense>
             <OrbitControls />
           </Canvas>
+        </Box>
+        
+        <Box gridColumn="span 9" >
+        <Box display="flex">
+        <Box
+          backgroundColor={colors.primary[400]}
+          p="10px"
+          borderRadius="20px"
+          height = "150px"
+          width = "200px"
+        > 
+                  <Canvas>
+            <ambientLight intensity={2} />
+            <directionalLight position={[5, 5, 5]} intensity={0.5} />
+            <Suspense fallback={null}>
+              <group scale={[5, 5, 5]}>
+                <SensorModel />
+              </group>
+            </Suspense>
+            <OrbitControls />
+          </Canvas>
+        </Box>
+
+        <Box
+  backgroundColor={colors.greenAccent[600]}
+  p="10px"
+  borderRadius="20px"
+  height="150px"
+  width="800px"
+  marginLeft="20px"
+  padding="20px"
+  style={{
+    color: "white", // Màu chữ trắng
+    fontSize: "20px", // Kích thước chữ (tuỳ chỉnh theo ý muốn)
+    lineHeight: "1.5", // Khoảng cách giữa các dòng
+    overflowWrap: "break-word", // Tự động xuống dòng nếu nội dung quá dài
+    textAlign: "left", // Canh trái nội dung (tuỳ chỉnh)
+  }}
+>
+  Cảm biến giám sát các môi trường ngoài trời (Sensor Outdoor) với đa dạng các loại cảm 
+  biến: như nhiệt độ và độ ẩm, ánh sáng, CO2, Bụi PM2.5/PM10, tiếng ồn,.... Có khả năng 
+  hoạt động trong các thời tiết xấu, có độ nhạy và chính xác cao, độ tuyến tính tốt, dễ dàng lắp 
+  đặt và sử dụng. Có khả năng truyền xa bằng giao tiếp RS485 Modbus RTU.
+</Box>
+
+
+
+
+
+        </Box>
+
+
+
+
+
         </Box>
 
       

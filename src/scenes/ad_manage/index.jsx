@@ -73,6 +73,7 @@ const AdManage = () => {
   const channelOptions = [
     { value: "1", label: "Channel 1" },
     { value: "2", label: "Channel 2" },
+    { value: "3", label: "Channel 3" },
   ];
 
   const handleChannelChange = async (event, index, id) => {

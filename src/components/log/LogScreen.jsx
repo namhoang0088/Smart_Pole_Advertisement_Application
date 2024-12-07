@@ -136,7 +136,7 @@ export default function LogScreen({ open, handleClose }) {
             }}
           >
             <iframe
-              src={`https://player.twitch.tv/?channel=gutsssssssss9&parent=${currentHost}`}
+              src={`https://player.twitch.tv/?channel=hehe0082&parent=${currentHost}`}
               height="35%"
               width="100%"
               allowfullscreen
@@ -311,7 +311,7 @@ export default function LogScreen({ open, handleClose }) {
             }}
           >
             <iframe
-              src={`https://player.twitch.tv/?channel=dat_live2&parent=${currentHost}`}
+              src={`https://player.twitch.tv/?channel=hehe0081&parent=${currentHost}`}
               height="35%"
               width="100%"
               allowfullscreen
@@ -486,7 +486,7 @@ export default function LogScreen({ open, handleClose }) {
             }}
           >
             <iframe
-              src={`https://player.twitch.tv/?channel=dat_live1&parent=${currentHost}`}
+              src={`https://player.twitch.tv/?channel=nhanlow_v2&parent=${currentHost}`}
               height="35%"
               width="100%"
               allowfullscreen

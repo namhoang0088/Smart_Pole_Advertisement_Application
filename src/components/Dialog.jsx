@@ -24,7 +24,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckIcon from "@mui/icons-material/Check";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
-
+import WaitingLivePopup from "./WaitingLivePopup";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {
   DatePicker,
@@ -221,8 +221,9 @@ export default function CustomDialog({
   //xóa quảng cáo-----------------------------------begin--------------------------------------
   const handleDeleteAdvertisement = () => {
     // Gửi yêu cầu API đến localhost:5000//schedule/deleteTask
+    setOpenpopupwait(true);
     fetch(
-      `${API_BASE_URL}/schedule/deleteTask?stream=${channelStream}&label=${defaultAdvertisementName}`,
+      `${API_BASE_URL}/schedule/deleteTask?stream=${channelStream}&label=${selectedVideo}`,
       {
         method: "GET",
 
@@ -241,12 +242,18 @@ export default function CustomDialog({
         console.error("Error deleting advertisement:", error);
         // Xử lý lỗi nếu cần
       });
-    window.location.reload();
+
+      setTimeout(() => {
+        setOpenpopupwait(false);
+        window.location.reload();
+        handleClose();
+      }, 2000);
     handleClose();
   };
 
   const handleDeleteId = (id) => {
     // Gửi yêu cầu API
+    setOpenpopupwait(true);
     fetch(
       `${API_BASE_URL}/schedule/deleteTask?stream=${channelStream}&id=${id}`,
       {
@@ -268,7 +275,20 @@ export default function CustomDialog({
         console.error("Error deleting task:", error);
         // Xử lý lỗi nếu cần
       });
-    window.location.reload();
+      setTimeout(() => {
+        setOpenpopupwait(false);
+        window.location.reload();
+        handleClose();
+      }, 2000);
+  };
+  const [openpopupwait, setOpenpopupwait] = useState(false);
+
+  const handleClickOpenpopupwait = () => {
+    setOpenpopupwait(true);
+  };
+
+  const handleClosepopupwait = () => {
+    setOpenpopupwait(false);
   };
 
   //xóa quảng cáo---------------------------------------end-------------------------------------
@@ -500,14 +520,15 @@ export default function CustomDialog({
         >
           {/* Hiển thị hình ảnh */}
           <img
-            src={`${API_BASE_URL}/image/${imageName.trim()}`} // Kết hợp base URL với tên ảnh
-            alt={`image-${imageIndex}`}
-            height={180}
-            style={{
-              borderRadius: "10%",
-              objectFit: "cover",
-            }}
-          />
+  src={`${API_BASE_URL}/image/${imageName.trim()}?ngrok-skip-browser-warning=true`} // Thêm query để bỏ qua cảnh báo ngrok
+  alt={`image-${imageIndex}`}
+  height={180}
+  style={{
+    borderRadius: "10%",
+    objectFit: "cover",
+  }}
+
+/>
 
           {/* Hiển thị tên ảnh */}
           <p
@@ -786,7 +807,7 @@ export default function CustomDialog({
         >
           {/* Hiển thị hình ảnh */}
           <img
-            src={`${API_BASE_URL}/image/${imageName.trim()}`} // Kết hợp base URL với tên ảnh
+              src={`${API_BASE_URL}/image/${imageName.trim()}?ngrok-skip-browser-warning=true`} 
             alt={`image-${imageIndex}`}
             height={180}
             style={{
@@ -1069,7 +1090,7 @@ export default function CustomDialog({
         >
           {/* Hiển thị hình ảnh */}
           <img
-            src={`${API_BASE_URL}/image/${imageName.trim()}`} // Kết hợp base URL với tên ảnh
+             src={`${API_BASE_URL}/image/${imageName.trim()}?ngrok-skip-browser-warning=true`}  // Kết hợp base URL với tên ảnh
             alt={`image-${imageIndex}`}
             height={180}
             style={{
@@ -1213,6 +1234,10 @@ export default function CustomDialog({
           </Button>
         </DialogActions>
       </Dialog>
+      <WaitingLivePopup
+        open={openpopupwait}
+        handleClose={handleClosepopupwait}
+      />
     </LocalizationProvider>
   );
 }
